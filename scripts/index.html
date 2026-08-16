@@ -70,7 +70,7 @@
             <h1 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight flex items-center justify-center gap-2.5">
                 <i class="fa-solid fa-plane-departure text-sky-400"></i> Global Travel Tracker
             </h1>
-            <p class="text-slate-400 text-xs sm:text-sm mt-1 max-w-md mx-auto">Worldwide Meta Scanner • 100+ Airports • Global Cards & Promo Engine</p>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1 max-w-md mx-auto">Worldwide Meta Scanner • 100+ Airports • Direct Results</p>
         </header>
 
         <!-- Search & Control Dashboard -->
@@ -93,47 +93,27 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                 
                 <!-- Departure From -->
-                <div class="relative" id="originWrapper">
+                <div>
                     <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Departure From</label>
-                    <div onclick="openLocationPopup('origin')" class="w-full bg-slate-950 border border-slate-700 hover:border-sky-500 active:scale-[0.99] rounded-xl p-3 text-white cursor-pointer flex justify-between items-center text-xs sm:text-sm transition shadow-inner">
-                        <span id="originDisplay" class="font-semibold text-slate-200 truncate">Dhaka - Hazrat Shahjalal Int. (DAC)</span>
+                    <div onclick="openLocationModal('origin')" class="w-full bg-slate-950 border border-slate-700 hover:border-sky-500 active:scale-[0.99] rounded-xl p-3 text-white cursor-pointer flex justify-between items-center text-xs sm:text-sm transition shadow-inner">
+                        <span id="originDisplay" class="font-semibold text-slate-200 truncate">Dhaka - Hazrat Shahjalal (DAC)</span>
                         <i class="fa-solid fa-plane-departure text-sky-400"></i>
-                    </div>
-
-                    <!-- Departure Popup Modal -->
-                    <div id="originPopup" class="hidden absolute left-0 top-full mt-2 w-full sm:w-[420px] bg-slate-900 border border-slate-700 rounded-2xl p-4 shadow-2xl z-50">
-                        <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
-                            <span class="text-xs font-bold text-sky-400 uppercase tracking-wider"><i class="fa-solid fa-plane-departure mr-1"></i> Origin Airport</span>
-                            <button onclick="closeLocationPopup('origin')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-sm"></i></button>
-                        </div>
-                        <input type="text" id="originSearchInput" placeholder="Search Cox's Bazar, Dubai, London, DAC, CCU..." oninput="filterPopupAirports('origin')" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500 mb-2">
-                        <div id="originAirportList" class="max-h-64 overflow-y-auto custom-scroll space-y-1.5"></div>
                     </div>
                 </div>
 
                 <!-- Destination To -->
-                <div class="relative" id="destWrapper">
+                <div>
                     <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Destination To</label>
-                    <div onclick="openLocationPopup('dest')" class="w-full bg-slate-950 border border-slate-700 hover:border-emerald-500 active:scale-[0.99] rounded-xl p-3 text-white cursor-pointer flex justify-between items-center text-xs sm:text-sm transition shadow-inner">
+                    <div onclick="openLocationModal('dest')" class="w-full bg-slate-950 border border-slate-700 hover:border-emerald-500 active:scale-[0.99] rounded-xl p-3 text-white cursor-pointer flex justify-between items-center text-xs sm:text-sm transition shadow-inner">
                         <span id="destDisplay" class="font-semibold text-slate-200 truncate">Cox's Bazar - Cox's Bazar Airport (CXB)</span>
                         <i class="fa-solid fa-plane-arrival text-emerald-400"></i>
-                    </div>
-
-                    <!-- Destination Popup Modal -->
-                    <div id="destPopup" class="hidden absolute left-0 sm:left-auto sm:right-0 top-full mt-2 w-full sm:w-[420px] bg-slate-900 border border-slate-700 rounded-2xl p-4 shadow-2xl z-50">
-                        <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
-                            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider"><i class="fa-solid fa-plane-arrival mr-1"></i> Destination Airport</span>
-                            <button onclick="closeLocationPopup('dest')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-sm"></i></button>
-                        </div>
-                        <input type="text" id="destSearchInput" placeholder="Search Cox's Bazar, India, Japan, UK, USA, CXB..." oninput="filterPopupAirports('dest')" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 mb-2">
-                        <div id="destAirportList" class="max-h-64 overflow-y-auto custom-scroll space-y-1.5"></div>
                     </div>
                 </div>
 
                 <!-- Currency Selector -->
                 <div>
                     <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Currency</label>
-                    <select id="currencySelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-500 text-xs sm:text-sm">
+                    <select id="currencySelect" onchange="renderCalendars(); calculateDeal();" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-500 text-xs sm:text-sm">
                         <option value="BDT" selected>BDT (৳ Bangladesh Taka)</option>
                         <option value="USD">USD ($ US Dollar)</option>
                         <option value="INR">INR (₹ Indian Rupee)</option>
@@ -146,7 +126,7 @@
                 <!-- Bank Card Discount -->
                 <div>
                     <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Bank / Card Discount</label>
-                    <select id="bankCard" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-500 text-xs sm:text-sm">
+                    <select id="bankCard" onchange="calculateDeal()" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-500 text-xs sm:text-sm">
                         <optgroup label="Global / International Cards">
                             <option value="WISE">Wise Multi-Currency Card (12% OFF)</option>
                             <option value="REVOLUT">Revolut Metal / Premium (10% OFF)</option>
@@ -171,21 +151,9 @@
                 <div class="flex items-center gap-2 mb-2 text-xs font-bold text-sky-400">
                     <i class="fa-solid fa-route"></i> Multi-City Connection / 3rd Stop
                 </div>
-                <div class="relative" id="stopoverWrapper">
-                    <div onclick="openLocationPopup('stopover')" class="w-full bg-slate-950 border border-slate-700 hover:border-amber-400 rounded-xl p-2.5 text-white cursor-pointer flex justify-between items-center text-xs sm:text-sm transition">
-                        <span id="stopoverDisplay" class="font-semibold text-slate-300">Phuket Int. Airport (HKT)</span>
-                        <i class="fa-solid fa-map-pin text-amber-400"></i>
-                    </div>
-
-                    <!-- Stopover Popup Modal -->
-                    <div id="stopoverPopup" class="hidden absolute left-0 top-full mt-2 w-full sm:w-[420px] bg-slate-900 border border-slate-700 rounded-2xl p-4 shadow-2xl z-50">
-                        <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
-                            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-map-pin mr-1"></i> Select 3rd Stop Airport</span>
-                            <button onclick="closeLocationPopup('stopover')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-sm"></i></button>
-                        </div>
-                        <input type="text" id="stopoverSearchInput" placeholder="Search 3rd stop..." oninput="filterPopupAirports('stopover')" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400 mb-2">
-                        <div id="stopoverAirportList" class="max-h-64 overflow-y-auto custom-scroll space-y-1.5"></div>
-                    </div>
+                <div onclick="openLocationModal('stopover')" class="w-full bg-slate-950 border border-slate-700 hover:border-amber-400 rounded-xl p-2.5 text-white cursor-pointer flex justify-between items-center text-xs sm:text-sm transition">
+                    <span id="stopoverDisplay" class="font-semibold text-slate-300">Phuket Int. Airport (HKT)</span>
+                    <i class="fa-solid fa-map-pin text-amber-400"></i>
                 </div>
             </div>
 
@@ -197,7 +165,7 @@
                     </div>
                     <div>
                         <div class="text-xs font-bold text-white">Live Promo Code & Voucher Offers</div>
-                        <div class="text-[11px] text-slate-400">Apply instant discount coupons to final verified rate</div>
+                        <div class="text-[11px] text-slate-400">Apply instant discount coupons to final rate</div>
                     </div>
                 </div>
                 
@@ -328,18 +296,33 @@
 
     </div>
 
+    <!-- Universal Location Modal Backdrop (100% Bug-Free Overlay) -->
+    <div id="locationModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl p-5" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+                <span id="modalTitle" class="text-sm font-bold text-sky-400 uppercase tracking-wider">Select Airport</span>
+                <button type="button" onclick="closeLocationModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="relative mb-3">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+                <input type="text" id="modalSearchInput" placeholder="Type city, country or code (e.g. Cox's Bazar, BKK, Dubai)..." oninput="filterModalAirports()" class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-sky-500">
+            </div>
+            <div id="modalAirportList" class="max-h-72 overflow-y-auto custom-scroll space-y-1.5 pr-1"></div>
+        </div>
+    </div>
+
     <script>
         const COUNTRY_AIRPORTS = [
-            // Bangladesh 🇧🇩 (Domestic & International with keywords/aliases)
+            // Bangladesh 🇧🇩
             { 
                 country: "Bangladesh 🇧🇩", 
                 city: "Cox's Bazar", 
                 name: "Cox's Bazar Airport (CXB)", 
                 code: "cxb", 
-                keywords: "coxsbazar coxs bazar cozbazar coz bazar cox cxb sea beach", 
+                keywords: "coxsbazar coxs bazar cozbazar coz bazar cox cxb sea beach inani", 
                 baseRoundBDT: 9500, 
                 hotelBaseBDT: 3200, 
-                domesticAirlines: [{ name: "US-Bangla Airlines", website: "https://usbair.com" }, { name: "Air Astra", website: "https://airastra.com" }, { name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }] 
+                domesticAirlines: [{ name: "US-Bangla Airlines", website: "https://usbair.com" }, { name: "Air Astra", website: "https://airastra.com" }] 
             },
             { 
                 country: "Bangladesh 🇧🇩", 
@@ -391,33 +374,11 @@
                 hotelBaseBDT: 1800, 
                 domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }] 
             },
-            { 
-                country: "Bangladesh 🇧🇩", 
-                city: "Rajshahi", 
-                name: "Shah Makhdum Airport (RJH)", 
-                code: "rjh", 
-                keywords: "rajshahi rjh shah makhdum", 
-                baseRoundBDT: 7200, 
-                hotelBaseBDT: 1900, 
-                domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }] 
-            },
-            { 
-                country: "Bangladesh 🇧🇩", 
-                city: "Barisal", 
-                name: "Barisal Airport (BZL)", 
-                code: "bzl", 
-                keywords: "barisal bzl", 
-                baseRoundBDT: 6800, 
-                hotelBaseBDT: 1800, 
-                domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }] 
-            },
 
             // India 🇮🇳
             { country: "India 🇮🇳", city: "Kolkata", name: "Netaji Subhash Chandra Bose Int. (CCU)", code: "ccu", keywords: "kolkata calcutta ccu west bengal india", baseRoundBDT: 13500, hotelBaseBDT: 2200, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }, { name: "Air India", website: "https://www.airindia.com" }] },
             { country: "India 🇮🇳", city: "Delhi", name: "Indira Gandhi Int. (DEL)", code: "del", keywords: "delhi new delhi del igi india", baseRoundBDT: 24500, hotelBaseBDT: 2800, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }, { name: "Vistara", website: "https://www.airvistara.com" }] },
             { country: "India 🇮🇳", city: "Mumbai", name: "Chhatrapati Shivaji Maharaj Int. (BOM)", code: "bom", keywords: "mumbai bombay bom maharashtra india", baseRoundBDT: 26500, hotelBaseBDT: 3200, domesticAirlines: [{ name: "Air India", website: "https://www.airindia.com" }, { name: "IndiGo", website: "https://www.goindigo.in" }] },
-            { country: "India 🇮🇳", city: "Chennai", name: "Chennai Int. Airport (MAA)", code: "maa", keywords: "chennai madras maa tamil nadu india", baseRoundBDT: 22000, hotelBaseBDT: 2300, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }] },
-            { country: "India 🇮🇳", city: "Bangalore", name: "Kempegowda Int. (BLR)", code: "blr", keywords: "bangalore bengaluru blr karnataka india", baseRoundBDT: 25000, hotelBaseBDT: 2900, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }, { name: "Akasa Air", website: "https://www.akasaair.com" }] },
             { country: "India 🇮🇳", city: "Bagdogra (Sikkim / Darjeeling Gateway)", name: "Bagdogra Airport (IXB)", code: "ixb", keywords: "bagdogra sikkim darjeeling ixb gangtok siliguri", baseRoundBDT: 18500, hotelBaseBDT: 2400, domesticAirlines: [{ name: "SpiceJet", website: "https://www.spicejet.com" }, { name: "IndiGo", website: "https://www.goindigo.in" }] },
             { country: "India 🇮🇳", city: "Srinagar (Kashmir Paradise)", name: "Sheikh ul-Alam Int. (SXR)", code: "sxr", keywords: "srinagar kashmir sxr gulmarg pahalgam paradise", baseRoundBDT: 31000, hotelBaseBDT: 2600, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }, { name: "SpiceJet", website: "https://www.spicejet.com" }] },
 
@@ -425,30 +386,18 @@
             { country: "Thailand 🇹🇭", city: "Bangkok (Main Hub)", name: "Suvarnabhumi Int. (BKK)", code: "bkk", keywords: "bangkok bkk suvarnabhumi thailand", baseRoundBDT: 38500, hotelBaseBDT: 2800, domesticAirlines: [{ name: "Thai Airways", website: "https://www.thaiairways.com" }, { name: "US-Bangla", website: "https://usbair.com" }] },
             { country: "Thailand 🇹🇭", city: "Bangkok (Budget Hub)", name: "Don Mueang Int. (DMK)", code: "dmk", keywords: "bangkok dmk don mueang thailand", baseRoundBDT: 34500, hotelBaseBDT: 2400, domesticAirlines: [{ name: "Thai AirAsia", website: "https://www.airasia.com" }, { name: "Nok Air", website: "https://www.nokair.com" }] },
             { country: "Thailand 🇹🇭", city: "Phuket", name: "Phuket Int. Airport (HKT)", code: "hkt", keywords: "phuket hkt thailand island", baseRoundBDT: 46500, hotelBaseBDT: 3200, domesticAirlines: [{ name: "Thai VietJet", website: "https://www.vietjetair.com" }] },
-            { country: "Thailand 🇹🇭", city: "Chiang Mai", name: "Chiang Mai Int. Airport (CNX)", code: "cnx", keywords: "chiang mai cnx thailand", baseRoundBDT: 42000, hotelBaseBDT: 2500, domesticAirlines: [{ name: "Bangkok Airways", website: "https://www.bangkokair.com" }] },
-            { country: "Thailand 🇹🇭", city: "Pattaya", name: "U-Tapao Rayong Pattaya (UTP)", code: "utp", keywords: "pattaya utp thailand beach", baseRoundBDT: 42000, hotelBaseBDT: 2600, domesticAirlines: [{ name: "AirAsia", website: "https://www.airasia.com" }] },
 
-            // UAE & Middle East 🇦🇪 🇸🇦 🇶🇦 🇴🇲
+            // UAE, Middle East & Others 🇦🇪 🇸🇦 🇶🇦 🇸🇬 🇲🇾 🇳🇵
             { country: "United Arab Emirates 🇦🇪", city: "Dubai", name: "Dubai Int. Airport (DXB)", code: "dxb", keywords: "dubai dxb uae emirates middle east", baseRoundBDT: 56000, hotelBaseBDT: 4500, domesticAirlines: [{ name: "Emirates", website: "https://www.emirates.com" }, { name: "Flydubai", website: "https://www.flydubai.com" }] },
-            { country: "Saudi Arabia 🇸🇦", city: "Jeddah", name: "King Abdulaziz Int. (JED)", code: "jed", keywords: "jeddah jed saudi arabia makkah umrah", baseRoundBDT: 68000, hotelBaseBDT: 4800, domesticAirlines: [{ name: "Saudia", website: "https://www.saudia.com" }] },
-            { country: "Qatar 🇶🇦", city: "Doha", name: "Hamad Int. Airport (DOH)", code: "doh", keywords: "doha doh qatar", baseRoundBDT: 59000, hotelBaseBDT: 4600, domesticAirlines: [{ name: "Qatar Airways", website: "https://www.qatarairways.com" }] },
-
-            // Singapore, Malaysia, Nepal, Sri Lanka, Maldives 🇸🇬 🇲🇾 🇳🇵 🇱🇰 🇲🇻
             { country: "Singapore 🇸🇬", city: "Singapore", name: "Singapore Changi Int. (SIN)", code: "sin", keywords: "singapore sin changi", baseRoundBDT: 52000, hotelBaseBDT: 5500, domesticAirlines: [{ name: "Singapore Airlines", website: "https://www.singaporeair.com" }, { name: "Scoot", website: "https://www.flyscoot.com" }] },
             { country: "Malaysia 🇲🇾", city: "Kuala Lumpur", name: "Kuala Lumpur Int. (KUL)", code: "kul", keywords: "kuala lumpur kul malaysia kl", baseRoundBDT: 48000, hotelBaseBDT: 3500, domesticAirlines: [{ name: "AirAsia", website: "https://www.airasia.com" }] },
-            { country: "Nepal 🇳🇵", city: "Kathmandu", name: "Tribhuvan Int. Airport (KTM)", code: "ktm", keywords: "nepal kathmandu ktm himalaya", baseRoundBDT: 32500, hotelBaseBDT: 2200, domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }] },
-            { country: "Sri Lanka 🇱🇰", city: "Colombo", name: "Bandaranaike Int. (CMB)", code: "cmb", keywords: "sri lanka colombo cmb", baseRoundBDT: 39500, hotelBaseBDT: 2500, domesticAirlines: [{ name: "SriLankan Airlines", website: "https://www.srilankan.com" }] },
-            { country: "Maldives 🇲🇻", city: "Male", name: "Velana Int. Airport (MLE)", code: "mle", keywords: "maldives male mle ocean island", baseRoundBDT: 49000, hotelBaseBDT: 6500, domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }] },
-
-            // UK, USA, Japan 🇬🇧 🇺🇸 🇯🇵
-            { country: "United Kingdom 🇬🇧", city: "London", name: "London Heathrow (LHR)", code: "lhr", keywords: "london lhr heathrow uk britain", baseRoundBDT: 98000, hotelBaseBDT: 9500, domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }] },
-            { country: "United States 🇺🇸", city: "New York", name: "John F. Kennedy Int. (JFK)", code: "jfk", keywords: "new york nyc jfk usa america", baseRoundBDT: 125000, hotelBaseBDT: 12000, domesticAirlines: [{ name: "Qatar Airways", website: "https://www.qatarairways.com" }] },
-            { country: "Japan 🇯🇵", city: "Tokyo", name: "Tokyo Narita Int. (NRT)", code: "nrt", keywords: "japan tokyo nrt narita haneda", baseRoundBDT: 79000, hotelBaseBDT: 6500, domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }] }
+            { country: "Nepal 🇳🇵", city: "Kathmandu", name: "Tribhuvan Int. Airport (KTM)", code: "ktm", keywords: "nepal kathmandu ktm himalaya", baseRoundBDT: 32500, hotelBaseBDT: 2200, domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }] }
         ];
 
         let currentTripType = 'round';
+        let activeModalType = 'dest';
         let selectedOriginCode = "dac";
-        let selectedDestCode = "cxb"; // ডিফল্ট ডেস্টিনেশন কক্সবাজার
+        let selectedDestCode = "cxb"; 
         let selectedStopoverCode = "hkt";
         let appliedPromoDiscount = 0;
         let appliedPromoType = 'percent';
@@ -502,43 +451,44 @@
             triggerFullScan();
         }
 
-        function openLocationPopup(type) {
-            const popup = document.getElementById(type === 'origin' ? 'originPopup' : (type === 'dest' ? 'destPopup' : 'stopoverPopup'));
-            closeLocationPopup('origin');
-            closeLocationPopup('dest');
-            closeLocationPopup('stopover');
-            
-            popup.classList.remove('hidden');
-            const input = document.getElementById(type === 'origin' ? 'originSearchInput' : (type === 'dest' ? 'destSearchInput' : 'stopoverSearchInput'));
+        // Dedicated Modal Controls (Fixes Backdrop Bug)
+        function openLocationModal(type) {
+            activeModalType = type;
+            const modal = document.getElementById('locationModal');
+            const title = document.getElementById('modalTitle');
+            const input = document.getElementById('modalSearchInput');
+
+            if (type === 'origin') title.innerText = "Select Departure Airport";
+            else if (type === 'dest') title.innerText = "Select Destination Airport";
+            else title.innerText = "Select 3rd Stopover Airport";
+
+            modal.classList.remove('hidden');
             input.value = '';
-            filterPopupAirports(type);
+            filterModalAirports();
             setTimeout(() => input.focus(), 50);
         }
 
-        function closeLocationPopup(type) {
-            const el = document.getElementById(type === 'origin' ? 'originPopup' : (type === 'dest' ? 'destPopup' : 'stopoverPopup'));
-            if(el) el.classList.add('hidden');
+        function closeLocationModal() {
+            document.getElementById('locationModal').classList.add('hidden');
         }
 
-        // ফাজি-সার্চিং (Smart Search for cozbazar, coxs, cxb etc.)
+        document.getElementById('locationModal').addEventListener('click', function(e) {
+            if (e.target === this) closeLocationModal();
+        });
+
         function normalizeSearchText(str) {
             return (str || "").toLowerCase().replace(/[^a-z0-9]/g, "");
         }
 
-        function filterPopupAirports(type) {
-            const inputId = type === 'origin' ? 'originSearchInput' : (type === 'dest' ? 'destSearchInput' : 'stopoverSearchInput');
-            const listId = type === 'origin' ? 'originAirportList' : (type === 'dest' ? 'destAirportList' : 'stopoverAirportList');
-            const rawQuery = document.getElementById(inputId).value.trim().toLowerCase();
+        function filterModalAirports() {
+            const rawQuery = document.getElementById('modalSearchInput').value.trim().toLowerCase();
             const normalizedQuery = normalizeSearchText(rawQuery);
-            const listContainer = document.getElementById(listId);
+            const listContainer = document.getElementById('modalAirportList');
 
             const filtered = COUNTRY_AIRPORTS.filter(item => {
                 const searchString = `${item.country} ${item.city} ${item.name} ${item.code} ${item.keywords || ''}`.toLowerCase();
                 const normalizedItem = normalizeSearchText(searchString);
-                
-                // ডাইরেক্ট ও নরম্যালাইজড ম্যাচ (যেমন: "cozbazar" বা "coxs" দুটিই ম্যাচ করবে)
-                return searchString.includes(rawQuery) || normalizedItem.includes(normalizedQuery) || 
-                       (normalizedQuery.includes("coz") && normalizedItem.includes("cox"));
+                return searchString.includes(rawQuery) || normalizedItem.includes(normalizedQuery) || (normalizedQuery.includes("coz") && normalizedItem.includes("cox"));
             });
 
             if (filtered.length === 0) {
@@ -547,11 +497,14 @@
             }
 
             listContainer.innerHTML = filtered.map(item => {
-                const isSelected = (type === 'origin' && selectedOriginCode === item.code) || (type === 'dest' && selectedDestCode === item.code) || (type === 'stopover' && selectedStopoverCode === item.code);
+                const isSelected = (activeModalType === 'origin' && selectedOriginCode === item.code) || 
+                                   (activeModalType === 'dest' && selectedDestCode === item.code) || 
+                                   (activeModalType === 'stopover' && selectedStopoverCode === item.code);
+                
                 const activeBorder = isSelected ? 'border-sky-500 bg-sky-500/10' : 'border-slate-800 bg-slate-950/60 hover:bg-slate-800';
                 
                 return `
-                    <div onclick="selectLocationFromPopup('${type}', '${item.city} - ${item.name}', '${item.code}')" 
+                    <div onclick="selectAirportFromModal('${item.city} - ${item.name}', '${item.code}')" 
                          class="p-2.5 rounded-xl border ${activeBorder} cursor-pointer flex justify-between items-center transition">
                         <div>
                             <div class="text-xs font-bold text-white">${item.name}</div>
@@ -563,31 +516,20 @@
             }).join('');
         }
 
-        function selectLocationFromPopup(type, fullName, code) {
-            if (type === 'origin') {
+        function selectAirportFromModal(fullName, code) {
+            if (activeModalType === 'origin') {
                 selectedOriginCode = code;
                 document.getElementById('originDisplay').innerText = fullName;
-                closeLocationPopup('origin');
-            } else if (type === 'dest') {
+            } else if (activeModalType === 'dest') {
                 selectedDestCode = code;
                 document.getElementById('destDisplay').innerText = fullName;
-                closeLocationPopup('dest');
-            } else if (type === 'stopover') {
+            } else if (activeModalType === 'stopover') {
                 selectedStopoverCode = code;
                 document.getElementById('stopoverDisplay').innerText = fullName;
-                closeLocationPopup('stopover');
             }
+            closeLocationModal();
             triggerFullScan();
         }
-
-        document.addEventListener('click', function(e) {
-            const originWrap = document.getElementById('originWrapper');
-            const destWrap = document.getElementById('destWrapper');
-            const stopWrap = document.getElementById('stopoverWrapper');
-            if (originWrap && !originWrap.contains(e.target)) closeLocationPopup('origin');
-            if (destWrap && !destWrap.contains(e.target)) closeLocationPopup('dest');
-            if (stopWrap && !stopWrap.contains(e.target)) closeLocationPopup('stopover');
-        });
 
         // Promo Engine
         function applyQuickPromo(code) {
@@ -600,18 +542,14 @@
             if (code === 'FLYGLOBAL15') {
                 appliedPromoDiscount = 0.15;
                 appliedPromoType = 'percent';
-                alert('Success! FLYGLOBAL15 applied: 15% Extra Discount on Verified Fares!');
             } else if (code === 'AGODAPROMO') {
                 appliedPromoDiscount = 0.10;
                 appliedPromoType = 'percent';
-                alert('Success! AGODAPROMO applied: 10% Hotel & Flight Discount!');
             } else if (code === 'SKYDEAL') {
                 appliedPromoDiscount = 1500;
                 appliedPromoType = 'fixed';
-                alert('Success! SKYDEAL applied: Flat ৳ 1,500 OFF!');
             } else {
                 appliedPromoDiscount = 0;
-                alert('Invalid Promo Code. Try FLYGLOBAL15, AGODAPROMO, or SKYDEAL');
             }
             triggerFullScan();
         }
@@ -762,8 +700,8 @@
                 calculateDeal();
                 icon.className = "fa-solid fa-magnifying-glass";
                 btnText.innerText = "Search Deals";
-                setTimeout(() => toast.classList.add('hidden'), 500);
-            }, 300);
+                setTimeout(() => toast.classList.add('hidden'), 400);
+            }, 250);
         }
 
         function formatCurrency(amountBDT, curr) {
@@ -793,7 +731,6 @@
             const destCode = selectedDestCode.toUpperCase();
             const stopCode = selectedStopoverCode.toUpperCase();
 
-            // Route Banner
             if (currentTripType === 'oneway') {
                 document.getElementById('routeBanner').innerText = `${origCode} ➔ ${destCode}`;
                 document.getElementById('stayNights').innerText = `Single Flight`;
@@ -817,7 +754,6 @@
                 realMarketBaseBDT = Math.round(realMarketBaseBDT * 1.35);
             }
 
-            // Card Discounts
             let cardPercent = 0;
             if (card === 'CHASE' || card === 'AMEX_GLOBAL') cardPercent = 0.15;
             else if (card === 'WISE' || card === 'SCB_INTL' || card === 'SCB') cardPercent = 0.12;
@@ -831,7 +767,6 @@
             const dStd = formatDateStandard(selectedDeptDate);
             const rStd = formatDateStandard(selectedRetDate);
 
-            // Dynamic Links
             let googleFlightsUrl = "";
             let skyscannerDirectUrl = "";
 
@@ -967,7 +902,7 @@
             const hotelPlatforms = [
                 { 
                     platform: "Agoda Verified Stay",
-                    name: `${matchedDest.city} Sea Pearl Beach Resort & Spa`,
+                    name: `${matchedDest.city} Premier Luxury Resort & Spa`,
                     stars: "⭐⭐⭐⭐⭐",
                     perNightBDT: Math.round(hotelBaseBDT * 0.85),
                     discount: "25% OFF on Agoda",
@@ -977,7 +912,7 @@
                 },
                 { 
                     platform: "Booking.com Official",
-                    name: `${matchedDest.city} Long Beach Hotel & Suites`,
+                    name: `${matchedDest.city} Executive Beach Hotel`,
                     stars: "⭐⭐⭐⭐",
                     perNightBDT: Math.round(hotelBaseBDT * 1.20),
                     discount: "20% OFF on Booking.com",
@@ -987,7 +922,7 @@
                 },
                 { 
                     platform: "Trip.com Stays",
-                    name: `${matchedDest.city} Sayeman Beach Resort`,
+                    name: `${matchedDest.city} Grand Suites & Resort`,
                     stars: "⭐⭐⭐⭐⭐",
                     perNightBDT: Math.round(hotelBaseBDT * 1.55),
                     discount: "28% OFF on Trip.com",
@@ -1030,8 +965,8 @@
             // Activities
             const touristContainer = document.getElementById('touristResults');
             const attractions = [
-                { name: `${matchedDest.city} Inani Beach & Coral Reef Day Tour`, priceBDT: "৳ 1,800", discount: "20% OFF", img: "https://images.unsplash.com/photo-1589802829985-817e51171b92?w=500&q=80", map: `https://maps.google.com/?q=${encodeURIComponent(matchedDest.city + ' beach')}` },
-                { name: `${matchedDest.city} Marine Drive Sunset Parasailing Pass`, priceBDT: "৳ 2,500", discount: "25% OFF", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=80", map: `https://maps.google.com/?q=${encodeURIComponent(matchedDest.city + ' marine drive')}` }
+                { name: `${matchedDest.city} City Sightseeing & Landmark Tour`, priceBDT: "৳ 1,800", discount: "20% OFF", img: "https://images.unsplash.com/photo-1589802829985-817e51171b92?w=500&q=80", map: `https://maps.google.com/?q=${encodeURIComponent(matchedDest.city + ' attractions')}` },
+                { name: `${matchedDest.city} Sunset Cruise & Heritage Pass`, priceBDT: "৳ 2,500", discount: "25% OFF", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=80", map: `https://maps.google.com/?q=${encodeURIComponent(matchedDest.city + ' tour')}` }
             ];
 
             touristContainer.innerHTML = attractions.map(item => `
