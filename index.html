@@ -125,24 +125,25 @@
 
                 <!-- Bank Card Discount -->
                 <div>
-                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Bank / Card Discount</label>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Card Discount Scenario</label>
                     <select id="bankCard" onchange="calculateDeal()" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-500 text-xs sm:text-sm">
                         <optgroup label="Global / International Cards">
-                            <option value="WISE">Wise Multi-Currency (12% OFF)</option>
-                            <option value="REVOLUT">Revolut Metal / Premium (10% OFF)</option>
-                            <option value="CHASE">Chase Sapphire Reserve (15% OFF)</option>
-                            <option value="AMEX_GLOBAL">Amex Global Platinum (15% OFF)</option>
-                            <option value="HSBC">HSBC Premier Global (10% OFF)</option>
-                            <option value="SCB_INTL">Standard Chartered Global (12% OFF)</option>
+                            <option value="WISE">Wise Multi-Currency (12% scenario)</option>
+                            <option value="REVOLUT">Revolut Metal / Premium (10% scenario)</option>
+                            <option value="CHASE">Chase Sapphire Reserve (15% scenario)</option>
+                            <option value="AMEX_GLOBAL">Amex Global Platinum (15% scenario)</option>
+                            <option value="HSBC">HSBC Premier Global (10% scenario)</option>
+                            <option value="SCB_INTL">Standard Chartered Global (12% scenario)</option>
                         </optgroup>
                         <optgroup label="Bangladesh Local Cards">
-                            <option value="EBL" selected>EBL Visa / Mastercard (10% OFF)</option>
-                            <option value="CITY">City Bank Amex (8% OFF)</option>
-                            <option value="SCB">Standard Chartered BD (12% OFF)</option>
-                            <option value="BRAC">BRAC Bank Tara / Premium (10% OFF)</option>
-                            <option value="REGULAR">Regular Card (0% OFF)</option>
+                            <option value="EBL" selected>EBL Visa / Mastercard (10% scenario)</option>
+                            <option value="CITY">City Bank Amex (8% scenario)</option>
+                            <option value="SCB">Standard Chartered BD (12% scenario)</option>
+                            <option value="BRAC">BRAC Bank Tara / Premium (10% scenario)</option>
+                            <option value="REGULAR">No card discount (0%)</option>
                         </optgroup>
                     </select>
+                    <p class="mt-1 text-[10px] leading-4 text-slate-500">Illustrative scenario only — actual bank/card offers must be confirmed with the issuer or booking platform.</p>
                 </div>
             </div>
 
@@ -236,6 +237,11 @@
         <div id="scanningToast" class="hidden bg-sky-950/90 border border-sky-500/40 rounded-2xl p-4 mb-6 flex items-center justify-center gap-3 text-sky-300 text-xs sm:text-sm font-bold shadow-2xl radar-scanning">
             <i class="fa-solid fa-satellite-dish fa-spin text-sky-400 text-lg"></i>
             <span>Calculating estimated rates and preparing search links...</span>
+        </div>
+
+        <div class="mb-4 rounded-xl border border-slate-800 bg-slate-900/70 px-3.5 py-3 text-[11px] leading-5 text-slate-400">
+            <i class="fa-solid fa-circle-info text-sky-400 mr-1"></i>
+            Prices and card/promo savings shown here are planning estimates, not live quotes. Final airfare, hotel price, eligibility, taxes and rules are confirmed only on the linked provider site.
         </div>
 
         <!-- Trip Summary Banner -->
@@ -855,10 +861,13 @@
                 shareTripUrl = `https://sharetrip.net/flight/search?tripType=OneWay&origin=${origCode}&destination=${destCode}&departDate=${dStd}&adults=1`;
                 goZayanUrl = `https://www.gozayan.com/flight/list?tripType=1&origin=${origCode}&destination=${destCode}&departDate=${dStd}&adult=1`;
             } else if (currentTripType === 'multicity') {
+                // Google Flights can carry both legs in a text query. For OTAs/meta-search,
+                // use their flight search landing pages instead of pretending an incomplete
+                // first-leg-only URL represents the full multi-city itinerary.
                 googleFlightsUrl = `https://www.google.com/travel/flights?q=${encodeURIComponent(`Multi-city flights ${origCode} to ${destCode} on ${dStd}, ${destCode} to ${stopCode} on ${rStd}`)}`;
-                skyscannerDirectUrl = `https://www.skyscanner.net/transport/flights/${selectedOriginCode.toLowerCase()}/${selectedDestCode.toLowerCase()}/${dSky}/?adultsv2=1&cabinclass=economy`;
-                shareTripUrl = `https://sharetrip.net/flight/search?tripType=MultiCity&origin=${origCode}&destination=${destCode}&departDate=${dStd}&adults=1`;
-                goZayanUrl = `https://www.gozayan.com/flight/list?tripType=3&origin=${origCode}&destination=${destCode}&departDate=${dStd}&adult=1`;
+                skyscannerDirectUrl = `https://www.skyscanner.net/transport/flights/`;
+                shareTripUrl = `https://sharetrip.net/flight`;
+                goZayanUrl = `https://www.gozayan.com/flight`;
             } else {
                 googleFlightsUrl = `https://www.google.com/travel/flights?q=Flights%20to%20${destCode}%20from%20${origCode}%20on%20${dStd}%20through%20${rStd}`;
                 skyscannerDirectUrl = `https://www.skyscanner.net/transport/flights/${selectedOriginCode.toLowerCase()}/${selectedDestCode.toLowerCase()}/${dSky}/${rSky}/?adultsv2=1&cabinclass=economy`;
@@ -895,12 +904,12 @@
                 { 
                     platform: "Official Airline Booking",
                     airline: airline3.name,
-                    airlineUrl: googleFlightsUrl,
-                    localOtaUrl: airline3.website,
-                    localOtaName: `${airline3.name} Portal 🌟`,
+                    airlineUrl: airline3.website,
+                    localOtaUrl: googleFlightsUrl,
+                    localOtaName: "Cross-check on Google Flights ↗",
                     multiplier: 1.04,
                     badge: "Official Airline Portal ↗",
-                    refundBadge: "Zero Middleman Markup"
+                    refundBadge: "Book directly with the airline; fare and rules are confirmed on its site"
                 }
             ];
 
@@ -951,7 +960,7 @@
 
                             <div class="mt-2.5 space-y-1 text-xs text-slate-300 border-t border-slate-800 pt-2">
                                 <div class="flex justify-between">
-                                    <span>Regular Market Rate:</span>
+                                    <span>Reference Fare Estimate:</span>
                                     <span class="line-through text-slate-500">${formatCurrency(initialFareBDT, currency)}</span>
                                 </div>
                                 <div class="flex justify-between text-sky-400">
@@ -972,10 +981,10 @@
                                 <div class="text-xl font-black text-emerald-400">${formatCurrency(finalPayBDT, currency)}</div>
                             </div>
                             <a href="${item.airlineUrl}" target="_blank" rel="noopener noreferrer" class="w-full block text-center bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow">
-                                <i class="fa-brands fa-google"></i> View on Google Flights / Skyscanner
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> ${item.platform === 'Official Airline Booking' ? `Open ${item.airline} Official Site` : (currentTripType === 'multicity' && item.platform === 'Skyscanner Meta-Compare' ? 'Open Skyscanner Multi-City Search' : 'Open Flight Search')}
                             </a>
                             <a href="${item.localOtaUrl}" target="_blank" rel="noopener noreferrer" class="w-full block text-center bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-1.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5 border border-slate-700">
-                                <i class="fa-solid fa-paper-plane text-sky-400"></i> ${item.localOtaName}
+                                <i class="fa-solid fa-paper-plane text-sky-400"></i> ${currentTripType === 'multicity' && item.platform !== 'Official Airline Booking' ? item.localOtaName.replace(/Direct Search|Instant Compare/g, 'Multi-City Search') : item.localOtaName}
                             </a>
                         </div>
                     </div>
@@ -985,35 +994,29 @@
             // ২. টপ ৩টি হোটেল ডিল
             const hotelBaseBDT = matchedDest.hotelBaseBDT || 2800;
             const hotelPlatforms = [
-                { 
-                    platform: "Agoda Search",
-                    name: `${matchedDest.city} Premier Luxury Resort`,
-                    stars: "⭐⭐⭐⭐⭐",
+                {
+                    platform: "Agoda",
+                    name: `Search ${matchedDest.city} hotels on Agoda`,
                     perNightBDT: Math.round(hotelBaseBDT * 0.85),
-                    discount: "25% OFF on Agoda",
-                    rating: "4.8/5",
+                    note: "Planning budget only — final property, rating, taxes and discount are shown by Agoda.",
                     url: `https://www.agoda.com/search?city=${encodeURIComponent(matchedDest.city)}&checkIn=${dStd}&checkOut=${rStd}`,
-                    btnText: "Book on Agoda"
+                    btnText: "Search on Agoda"
                 },
-                { 
-                    platform: "Booking.com Official",
-                    name: `${matchedDest.city} Executive City Hotel`,
-                    stars: "⭐⭐⭐⭐",
+                {
+                    platform: "Booking.com",
+                    name: `Search ${matchedDest.city} hotels on Booking.com`,
                     perNightBDT: Math.round(hotelBaseBDT * 1.20),
-                    discount: "20% OFF on Booking.com",
-                    rating: "4.9/5",
+                    note: "Planning budget only — final property, rating, taxes and discount are shown by Booking.com.",
                     url: `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(matchedDest.city)}&checkin=${dStd}&checkout=${rStd}`,
-                    btnText: "Book on Booking.com"
+                    btnText: "Search on Booking.com"
                 },
-                { 
-                    platform: "Trip.com Stays",
-                    name: `${matchedDest.city} Grand Suites & Spa`,
-                    stars: "⭐⭐⭐⭐⭐",
+                {
+                    platform: "Trip.com",
+                    name: `Search ${matchedDest.city} hotels on Trip.com`,
                     perNightBDT: Math.round(hotelBaseBDT * 1.55),
-                    discount: "28% OFF on Trip.com",
-                    rating: "4.7/5",
+                    note: "Planning budget only — final property, rating, taxes and discount are shown by Trip.com.",
                     url: `https://www.trip.com/hotels/list?city=${encodeURIComponent(matchedDest.city)}&checkIn=${dStd}&checkOut=${rStd}`,
-                    btnText: "Book on Trip.com"
+                    btnText: "Search on Trip.com"
                 }
             ];
 
@@ -1026,15 +1029,16 @@
                     <div class="bg-slate-900 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl shadow-xl flex flex-col justify-between transition">
                         <div>
                             <div class="flex justify-between items-start mb-2">
-                                <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">${hotel.discount}</span>
-                                <span class="text-xs text-amber-400 font-semibold"><i class="fa-solid fa-star"></i> ${hotel.rating}</span>
+                                <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">${hotel.platform} Search</span>
+                                <span class="text-[10px] text-slate-500 font-semibold">No fake rating / promo</span>
                             </div>
                             <h3 class="text-sm sm:text-base font-bold text-white">${hotel.name}</h3>
-                            <p class="text-xs text-slate-400 mt-0.5">${hotel.stars} • ${formatCurrency(hotel.perNightBDT, currency)}/night</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Planning budget: ${formatCurrency(hotel.perNightBDT, currency)}/night</p>
+                            <p class="text-[10px] leading-4 text-slate-500 mt-1.5">${hotel.note}</p>
                         </div>
 
                         <div class="mt-4 border-t border-slate-800 pt-3">
-                            <span class="text-xs text-slate-400">Total for ${stayDays} Nights:</span>
+                            <span class="text-xs text-slate-400">Estimated budget for ${stayDays} Nights:</span>
                             <div class="text-2xl font-black text-emerald-400 mb-2.5">${formatCurrency(totalHotelBDT, currency)}</div>
                             <a href="${hotel.url}" target="_blank" rel="noopener noreferrer" class="w-full block text-center bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs transition">
                                 <i class="fa-solid fa-hotel"></i> ${hotel.btnText}
