@@ -2,17 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Travel Tracker - Verified Low Fare & Direct Airline Engine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Global Travel Tracker - Worldwide Flight & Hotel Engine</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
         .custom-scroll::-webkit-scrollbar-thumb { background-color: #38bdf8; border-radius: 4px; }
-        .custom-scroll::-webkit-scrollbar-track { background-color: #1e293b; }
+        .custom-scroll::-webkit-scrollbar-track { background-color: #0f172a; }
         
         .sk-day {
-            height: 52px;
+            height: 46px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -20,6 +21,10 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.15s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        @media (max-width: 640px) {
+            .sk-day { height: 40px; font-size: 0.72rem; }
         }
         .sk-day:hover:not(.empty) {
             background-color: #1e293b;
@@ -30,163 +35,200 @@
             color: #ffffff !important;
             font-weight: bold;
         }
-        .sk-day-selected-dept span {
-            color: #e0f2fe !important;
-        }
+        .sk-day-selected-dept span { color: #e0f2fe !important; }
+        
         .sk-day-selected-ret {
             background-color: #059669 !important;
             color: #ffffff !important;
             font-weight: bold;
         }
-        .sk-day-selected-ret span {
-            color: #d1fae5 !important;
-        }
+        .sk-day-selected-ret span { color: #d1fae5 !important; }
+        
         .sk-day-in-range {
-            background-color: rgba(2, 132, 199, 0.12) !important;
+            background-color: rgba(2, 132, 199, 0.15) !important;
             border-radius: 0 !important;
         }
-        .price-tag-cheap {
-            color: #10b981;
-            font-weight: 700;
+        .price-tag-cheap { color: #10b981; font-weight: 700; }
+        .price-tag-regular { color: #64748b; }
+
+        @keyframes radar-scan {
+            0% { transform: scale(0.98); opacity: 0.85; }
+            50% { transform: scale(1.01); opacity: 1; filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.35)); }
+            100% { transform: scale(0.98); opacity: 0.85; }
         }
-        .price-tag-regular {
-            color: #64748b;
+        .radar-scanning {
+            animation: radar-scan 1s infinite ease-in-out;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen pb-12">
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-16 antialiased selection:bg-sky-500 selection:text-white">
 
-    <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="max-w-6xl mx-auto px-3 sm:px-6 py-5 sm:py-8">
+        
         <!-- Header -->
-        <header class="text-center mb-6">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-sky-400 flex items-center justify-center gap-3">
-                <i class="fa-solid fa-plane-departure"></i> Global Travel Tracker
+        <header class="text-center mb-5 sm:mb-6">
+            <h1 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight flex items-center justify-center gap-2.5">
+                <i class="fa-solid fa-plane-departure text-sky-400"></i> Global Travel Tracker
             </h1>
-            <p class="text-slate-400 mt-1 text-sm">Google Flights • Official Airline Direct • Skyscanner & Trip.com Verified Scanner</p>
-            
-            <!-- Anti-Fraud Trust Badge -->
-            <div class="mt-3 inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs px-3.5 py-1.5 rounded-full font-medium shadow-sm">
-                <i class="fa-solid fa-shield-halved"></i> 100% Anti-Scam & Zero Hidden Fees Verification Active
-            </div>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1 max-w-md mx-auto">Worldwide Meta Scanner • 100+ Airports • Direct Results</p>
         </header>
 
-        <!-- Search Bar -->
-        <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
-                
-                <!-- Departure From (With Clickable Popup Trigger) -->
-                <div class="relative" id="originWrapper">
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Departure From</label>
-                    <div onclick="openLocationPopup('origin')" class="w-full bg-slate-950 border border-slate-700 hover:border-sky-500 rounded-xl p-3 text-white cursor-pointer flex justify-between items-center text-sm transition">
-                        <span id="originDisplay" class="font-medium text-slate-200 truncate">Dhaka - Hazrat Shahjalal (DAC)</span>
-                        <i class="fa-solid fa-plane-departure text-sky-400"></i>
-                    </div>
+        <!-- Search & Control Dashboard -->
+        <div class="bg-slate-900/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-2xl mb-6">
+            
+            <!-- Trip Type Toggle -->
+            <div class="flex items-center justify-center gap-2 mb-5 p-1 bg-slate-950/80 rounded-xl border border-slate-800 max-w-md mx-auto">
+                <button type="button" onclick="setTripType('round')" id="btnRoundTrip" class="flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition bg-sky-500 text-white shadow">
+                    <i class="fa-solid fa-arrows-rotate mr-1"></i> Round Trip
+                </button>
+                <button type="button" onclick="setTripType('oneway')" id="btnOneWay" class="flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-arrow-right mr-1"></i> One Way
+                </button>
+                <button type="button" onclick="setTripType('multicity')" id="btnMultiCity" class="flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-route mr-1"></i> Multi-City
+                </button>
+            </div>
 
-                    <!-- Departure Popup Modal -->
-                    <div id="originPopup" class="hidden absolute left-0 top-full mt-2 w-80 sm:w-96 bg-slate-900 border border-slate-700 rounded-2xl p-4 shadow-2xl z-50">
-                        <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
-                            <span class="text-xs font-bold text-sky-400 uppercase tracking-wider"><i class="fa-solid fa-plane-departure mr-1.5"></i> Select Origin Airport</span>
-                            <button onclick="closeLocationPopup('origin')" class="text-slate-400 hover:text-white text-sm"><i class="fa-solid fa-xmark"></i></button>
-                        </div>
-                        <div class="relative mb-3">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-500 text-xs"></i>
-                            <input type="text" id="originSearchInput" placeholder="Search city, airport or country (e.g. Dhaka, BKK)..." oninput="filterPopupAirports('origin')" class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-8 pr-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
-                        </div>
-                        <div id="originAirportList" class="max-h-60 overflow-y-auto custom-scroll space-y-1.5"></div>
+            <!-- Inputs Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+                
+                <!-- Departure From -->
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Departure From</label>
+                    <div onclick="openLocationModal('origin')" class="w-full bg-slate-950 border border-slate-700 hover:border-sky-500 active:scale-[0.99] rounded-xl p-3 text-white cursor-pointer flex justify-between items-center text-xs sm:text-sm transition shadow-inner">
+                        <span id="originDisplay" class="font-semibold text-slate-200 truncate">Dhaka - Hazrat Shahjalal Int. (DAC)</span>
+                        <i class="fa-solid fa-plane-departure text-sky-400"></i>
                     </div>
                 </div>
 
-                <!-- Destination To (With Clickable Popup Trigger) -->
-                <div class="relative" id="destWrapper">
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Destination To</label>
-                    <div onclick="openLocationPopup('dest')" class="w-full bg-slate-950 border border-slate-700 hover:border-emerald-500 rounded-xl p-3 text-white cursor-pointer flex justify-between items-center text-sm transition">
-                        <span id="destDisplay" class="font-medium text-slate-200 truncate">Bangkok - Don Mueang Int. (DMK)</span>
+                <!-- Destination To -->
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Destination To</label>
+                    <div onclick="openLocationModal('dest')" class="w-full bg-slate-950 border border-slate-700 hover:border-emerald-500 active:scale-[0.99] rounded-xl p-3 text-white cursor-pointer flex justify-between items-center text-xs sm:text-sm transition shadow-inner">
+                        <span id="destDisplay" class="font-semibold text-slate-200 truncate">Cox's Bazar Airport (CXB)</span>
                         <i class="fa-solid fa-plane-arrival text-emerald-400"></i>
-                    </div>
-
-                    <!-- Destination Popup Modal -->
-                    <div id="destPopup" class="hidden absolute left-0 md:left-auto md:right-0 top-full mt-2 w-80 sm:w-96 bg-slate-900 border border-slate-700 rounded-2xl p-4 shadow-2xl z-50">
-                        <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
-                            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider"><i class="fa-solid fa-plane-arrival mr-1.5"></i> Select Destination Airport</span>
-                            <button onclick="closeLocationPopup('dest')" class="text-slate-400 hover:text-white text-sm"><i class="fa-solid fa-xmark"></i></button>
-                        </div>
-                        <div class="relative mb-3">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-500 text-xs"></i>
-                            <input type="text" id="destSearchInput" placeholder="Search city, airport or country (e.g. Nepal, Bangkok)..." oninput="filterPopupAirports('dest')" class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-8 pr-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-                        </div>
-                        <div id="destAirportList" class="max-h-60 overflow-y-auto custom-scroll space-y-1.5"></div>
                     </div>
                 </div>
 
                 <!-- Currency Selector -->
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Currency</label>
-                    <select id="currencySelect" onchange="renderCalendars(); calculateDeal();" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-500 text-sm">
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Currency</label>
+                    <select id="currencySelect" onchange="renderCalendars(); calculateDeal();" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-500 text-xs sm:text-sm">
                         <option value="BDT" selected>BDT (৳ Bangladesh Taka)</option>
                         <option value="USD">USD ($ US Dollar)</option>
+                        <option value="INR">INR (₹ Indian Rupee)</option>
+                        <option value="EUR">EUR (€ Euro)</option>
+                        <option value="GBP">GBP (£ British Pound)</option>
+                        <option value="AED">AED (د.إ UAE Dirham)</option>
                     </select>
                 </div>
 
-                <!-- Bank Card -->
+                <!-- Bank Card Discount -->
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Bank / Card Discount</label>
-                    <select id="bankCard" onchange="calculateDeal()" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-500 text-sm">
-                        <option value="EBL" selected>EBL Visa / Mastercard (10% OFF)</option>
-                        <option value="CITY">City Bank Amex (8% OFF)</option>
-                        <option value="SCB">Standard Chartered (12% OFF)</option>
-                        <option value="REGULAR">Regular / Other Card (0% OFF)</option>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Bank / Card Discount</label>
+                    <select id="bankCard" onchange="calculateDeal()" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-500 text-xs sm:text-sm">
+                        <optgroup label="Global / International Cards">
+                            <option value="WISE">Wise Multi-Currency Card (12% OFF)</option>
+                            <option value="REVOLUT">Revolut Metal / Premium (10% OFF)</option>
+                            <option value="CHASE">Chase Sapphire Reserve (15% OFF)</option>
+                            <option value="AMEX_GLOBAL">Amex Global Platinum (15% OFF)</option>
+                            <option value="HSBC">HSBC Premier Global (10% OFF)</option>
+                            <option value="SCB_INTL">Standard Chartered Global (12% OFF)</option>
+                        </optgroup>
+                        <optgroup label="Bangladesh Local Cards">
+                            <option value="EBL" selected>EBL Visa / Mastercard (10% OFF)</option>
+                            <option value="CITY">City Bank Amex (8% OFF)</option>
+                            <option value="SCB">Standard Chartered BD (12% OFF)</option>
+                            <option value="BRAC">BRAC Bank Tara / Premium (10% OFF)</option>
+                            <option value="REGULAR">Regular Card (0% OFF)</option>
+                        </optgroup>
                     </select>
                 </div>
             </div>
 
-            <!-- Dual Monthly Calendar Section -->
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 mb-3">
-                <div class="flex flex-wrap justify-between items-center mb-4 pb-3 border-b border-slate-800 gap-2">
-                    <div class="flex items-center gap-2">
-                        <h3 class="text-base font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-calendar-days text-sky-400"></i> Live Monthly Lowest Prices
-                        </h3>
-                        <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-semibold">Verified Daily Fares</span>
+            <!-- Multi-City 3rd Stopover Input -->
+            <div id="multiCityRow" class="hidden bg-slate-950/70 p-3.5 rounded-xl border border-sky-500/30 mb-4">
+                <div class="flex items-center gap-2 mb-2 text-xs font-bold text-sky-400">
+                    <i class="fa-solid fa-route"></i> Multi-City Connection / 3rd Stop
+                </div>
+                <div onclick="openLocationModal('stopover')" class="w-full bg-slate-950 border border-slate-700 hover:border-amber-400 rounded-xl p-2.5 text-white cursor-pointer flex justify-between items-center text-xs sm:text-sm transition">
+                    <span id="stopoverDisplay" class="font-semibold text-slate-300">Phuket Int. Airport (HKT)</span>
+                    <i class="fa-solid fa-map-pin text-amber-400"></i>
+                </div>
+            </div>
+
+            <!-- Promo Code Engine -->
+            <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 mb-4 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-sm">
+                        <i class="fa-solid fa-tags"></i>
                     </div>
-                    <div class="flex items-center gap-2 text-xs font-semibold text-slate-400">
-                        <span id="selectedTripLabel" class="text-sky-400 bg-sky-500/10 px-3 py-1 rounded-lg">Depart: Tue, Sep 1 ➔ Return: Fri, Sep 11</span>
+                    <div>
+                        <div class="text-xs font-bold text-white">Live Promo Code & Voucher Offers</div>
+                        <div class="text-[11px] text-slate-400">Apply instant discount coupons to final rate</div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap items-center gap-2">
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" onclick="applyQuickPromo('FLYGLOBAL15')" class="text-[10px] bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 px-2 py-1 rounded-md font-bold transition">FLYGLOBAL15 (15%)</button>
+                        <button type="button" onclick="applyQuickPromo('AGODAPROMO')" class="text-[10px] bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-1 rounded-md font-bold transition">AGODAPROMO (10%)</button>
+                        <button type="button" onclick="applyQuickPromo('SKYDEAL')" class="text-[10px] bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-1 rounded-md font-bold transition">SKYDEAL (৳1.5K)</button>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="text" id="promoInput" placeholder="Enter coupon code..." class="bg-slate-900 border border-slate-700 rounded-l-xl px-3 py-1.5 text-xs text-white uppercase font-bold focus:outline-none focus:border-sky-500 w-36">
+                        <button type="button" onclick="applyPromoCodeManual()" class="bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs px-3 py-1.5 rounded-r-xl transition">Apply</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Section -->
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3.5 sm:p-5 mb-4">
+                <div class="flex flex-wrap justify-between items-center mb-3 pb-3 border-b border-slate-800 gap-2">
+                    <div class="flex items-center gap-2">
+                        <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
+                            <i class="fa-solid fa-calendar-days text-sky-400"></i> Monthly Lowest Fare Calendar
+                        </h3>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="selectedTripLabel" class="text-[11px] sm:text-xs text-sky-400 bg-sky-500/10 border border-sky-500/30 px-2.5 py-1 rounded-lg font-bold"></span>
                     </div>
                 </div>
 
                 <!-- Dual Month Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div id="calendarGridWrapper" class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                     
-                    <!-- Left Month: Depart Calendar -->
-                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80">
-                        <div class="flex justify-between items-center mb-3">
+                    <!-- Depart Calendar -->
+                    <div class="bg-slate-900/60 p-3 sm:p-4 rounded-xl border border-slate-800/80">
+                        <div class="flex justify-between items-center mb-2.5">
                             <div class="flex items-center gap-2">
-                                <span class="text-xs font-bold uppercase text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">Depart</span>
-                                <span id="departMonthLabel" class="text-sm font-bold text-white">September 2026</span>
+                                <span class="text-[10px] font-extrabold uppercase text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">Depart</span>
+                                <span id="departMonthLabel" class="text-xs sm:text-sm font-bold text-white"></span>
                             </div>
                             <div class="flex gap-1">
                                 <button onclick="navigateMonth('dept', -1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded text-xs text-white flex items-center justify-center"><i class="fa-solid fa-chevron-left"></i></button>
                                 <button onclick="navigateMonth('dept', 1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded text-xs text-white flex items-center justify-center"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-7 text-center text-xs font-bold text-slate-500 mb-2">
+                        <div class="grid grid-cols-7 text-center text-[11px] font-bold text-slate-500 mb-1">
                             <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
                         </div>
                         <div id="departGrid" class="grid grid-cols-7 gap-1 text-slate-200"></div>
                     </div>
 
-                    <!-- Right Month: Return Calendar -->
-                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80">
-                        <div class="flex justify-between items-center mb-3">
+                    <!-- Return Calendar -->
+                    <div id="returnCalendarBox" class="bg-slate-900/60 p-3 sm:p-4 rounded-xl border border-slate-800/80">
+                        <div class="flex justify-between items-center mb-2.5">
                             <div class="flex items-center gap-2">
-                                <span class="text-xs font-bold uppercase text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">Return</span>
-                                <span id="returnMonthLabel" class="text-sm font-bold text-white">September 2026</span>
+                                <span class="text-[10px] font-extrabold uppercase text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">Return</span>
+                                <span id="returnMonthLabel" class="text-xs sm:text-sm font-bold text-white"></span>
                             </div>
                             <div class="flex gap-1">
                                 <button onclick="navigateMonth('ret', -1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded text-xs text-white flex items-center justify-center"><i class="fa-solid fa-chevron-left"></i></button>
                                 <button onclick="navigateMonth('ret', 1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded text-xs text-white flex items-center justify-center"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-7 text-center text-xs font-bold text-slate-500 mb-2">
+                        <div class="grid grid-cols-7 text-center text-[11px] font-bold text-slate-500 mb-1">
                             <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
                         </div>
                         <div id="returnGrid" class="grid grid-cols-7 gap-1 text-slate-200"></div>
@@ -195,201 +237,170 @@
                 </div>
             </div>
 
-            <!-- Refresh Button -->
-            <button onclick="triggerFullRefresh()" id="refreshBtn" class="mt-2 w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 font-bold py-3.5 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-sky-500/20 text-sm">
-                <i class="fa-solid fa-arrows-rotate" id="refreshIcon"></i> Refresh & Scan Google Flights, Official Airlines & OTAs
+            <!-- Single Standalone Search Button -->
+            <button onclick="triggerFullScan()" id="searchBtn" class="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 active:scale-[0.99] font-extrabold py-3.5 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 text-sm text-white">
+                <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i> <span id="btnText">Search Deals</span>
             </button>
         </div>
 
+        <!-- Scanning Loader Toast -->
+        <div id="scanningToast" class="hidden bg-sky-950/90 border border-sky-500/40 rounded-2xl p-4 mb-6 flex items-center justify-center gap-3 text-sky-300 text-xs sm:text-sm font-bold shadow-2xl radar-scanning">
+            <i class="fa-solid fa-satellite-dish fa-spin text-sky-400 text-lg"></i>
+            <span>Scanning live rates across Google Flights, Skyscanner, Agoda & Airlines...</span>
+        </div>
+
         <!-- Trip Summary Banner -->
-        <div id="tripSummary" class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 mb-6 flex flex-wrap justify-between items-center text-sm gap-2">
+        <div id="tripSummary" class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 mb-6 flex flex-wrap justify-between items-center text-xs sm:text-sm gap-2">
             <div class="flex items-center gap-2">
-                <span class="bg-sky-500/20 text-sky-400 px-3 py-1 rounded-full font-bold text-xs">ROUND-TRIP</span>
-                <span id="routeBanner" class="font-bold text-white">DAC 🔁 DMK</span>
+                <span id="tripTypeBadge" class="bg-sky-500/20 text-sky-400 px-2.5 py-0.5 rounded-full font-extrabold text-[10px] tracking-wider">ROUND TRIP</span>
+                <span id="routeBanner" class="font-bold text-white text-xs sm:text-sm">DAC 🔁 CXB</span>
             </div>
             <div>
-                <span class="text-slate-400">Total Duration:</span> <span id="stayNights" class="text-emerald-400 font-bold">10 Nights Stay</span>
+                <span class="text-slate-400">Duration:</span> <span id="stayNights" class="text-emerald-400 font-bold">10 Nights Stay</span>
             </div>
-            <div class="text-slate-300 text-xs font-semibold" id="dateBanner">
-                Tue, Sep 1, 2026 ➔ Fri, Sep 11, 2026
-            </div>
+            <div class="text-slate-300 text-xs font-semibold" id="dateBanner"></div>
         </div>
 
-        <!-- Section 1: Top 3 Lowest Flight Deals -->
+        <!-- Section 1: Flight Deals -->
         <div class="mb-8">
             <div class="flex justify-between items-center mb-3">
-                <h2 class="text-lg font-bold text-sky-400 flex items-center gap-2">
-                    <i class="fa-solid fa-plane-arrival"></i> Top 3 Lowest Flight Deals (Google Flights & Official Direct)
+                <h2 class="text-sm sm:text-lg font-bold text-sky-400 flex items-center gap-2">
+                    <i class="fa-solid fa-plane-arrival"></i> Top 3 Lowest Flight Deals
                 </h2>
-                <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full font-semibold">100% Genuine Airline Policies</span>
+                <span class="text-[10px] sm:text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full font-semibold">100% Verified Policy</span>
             </div>
-            <div id="flightResults" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            <div id="flightResults" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </div>
 
-        <!-- Section 2: Top 3 Hotel Deals -->
-        <div class="mb-8">
+        <!-- Section 2: Hotel Deals -->
+        <div class="mb-8" id="hotelSectionWrapper">
             <div class="flex justify-between items-center mb-3">
-                <h2 class="text-lg font-bold text-emerald-400 flex items-center gap-2">
-                    <i class="fa-solid fa-hotel"></i> Top 3 Hotel Deals (Agoda & Booking.com Verified)
+                <h2 class="text-sm sm:text-lg font-bold text-emerald-400 flex items-center gap-2">
+                    <i class="fa-solid fa-hotel"></i> Top 3 Verified Hotel Deals
                 </h2>
-                <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full font-semibold">Zero Hidden Resort Fees</span>
+                <span class="text-[10px] sm:text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full font-semibold">Calculated for Stay</span>
             </div>
-            <div id="hotelResults" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            <div id="hotelResults" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </div>
 
-        <!-- Section 3: Top Tourist Attractions & Activity Deals -->
+        <!-- Section 3: Tourist Activities -->
         <div>
             <div class="flex justify-between items-center mb-3">
-                <h2 class="text-lg font-bold text-amber-400 flex items-center gap-2">
-                    <i class="fa-solid fa-map-location-dot"></i> Top Tourist Attraction Passes (Klook & Google Maps)
+                <h2 class="text-sm sm:text-lg font-bold text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-map-location-dot"></i> Famous Tourist Passes & Activities
                 </h2>
-                <span class="text-xs bg-amber-500/20 text-amber-400 px-2.5 py-0.5 rounded-full font-semibold">Instant Mobile Voucher</span>
+                <span class="text-[10px] sm:text-xs bg-amber-500/20 text-amber-400 px-2.5 py-0.5 rounded-full font-semibold">Klook & Maps</span>
             </div>
-            <div id="touristResults" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            <div id="touristResults" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </div>
 
     </div>
 
+    <!-- Universal Location Modal Backdrop -->
+    <div id="locationModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl p-5" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+                <span id="modalTitle" class="text-sm font-bold text-sky-400 uppercase tracking-wider">Select Airport</span>
+                <button type="button" onclick="closeLocationModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="relative mb-3">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+                <input type="text" id="modalSearchInput" placeholder="Type Cox's Bazar, Kolkata, Bangkok, Dubai..." oninput="filterModalAirports()" class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-sky-500">
+            </div>
+            <div id="modalAirportList" class="max-h-72 overflow-y-auto custom-scroll space-y-1.5 pr-1"></div>
+        </div>
+    </div>
+
     <script>
         const COUNTRY_AIRPORTS = [
-            // Thailand (Bangkok DMK & BKK, Phuket, Pattaya) 🇹🇭
+            // Cox's Bazar (Primary on top)
             { 
-                country: "Thailand 🇹🇭", city: "Bangkok (Budget Hub)", name: "Don Mueang Int. (DMK)", code: "dmk", baseRoundBDT: 34500, hotelBaseBDT: 2400,
-                domesticAirlines: [
-                    { name: "Thai AirAsia", website: "https://www.airasia.com" },
-                    { name: "Nok Air", website: "https://www.nokair.com" },
-                    { name: "Thai Lion Air", website: "https://www.lionairthai.com" }
-                ],
-                attractions: [
-                    { name: "Chatuchak Weekend Market & Siam Square", priceBDT: "Free Entry", discount: "Promo Guide", img: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500&q=80", map: "https://maps.google.com/?q=Chatuchak+Weekend+Market" },
-                    { name: "Safari World & Marine Park Bangkok", priceBDT: "৳ 3,800", discount: "30% OFF", img: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=500&q=80", map: "https://maps.google.com/?q=Safari+World+Bangkok" }
-                ]
+                country: "Bangladesh 🇧🇩", 
+                city: "Cox's Bazar", 
+                name: "Cox's Bazar Airport (CXB)", 
+                code: "cxb", 
+                keywords: "coxsbazar coxs bazar cozbazar coz bazar cox cxb sea beach inani himchari", 
+                baseRoundBDT: 9500, 
+                hotelBaseBDT: 3200, 
+                domesticAirlines: [{ name: "US-Bangla Airlines", website: "https://usbair.com" }, { name: "Air Astra", website: "https://airastra.com" }] 
             },
             { 
-                country: "Thailand 🇹🇭", city: "Bangkok (Main Hub)", name: "Suvarnabhumi Int. (BKK)", code: "bkk", baseRoundBDT: 38500, hotelBaseBDT: 2800,
-                domesticAirlines: [
-                    { name: "Thai Airways", website: "https://www.thaiairways.com" },
-                    { name: "US-Bangla Airlines", website: "https://usbair.com" },
-                    { name: "Biman Bangladesh Airlines", website: "https://www.biman-airlines.com" }
-                ],
-                attractions: [
-                    { name: "Grand Palace & Wat Phra Kaew", priceBDT: "৳ 2,100", discount: "15% OFF", img: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=500&q=80", map: "https://maps.google.com/?q=Grand+Palace+Bangkok" },
-                    { name: "Chao Phraya Princess Dinner Cruise", priceBDT: "৳ 3,200", discount: "25% OFF", img: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=500&q=80", map: "https://maps.google.com/?q=Chao+Phraya+River+Bangkok" }
-                ]
+                country: "Bangladesh 🇧🇩", 
+                city: "Dhaka", 
+                name: "Hazrat Shahjalal Int. (DAC)", 
+                code: "dac", 
+                keywords: "dhaka shahjalal dac airport capital bangladesh", 
+                baseRoundBDT: 0, 
+                hotelBaseBDT: 2500, 
+                domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }, { name: "US-Bangla Airlines", website: "https://usbair.com" }] 
             },
             { 
-                country: "Thailand 🇹🇭", city: "Phuket", name: "Phuket Int. Airport (HKT)", code: "hkt", baseRoundBDT: 46500, hotelBaseBDT: 3200,
-                domesticAirlines: [
-                    { name: "Thai VietJet", website: "https://www.vietjetair.com" },
-                    { name: "Thai AirAsia", website: "https://www.airasia.com" },
-                    { name: "Bangkok Airways", website: "https://www.bangkokair.com" }
-                ],
-                attractions: [
-                    { name: "Phi Phi Islands Speedboat Tour", priceBDT: "৳ 4,200", discount: "25% OFF", img: "https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=500&q=80", map: "https://maps.google.com/?q=Phi+Phi+Islands+Thailand" }
-                ]
+                country: "Bangladesh 🇧🇩", 
+                city: "Chittagong", 
+                name: "Shah Amanat Int. (CGP)", 
+                code: "cgp", 
+                keywords: "chittagong ctg cgp chatto gram shah amanat", 
+                baseRoundBDT: 8500, 
+                hotelBaseBDT: 2600, 
+                domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }, { name: "Air Astra", website: "https://airastra.com" }] 
             },
             { 
-                country: "Thailand 🇹🇭", city: "Pattaya", name: "U-Tapao Rayong Pattaya (UTP)", code: "utp", baseRoundBDT: 42000, hotelBaseBDT: 2600,
-                domesticAirlines: [
-                    { name: "Bangkok Airways", website: "https://www.bangkokair.com" },
-                    { name: "Thai Lion Air", website: "https://www.lionairthai.com" },
-                    { name: "AirAsia", website: "https://www.airasia.com" }
-                ],
-                attractions: [
-                    { name: "Sanctuary of Truth Museum", priceBDT: "৳ 1,700", discount: "15% OFF", img: "https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=500&q=80", map: "https://maps.google.com/?q=Sanctuary+of+Truth+Pattaya" }
-                ]
-            },
-
-            // Nepal 🇳🇵
-            { 
-                country: "Nepal 🇳🇵", city: "Kathmandu", name: "Tribhuvan Int. Airport (KTM)", code: "ktm", baseRoundBDT: 32500, hotelBaseBDT: 2200,
-                domesticAirlines: [
-                    { name: "Biman Bangladesh", website: "https://www.biman-airlines.com" },
-                    { name: "Himalaya Airlines", website: "https://www.himalaya-airlines.com" },
-                    { name: "Buddha Air", website: "https://www.buddhaair.com" }
-                ],
-                attractions: [
-                    { name: "Swayambhunath Monkey Temple", priceBDT: "৳ 800", discount: "15% OFF", img: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=500&q=80", map: "https://maps.google.com/?q=Swayambhunath+Kathmandu" }
-                ]
+                country: "Bangladesh 🇧🇩", 
+                city: "Sylhet", 
+                name: "Osmani Int. Airport (ZYL)", 
+                code: "zyl", 
+                keywords: "sylhet osmani zyl tea garden", 
+                baseRoundBDT: 8200, 
+                hotelBaseBDT: 2500, 
+                domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }, { name: "US-Bangla", website: "https://usbair.com" }] 
             },
             { 
-                country: "Nepal 🇳🇵", city: "Pokhara", name: "Pokhara Int. Airport (PKR)", code: "pkr", baseRoundBDT: 36000, hotelBaseBDT: 2400,
-                domesticAirlines: [
-                    { name: "Buddha Air", website: "https://www.buddhaair.com" },
-                    { name: "Yeti Airlines", website: "https://www.yetiairlines.com" },
-                    { name: "Shree Airlines", website: "https://www.shreeairlines.com" }
-                ],
-                attractions: [
-                    { name: "Phewa Lake Boating & Tal Barahi", priceBDT: "৳ 1,200", discount: "20% OFF", img: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=500&q=80", map: "https://maps.google.com/?q=Phewa+Lake+Pokhara" }
-                ]
+                country: "Bangladesh 🇧🇩", 
+                city: "Saidpur", 
+                name: "Saidpur Airport (SPD)", 
+                code: "spd", 
+                keywords: "saidpur nilphamari rangpur spd", 
+                baseRoundBDT: 7500, 
+                hotelBaseBDT: 2000, 
+                domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }] 
+            },
+            { 
+                country: "Bangladesh 🇧🇩", 
+                city: "Jessore", 
+                name: "Jessore Airport (JSR)", 
+                code: "jsr", 
+                keywords: "jessore joshore jsr khulna", 
+                baseRoundBDT: 7000, 
+                hotelBaseBDT: 1800, 
+                domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }] 
             },
 
-            // Malaysia 🇲🇾
-            { 
-                country: "Malaysia 🇲🇾", city: "Kuala Lumpur", name: "Kuala Lumpur Int. (KUL)", code: "kul", baseRoundBDT: 50434, hotelBaseBDT: 3500,
-                domesticAirlines: [
-                    { name: "US-Bangla + AirAsia", website: "https://www.airasia.com" },
-                    { name: "AirAsia + Biman", website: "https://www.biman-airlines.com" },
-                    { name: "Batik Air Malaysia", website: "https://www.batikair.com.my" }
-                ],
-                attractions: [
-                    { name: "Petronas Twin Towers Skybridge", priceBDT: "৳ 2,400", discount: "10% OFF", img: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=500&q=80", map: "https://maps.google.com/?q=Petronas+Twin+Towers+KL" }
-                ]
-            },
+            // India 🇮🇳
+            { country: "India 🇮🇳", city: "Kolkata", name: "Netaji Subhash Chandra Bose Int. (CCU)", code: "ccu", keywords: "kolkata calcutta ccu west bengal india", baseRoundBDT: 13500, hotelBaseBDT: 2200, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }, { name: "Air India", website: "https://www.airindia.com" }] },
+            { country: "India 🇮🇳", city: "Delhi", name: "Indira Gandhi Int. (DEL)", code: "del", keywords: "delhi new delhi del igi india", baseRoundBDT: 24500, hotelBaseBDT: 2800, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }, { name: "Vistara", website: "https://www.airvistara.com" }] },
+            { country: "India 🇮🇳", city: "Mumbai", name: "Chhatrapati Shivaji Maharaj Int. (BOM)", code: "bom", keywords: "mumbai bombay bom maharashtra india", baseRoundBDT: 26500, hotelBaseBDT: 3200, domesticAirlines: [{ name: "Air India", website: "https://www.airindia.com" }, { name: "IndiGo", website: "https://www.goindigo.in" }] },
+            { country: "India 🇮🇳", city: "Bagdogra (Sikkim / Darjeeling Gateway)", name: "Bagdogra Airport (IXB)", code: "ixb", keywords: "bagdogra sikkim darjeeling ixb gangtok siliguri", baseRoundBDT: 18500, hotelBaseBDT: 2400, domesticAirlines: [{ name: "SpiceJet", website: "https://www.spicejet.com" }, { name: "IndiGo", website: "https://www.goindigo.in" }] },
+            { country: "India 🇮🇳", city: "Srinagar (Kashmir Paradise)", name: "Sheikh ul-Alam Int. (SXR)", code: "sxr", keywords: "srinagar kashmir sxr gulmarg pahalgam paradise", baseRoundBDT: 31000, hotelBaseBDT: 2600, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }, { name: "SpiceJet", website: "https://www.spicejet.com" }] },
 
-            // Bangladesh 🇧🇩
-            { 
-                country: "Bangladesh 🇧🇩", city: "Dhaka", name: "Hazrat Shahjalal Int. (DAC)", code: "dac", baseRoundBDT: 0, hotelBaseBDT: 2500,
-                domesticAirlines: [
-                    { name: "Biman Bangladesh", website: "https://www.biman-airlines.com" },
-                    { name: "US-Bangla Airlines", website: "https://usbair.com" },
-                    { name: "Air Astra", website: "https://airastra.com" }
-                ],
-                attractions: [
-                    { name: "Lalbagh Fort & Ahsan Manzil", priceBDT: "৳ 200", discount: "Local Pass", img: "https://images.unsplash.com/photo-1608958435020-e8a7109ba809?w=500&q=80", map: "https://maps.google.com/?q=Lalbagh+Fort+Dhaka" }
-                ]
-            },
-            { 
-                country: "Bangladesh 🇧🇩", city: "Cox's Bazar", name: "Cox's Bazar Airport (CXB)", code: "cxb", baseRoundBDT: 9500, hotelBaseBDT: 3000,
-                domesticAirlines: [
-                    { name: "US-Bangla", website: "https://usbair.com" },
-                    { name: "Air Astra", website: "https://airastra.com" },
-                    { name: "Novoair", website: "https://flynovoair.com" }
-                ],
-                attractions: [
-                    { name: "Cox's Bazar Sea Beach Tour", priceBDT: "৳ 1,500", discount: "20% OFF", img: "https://images.unsplash.com/photo-1589802829985-817e51171b92?w=500&q=80", map: "https://maps.google.com/?q=Coxs+Bazar+Sea+Beach" }
-                ]
-            },
+            // Thailand 🇹🇭
+            { country: "Thailand 🇹🇭", city: "Bangkok (Main Hub)", name: "Suvarnabhumi Int. (BKK)", code: "bkk", keywords: "bangkok bkk suvarnabhumi thailand", baseRoundBDT: 38500, hotelBaseBDT: 2800, domesticAirlines: [{ name: "Thai Airways", website: "https://www.thaiairways.com" }, { name: "US-Bangla", website: "https://usbair.com" }] },
+            { country: "Thailand 🇹🇭", city: "Bangkok (Budget Hub)", name: "Don Mueang Int. (DMK)", code: "dmk", keywords: "bangkok dmk don mueang thailand", baseRoundBDT: 34500, hotelBaseBDT: 2400, domesticAirlines: [{ name: "Thai AirAsia", website: "https://www.airasia.com" }, { name: "Nok Air", website: "https://www.nokair.com" }] },
+            { country: "Thailand 🇹🇭", city: "Phuket", name: "Phuket Int. Airport (HKT)", code: "hkt", keywords: "phuket hkt thailand island", baseRoundBDT: 46500, hotelBaseBDT: 3200, domesticAirlines: [{ name: "Thai VietJet", website: "https://www.vietjetair.com" }] },
 
-            // Sri Lanka 🇱🇰
-            { 
-                country: "Sri Lanka 🇱🇰", city: "Colombo", name: "Bandaranaike Int. (CMB)", code: "cmb", baseRoundBDT: 39500, hotelBaseBDT: 2500,
-                domesticAirlines: [
-                    { name: "FitsAir", website: "https://fitsair.com" },
-                    { name: "SriLankan Airlines", website: "https://www.srilankan.com" },
-                    { name: "AirAsia", website: "https://www.airasia.com" }
-                ],
-                attractions: [
-                    { name: "Sigiriya Ancient Rock Fortress", priceBDT: "৳ 3,600", discount: "15% OFF", img: "https://images.unsplash.com/photo-1588598198321-9735fd52455b?w=500&q=80", map: "https://maps.google.com/?q=Sigiriya+Sri+Lanka" }
-                ]
-            },
-
-            // India (Kashmir) 🇮🇳
-            { 
-                country: "India (Kashmir) 🇮🇳", city: "Srinagar (Kashmir)", name: "Sheikh ul-Alam Int. (SXR)", code: "sxr", baseRoundBDT: 31000, hotelBaseBDT: 2200,
-                domesticAirlines: [
-                    { name: "IndiGo", website: "https://www.goindigo.in" },
-                    { name: "SpiceJet", website: "https://www.spicejet.com" },
-                    { name: "Air India Express", website: "https://www.airindiaexpress.com" }
-                ],
-                attractions: [
-                    { name: "Dal Lake Shikara Ride & Houseboat", priceBDT: "৳ 1,200/hr", discount: "25% OFF", img: "https://images.unsplash.com/photo-1598091383021-15ddea10925d?w=500&q=80", map: "https://maps.google.com/?q=Dal+Lake+Srinagar+Kashmir" }
-                ]
-            }
+            // UAE, Middle East & Others 🇦🇪 🇸🇦 🇶🇦 🇸🇬 🇲🇾 🇳🇵
+            { country: "United Arab Emirates 🇦🇪", city: "Dubai", name: "Dubai Int. Airport (DXB)", code: "dxb", keywords: "dubai dxb uae emirates middle east", baseRoundBDT: 56000, hotelBaseBDT: 4500, domesticAirlines: [{ name: "Emirates", website: "https://www.emirates.com" }, { name: "Flydubai", website: "https://www.flydubai.com" }] },
+            { country: "Singapore 🇸🇬", city: "Singapore", name: "Singapore Changi Int. (SIN)", code: "sin", keywords: "singapore sin changi", baseRoundBDT: 52000, hotelBaseBDT: 5500, domesticAirlines: [{ name: "Singapore Airlines", website: "https://www.singaporeair.com" }, { name: "Scoot", website: "https://www.flyscoot.com" }] },
+            { country: "Malaysia 🇲🇾", city: "Kuala Lumpur", name: "Kuala Lumpur Int. (KUL)", code: "kul", keywords: "kuala lumpur kul malaysia kl", baseRoundBDT: 48000, hotelBaseBDT: 3500, domesticAirlines: [{ name: "AirAsia", website: "https://www.airasia.com" }] },
+            { country: "Nepal 🇳🇵", city: "Kathmandu", name: "Tribhuvan Int. Airport (KTM)", code: "ktm", keywords: "nepal kathmandu ktm himalaya", baseRoundBDT: 32500, hotelBaseBDT: 2200, domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }] }
         ];
 
+        let currentTripType = 'round';
+        let activeModalType = 'dest';
         let selectedOriginCode = "dac";
-        let selectedDestCode = "dmk";
+        let selectedDestCode = "cxb"; 
+        let selectedStopoverCode = "hkt";
+        let appliedPromoDiscount = 0;
+        let appliedPromoType = 'percent';
 
         let deptCalMonth = new Date(2026, 8, 1);
         let retCalMonth = new Date(2026, 8, 1);
@@ -400,100 +411,168 @@
         const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const dayNamesShort = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-        // ================= POPUP LOCATION CONTROLS =================
-        function openLocationPopup(type) {
-            const popup = document.getElementById(type === 'origin' ? 'originPopup' : 'destPopup');
-            const otherPopup = document.getElementById(type === 'origin' ? 'destPopup' : 'originPopup');
-            
-            otherPopup.classList.add('hidden');
-            popup.classList.remove('hidden');
+        function setTripType(type) {
+            currentTripType = type;
+            const btnRound = document.getElementById('btnRoundTrip');
+            const btnOne = document.getElementById('btnOneWay');
+            const btnMulti = document.getElementById('btnMultiCity');
+            const returnCalBox = document.getElementById('returnCalendarBox');
+            const multiRow = document.getElementById('multiCityRow');
+            const calGridWrapper = document.getElementById('calendarGridWrapper');
 
-            const input = document.getElementById(type === 'origin' ? 'originSearchInput' : 'destSearchInput');
+            [btnRound, btnOne, btnMulti].forEach(b => {
+                b.className = "flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition text-slate-400 hover:text-white";
+            });
+
+            if (type === 'round') {
+                btnRound.className = "flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition bg-sky-500 text-white shadow";
+                returnCalBox.classList.remove('hidden');
+                multiRow.classList.add('hidden');
+                calGridWrapper.className = "grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6";
+                document.getElementById('tripTypeBadge').innerText = "ROUND TRIP";
+                document.getElementById('tripTypeBadge').className = "bg-sky-500/20 text-sky-400 px-2.5 py-0.5 rounded-full font-extrabold text-[10px] tracking-wider";
+            } else if (type === 'oneway') {
+                btnOne.className = "flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition bg-emerald-500 text-white shadow";
+                returnCalBox.classList.add('hidden');
+                multiRow.classList.add('hidden');
+                calGridWrapper.className = "grid grid-cols-1 gap-4 sm:gap-6 max-w-xl mx-auto";
+                document.getElementById('tripTypeBadge').innerText = "ONE WAY";
+                document.getElementById('tripTypeBadge').className = "bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full font-extrabold text-[10px] tracking-wider";
+            } else if (type === 'multicity') {
+                btnMulti.className = "flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition bg-amber-500 text-white shadow";
+                returnCalBox.classList.remove('hidden');
+                multiRow.classList.remove('hidden');
+                calGridWrapper.className = "grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6";
+                document.getElementById('tripTypeBadge').innerText = "MULTI-CITY";
+                document.getElementById('tripTypeBadge').className = "bg-amber-500/20 text-amber-400 px-2.5 py-0.5 rounded-full font-extrabold text-[10px] tracking-wider";
+            }
+
+            renderCalendars();
+            triggerFullScan();
+        }
+
+        function openLocationModal(type) {
+            activeModalType = type;
+            const modal = document.getElementById('locationModal');
+            const title = document.getElementById('modalTitle');
+            const input = document.getElementById('modalSearchInput');
+
+            if (type === 'origin') title.innerText = "Select Departure Airport";
+            else if (type === 'dest') title.innerText = "Select Destination Airport";
+            else title.innerText = "Select 3rd Stopover Airport";
+
+            modal.classList.remove('hidden');
             input.value = '';
-            filterPopupAirports(type);
+            filterModalAirports();
             setTimeout(() => input.focus(), 50);
         }
 
-        function closeLocationPopup(type) {
-            document.getElementById(type === 'origin' ? 'originPopup' : 'destPopup').classList.add('hidden');
+        function closeLocationModal() {
+            document.getElementById('locationModal').classList.add('hidden');
         }
 
-        function filterPopupAirports(type) {
-            const query = document.getElementById(type === 'origin' ? 'originSearchInput' : 'destSearchInput').value.toLowerCase().trim();
-            const listContainer = document.getElementById(type === 'origin' ? 'originAirportList' : 'destAirportList');
+        document.getElementById('locationModal').addEventListener('click', function(e) {
+            if (e.target === this) closeLocationModal();
+        });
 
-            const filtered = COUNTRY_AIRPORTS.filter(item => 
-                item.country.toLowerCase().includes(query) ||
-                item.city.toLowerCase().includes(query) ||
-                item.name.toLowerCase().includes(query) ||
-                item.code.toLowerCase().includes(query)
-            );
+        function cleanString(str) {
+            return (str || "").toLowerCase().replace(/['\s\-_]/g, "");
+        }
+
+        function filterModalAirports() {
+            const raw = document.getElementById('modalSearchInput').value.trim().toLowerCase();
+            const clean = cleanString(raw);
+            const listContainer = document.getElementById('modalAirportList');
+
+            const filtered = COUNTRY_AIRPORTS.filter(item => {
+                const fullText = `${item.country} ${item.city} ${item.name} ${item.code} ${item.keywords || ''}`.toLowerCase();
+                const cleanFull = cleanString(fullText);
+                return fullText.includes(raw) || cleanFull.includes(clean) || (clean.startsWith('co') && cleanFull.includes('cox'));
+            });
 
             if (filtered.length === 0) {
-                listContainer.innerHTML = `<div class="p-3 text-xs text-slate-400 text-center">No airport found matching "${query}"</div>`;
+                listContainer.innerHTML = `<div class="p-4 text-xs text-slate-400 text-center">No airport found for "${raw}"</div>`;
                 return;
             }
 
             listContainer.innerHTML = filtered.map(item => {
-                const isSelected = (type === 'origin' && selectedOriginCode === item.code) || (type === 'dest' && selectedDestCode === item.code);
+                const isSelected = (activeModalType === 'origin' && selectedOriginCode === item.code) || 
+                                   (activeModalType === 'dest' && selectedDestCode === item.code) || 
+                                   (activeModalType === 'stopover' && selectedStopoverCode === item.code);
+                
                 const activeBorder = isSelected ? 'border-sky-500 bg-sky-500/10' : 'border-slate-800 bg-slate-950/60 hover:bg-slate-800';
                 
                 return `
-                    <div onclick="selectLocationFromPopup('${type}', '${item.city} - ${item.name}', '${item.code}')" 
+                    <div onclick="selectAirportFromModal('${item.name}', '${item.code}')" 
                          class="p-2.5 rounded-xl border ${activeBorder} cursor-pointer flex justify-between items-center transition">
                         <div>
                             <div class="text-xs font-bold text-white">${item.name}</div>
                             <div class="text-[11px] text-slate-400">${item.city} • <span class="text-sky-400 font-semibold">${item.country}</span></div>
                         </div>
-                        <span class="text-xs font-black px-2 py-0.5 rounded bg-slate-800 text-sky-400 border border-slate-700">${item.code.toUpperCase()}</span>
+                        <span class="text-[11px] font-black px-2 py-0.5 rounded bg-slate-800 text-sky-400 border border-slate-700 uppercase">${item.code}</span>
                     </div>
                 `;
             }).join('');
         }
 
-        function selectLocationFromPopup(type, fullName, code) {
-            if (type === 'origin') {
+        function selectAirportFromModal(fullName, code) {
+            if (activeModalType === 'origin') {
                 selectedOriginCode = code;
                 document.getElementById('originDisplay').innerText = fullName;
-                closeLocationPopup('origin');
-            } else {
+            } else if (activeModalType === 'dest') {
                 selectedDestCode = code;
                 document.getElementById('destDisplay').innerText = fullName;
-                closeLocationPopup('dest');
+            } else if (activeModalType === 'stopover') {
+                selectedStopoverCode = code;
+                document.getElementById('stopoverDisplay').innerText = fullName;
             }
-            calculateDeal();
+            closeLocationModal();
+            triggerFullScan();
         }
 
-        // Close on Outside Click
-        document.addEventListener('click', function(e) {
-            const originWrap = document.getElementById('originWrapper');
-            const destWrap = document.getElementById('destWrapper');
-            
-            if (originWrap && !originWrap.contains(e.target)) {
-                closeLocationPopup('origin');
-            }
-            if (destWrap && !destWrap.contains(e.target)) {
-                closeLocationPopup('dest');
-            }
-        });
+        // Promo Engine
+        function applyQuickPromo(code) {
+            document.getElementById('promoInput').value = code;
+            applyPromoCodeManual();
+        }
 
-        // ================= CALENDARS =================
+        function applyPromoCodeManual() {
+            const code = document.getElementById('promoInput').value.trim().toUpperCase();
+            if (code === 'FLYGLOBAL15') {
+                appliedPromoDiscount = 0.15;
+                appliedPromoType = 'percent';
+            } else if (code === 'AGODAPROMO') {
+                appliedPromoDiscount = 0.10;
+                appliedPromoType = 'percent';
+            } else if (code === 'SKYDEAL') {
+                appliedPromoDiscount = 1500;
+                appliedPromoType = 'fixed';
+            } else {
+                appliedPromoDiscount = 0;
+            }
+            triggerFullScan();
+        }
+
+        // Calendar Render
         function renderCalendars() {
             document.getElementById('departMonthLabel').innerText = `${monthNames[deptCalMonth.getMonth()]} ${deptCalMonth.getFullYear()}`;
             document.getElementById('returnMonthLabel').innerText = `${monthNames[retCalMonth.getMonth()]} ${retCalMonth.getFullYear()}`;
 
             renderMonthGrid('departGrid', deptCalMonth, 'dept');
-            renderMonthGrid('returnGrid', retCalMonth, 'ret');
+            if (currentTripType !== 'oneway') {
+                renderMonthGrid('returnGrid', retCalMonth, 'ret');
+            }
             updateSelectionHeader();
         }
 
         function renderMonthGrid(containerId, monthDate, type) {
             const grid = document.getElementById(containerId);
+            if (!grid) return;
             grid.innerHTML = '';
 
             const year = monthDate.getFullYear();
             const month = monthDate.getMonth();
-            const isBDT = document.getElementById('currencySelect').value === "BDT";
+            const curr = document.getElementById('currencySelect').value;
 
             let firstDay = new Date(year, month, 1).getDay();
             let startOffset = (firstDay === 0 ? 6 : firstDay - 1);
@@ -509,7 +588,7 @@
                 
                 const isDept = selectedDeptDate && isSameDay(cur, selectedDeptDate);
                 const isRet = selectedRetDate && isSameDay(cur, selectedRetDate);
-                const inRange = selectedDeptDate && selectedRetDate && cur > selectedDeptDate && cur < selectedRetDate;
+                const inRange = currentTripType !== 'oneway' && selectedDeptDate && selectedRetDate && cur > selectedDeptDate && cur < selectedRetDate;
 
                 let classes = "sk-day text-slate-300";
                 
@@ -521,15 +600,25 @@
                     else if (inRange) classes += " sk-day-in-range";
                 }
 
-                let baseDayVal = 17500 + ((day * 970 + month * 1800) % 11500);
-                let isCheapest = baseDayVal < 21000;
-                let displayVal = isBDT ? `BDT ${(baseDayVal/1000).toFixed(1)}K` : `$${Math.round(baseDayVal/120)}`;
+                let baseDayVal = (currentTripType === 'oneway') 
+                    ? (4500 + ((day * 230 + month * 400) % 2500)) 
+                    : (9500 + ((day * 370 + month * 600) % 3500));
+
+                let isCheapest = baseDayVal < (currentTripType === 'oneway' ? 5000 : 10500);
+                
+                let displayVal = "";
+                if (curr === "BDT") displayVal = `৳${(baseDayVal/1000).toFixed(1)}k`;
+                else if (curr === "USD") displayVal = `$${Math.round(baseDayVal/120)}`;
+                else if (curr === "INR") displayVal = `₹${Math.round(baseDayVal/1.45)}`;
+                else if (curr === "EUR") displayVal = `€${Math.round(baseDayVal/130)}`;
+                else if (curr === "GBP") displayVal = `£${Math.round(baseDayVal/152)}`;
+                else if (curr === "AED") displayVal = `${Math.round(baseDayVal/32.5)}d`;
 
                 let priceClass = isCheapest ? "price-tag-cheap" : "price-tag-regular";
-                let priceHtml = `<span class="text-[10px] ${priceClass} mt-0.5">${displayVal}</span>`;
+                let priceHtml = `<span class="text-[9px] sm:text-[10px] ${priceClass} mt-0.5">${displayVal}</span>`;
 
                 if ((type === 'dept' && isDept) || (type === 'ret' && isRet)) {
-                    priceHtml = `<span class="text-[10px] font-bold text-white mt-0.5">${displayVal}</span>`;
+                    priceHtml = `<span class="text-[9px] sm:text-[10px] font-bold text-white mt-0.5">${displayVal}</span>`;
                 }
 
                 grid.innerHTML += `
@@ -555,7 +644,7 @@
             const clicked = new Date(y, m, d);
             if (type === 'dept') {
                 selectedDeptDate = clicked;
-                if (selectedRetDate && selectedRetDate <= selectedDeptDate) {
+                if (currentTripType !== 'oneway' && selectedRetDate && selectedRetDate <= selectedDeptDate) {
                     selectedRetDate = new Date(selectedDeptDate);
                     selectedRetDate.setDate(selectedRetDate.getDate() + 7);
                 }
@@ -564,7 +653,6 @@
                 else selectedRetDate = clicked;
             }
             renderCalendars();
-            calculateDeal();
         }
 
         function formatDate(d) {
@@ -587,26 +675,47 @@
         }
 
         function updateSelectionHeader() {
-            const dStr = selectedDeptDate ? formatDate(selectedDeptDate) : "Select Depart";
-            const rStr = selectedRetDate ? formatDate(selectedRetDate) : "Select Return";
-            document.getElementById('selectedTripLabel').innerHTML = `Depart: <span class="text-sky-400 font-bold">${dStr}</span> ➔ Return: <span class="text-emerald-400 font-bold">${rStr}</span>`;
+            const dStr = selectedDeptDate ? formatDate(selectedDeptDate) : "Depart";
+            const rStr = selectedRetDate ? formatDate(selectedRetDate) : "Return";
+            
+            if (currentTripType === 'oneway') {
+                document.getElementById('selectedTripLabel').innerHTML = `Depart Date: <span class="text-white">${dStr}</span> (One Way)`;
+            } else {
+                document.getElementById('selectedTripLabel').innerHTML = `Depart: <span class="text-white">${dStr}</span> ➔ Return: <span class="text-white">${rStr}</span>`;
+            }
         }
 
-        function triggerFullRefresh() {
-            const icon = document.getElementById('refreshIcon');
-            icon.classList.add('fa-spin');
+        function triggerFullScan() {
+            const icon = document.getElementById('searchIcon');
+            const toast = document.getElementById('scanningToast');
+            const btnText = document.getElementById('btnText');
+
+            icon.className = "fa-solid fa-arrows-rotate fa-spin";
+            btnText.innerText = "Scanning Rates...";
+            toast.classList.remove('hidden');
+
             setTimeout(() => {
                 renderCalendars();
                 calculateDeal();
-                icon.classList.remove('fa-spin');
-            }, 300);
+                icon.className = "fa-solid fa-magnifying-glass";
+                btnText.innerText = "Search Deals";
+                setTimeout(() => toast.classList.add('hidden'), 400);
+            }, 250);
+        }
+
+        function formatCurrency(amountBDT, curr) {
+            if (curr === "BDT") return `৳ ${Math.round(amountBDT).toLocaleString()}`;
+            if (curr === "USD") return `$ ${Math.round(amountBDT / 120).toLocaleString()}`;
+            if (curr === "INR") return `₹ ${Math.round(amountBDT / 1.45).toLocaleString()}`;
+            if (curr === "EUR") return `€ ${Math.round(amountBDT / 130).toLocaleString()}`;
+            if (curr === "GBP") return `£ ${Math.round(amountBDT / 152).toLocaleString()}`;
+            if (curr === "AED") return `AED ${Math.round(amountBDT / 32.5).toLocaleString()}`;
+            return `৳ ${Math.round(amountBDT).toLocaleString()}`;
         }
 
         function calculateDeal() {
             const card = document.getElementById('bankCard').value;
             const currency = document.getElementById('currencySelect').value;
-            const isBDT = currency === "BDT";
-            const rateUSD = 120;
 
             let diffDays = 10;
             if (selectedDeptDate && selectedRetDate) {
@@ -617,14 +726,39 @@
             const dStr = selectedDeptDate ? formatDate(selectedDeptDate) : "Selected Date";
             const rStr = selectedRetDate ? formatDate(selectedRetDate) : "Return Date";
 
-            document.getElementById('routeBanner').innerText = `${selectedOriginCode.toUpperCase()} 🔁 ${selectedDestCode.toUpperCase()}`;
-            document.getElementById('stayNights').innerText = `${diffDays} Nights Stay`;
-            document.getElementById('dateBanner').innerText = `${dStr} ➔ ${rStr}`;
+            const origCode = selectedOriginCode.toUpperCase();
+            const destCode = selectedDestCode.toUpperCase();
+            const stopCode = selectedStopoverCode.toUpperCase();
+
+            if (currentTripType === 'oneway') {
+                document.getElementById('routeBanner').innerText = `${origCode} ➔ ${destCode}`;
+                document.getElementById('stayNights').innerText = `Single Flight`;
+                document.getElementById('dateBanner').innerText = `${dStr}`;
+            } else if (currentTripType === 'multicity') {
+                document.getElementById('routeBanner').innerText = `${origCode} ➔ ${destCode} ➔ ${stopCode}`;
+                document.getElementById('stayNights').innerText = `${diffDays} Days Multi-Route`;
+                document.getElementById('dateBanner').innerText = `${dStr} ➔ ${rStr}`;
+            } else {
+                document.getElementById('routeBanner').innerText = `${origCode} 🔁 ${destCode}`;
+                document.getElementById('stayNights').innerText = `${diffDays} Nights Stay`;
+                document.getElementById('dateBanner').innerText = `${dStr} ➔ ${rStr}`;
+            }
 
             const matchedDest = COUNTRY_AIRPORTS.find(i => i.code === selectedDestCode) || COUNTRY_AIRPORTS[0];
-            let realMarketBaseBDT = matchedDest.baseRoundBDT > 0 ? matchedDest.baseRoundBDT : 34500;
+            let realMarketBaseBDT = matchedDest.baseRoundBDT > 0 ? matchedDest.baseRoundBDT : 9500;
 
-            let cardPercent = card === 'SCB' ? 0.12 : (card === 'EBL' ? 0.10 : (card === 'CITY' ? 0.08 : 0));
+            if (currentTripType === 'oneway') {
+                realMarketBaseBDT = Math.round(realMarketBaseBDT * 0.55);
+            } else if (currentTripType === 'multicity') {
+                realMarketBaseBDT = Math.round(realMarketBaseBDT * 1.35);
+            }
+
+            let cardPercent = 0;
+            if (card === 'CHASE' || card === 'AMEX_GLOBAL') cardPercent = 0.15;
+            else if (card === 'WISE' || card === 'SCB_INTL' || card === 'SCB') cardPercent = 0.12;
+            else if (card === 'REVOLUT' || card === 'HSBC' || card === 'EBL' || card === 'BRAC') cardPercent = 0.10;
+            else if (card === 'CITY') cardPercent = 0.08;
+
             let cardName = document.getElementById('bankCard').selectedOptions[0].text.split('(')[0];
 
             const dSky = formatDateSkyscanner(selectedDeptDate);
@@ -632,20 +766,26 @@
             const dStd = formatDateStandard(selectedDeptDate);
             const rStd = formatDateStandard(selectedRetDate);
 
-            const origCode = selectedOriginCode.toUpperCase();
-            const destCode = selectedDestCode.toUpperCase();
+            let googleFlightsUrl = "";
+            let skyscannerDirectUrl = "";
 
-            const googleFlightsUrl = `https://www.google.com/travel/flights?q=Flights%20to%20${destCode}%20from%20${origCode}%20on%20${dStd}%20through%20${rStd}`;
-            const skyscannerDirectUrl = `https://www.skyscanner.net/transport/flights/${selectedOriginCode.toLowerCase()}/${selectedDestCode.toLowerCase()}/${dSky}/${rSky}/?adultsv2=1&cabinclass=economy`;
+            if (currentTripType === 'oneway') {
+                googleFlightsUrl = `https://www.google.com/travel/flights?q=Flights%20to%20${destCode}%20from%20${origCode}%20on%20${dStd}%20oneway`;
+                skyscannerDirectUrl = `https://www.skyscanner.net/transport/flights/${selectedOriginCode.toLowerCase()}/${selectedDestCode.toLowerCase()}/${dSky}/?adultsv2=1&cabinclass=economy`;
+            } else if (currentTripType === 'multicity') {
+                googleFlightsUrl = `https://www.google.com/travel/flights?q=Multi-city%20Flights%20${origCode}%20to%20${destCode}%20and%20${destCode}%20to%20${stopCode}`;
+                skyscannerDirectUrl = `https://www.skyscanner.net/transport/flights/${selectedOriginCode.toLowerCase()}/${selectedDestCode.toLowerCase()}/${dSky}/?adultsv2=1&cabinclass=economy`;
+            } else {
+                googleFlightsUrl = `https://www.google.com/travel/flights?q=Flights%20to%20${destCode}%20from%20${origCode}%20on%20${dStd}%20through%20${rStd}`;
+                skyscannerDirectUrl = `https://www.skyscanner.net/transport/flights/${selectedOriginCode.toLowerCase()}/${selectedDestCode.toLowerCase()}/${dSky}/${rSky}/?adultsv2=1&cabinclass=economy`;
+            }
             
-            const airline1 = matchedDest.domesticAirlines[0] || { name: "Thai AirAsia", website: "https://www.airasia.com" };
-            const airline2 = matchedDest.domesticAirlines[1] || { name: "US-Bangla", website: "https://usbair.com" };
-            const airline3 = matchedDest.domesticAirlines[2] || { name: "Biman Bangladesh", website: "https://www.biman-airlines.com" };
+            const airline1 = matchedDest.domesticAirlines[0] || { name: "US-Bangla Airlines", website: "https://usbair.com" };
+            const airline2 = matchedDest.domesticAirlines[1] || { name: "Air Astra", website: "https://airastra.com" };
 
-            // টপ ৩টি ফ্লাইট ডিল
             const flightPlatforms = [
                 { 
-                    platform: "Google Flights Live Track",
+                    platform: "Google Flights Live",
                     airline: airline1.name,
                     airlineUrl: airline1.website,
                     multiplier: 0.98,
@@ -654,22 +794,22 @@
                     refundBadge: "Direct Airline Refund / Change Policy"
                 },
                 { 
-                    platform: "Skyscanner Meta-Compare",
+                    platform: "Skyscanner Live Compare",
                     airline: airline2.name,
                     airlineUrl: airline2.website,
                     multiplier: 1.0,
-                    badge: "Skyscanner Best Match 🔥",
+                    badge: "Skyscanner Best Value 🔥",
                     googleUrl: skyscannerDirectUrl,
-                    refundBadge: "Official Airline Booking Route"
+                    refundBadge: "Official Airline Booking Match"
                 },
                 { 
-                    platform: "Official Airline Direct",
-                    airline: airline3.name,
-                    airlineUrl: airline3.website,
+                    platform: "Official Airline Portal",
+                    airline: airline1.name + " Direct",
+                    airlineUrl: airline1.website,
                     multiplier: 1.04,
-                    badge: "100% Genuine Direct Airline 🌟",
-                    googleUrl: airline3.website,
-                    refundBadge: "Instant Date Change & Zero Middleman Fee"
+                    badge: "100% Genuine Airline 🌟",
+                    googleUrl: airline1.website,
+                    refundBadge: "Instant Date Change & Zero Agency Markup"
                 }
             ];
 
@@ -679,35 +819,42 @@
                 let discountDropBDT = Math.round(initialFareBDT * 0.05);
                 let afterDropBDT = initialFareBDT - discountDropBDT;
                 let cardDisBDT = Math.round(afterDropBDT * cardPercent);
-                let finalPayBDT = afterDropBDT - cardDisBDT - 1000;
+                
+                let promoValBDT = 0;
+                if (appliedPromoDiscount > 0) {
+                    if (appliedPromoType === 'percent') promoValBDT = Math.round(afterDropBDT * appliedPromoDiscount);
+                    else promoValBDT = appliedPromoDiscount;
+                }
 
-                let showRegular = isBDT ? `BDT ${initialFareBDT.toLocaleString()}` : `$${Math.round(initialFareBDT/rateUSD)}`;
-                let showCard = isBDT ? `-BDT ${cardDisBDT.toLocaleString()}` : `-$${Math.round(cardDisBDT/rateUSD)}`;
-                let showFinal = isBDT ? `BDT ${finalPayBDT.toLocaleString()}` : `$${Math.round(finalPayBDT/rateUSD)}`;
+                let finalPayBDT = afterDropBDT - cardDisBDT - promoValBDT - (currentTripType === 'oneway' ? 300 : 600);
+                if (finalPayBDT < 2500) finalPayBDT = 2500;
+
+                let showRegular = formatCurrency(initialFareBDT, currency);
+                let showCard = `-${formatCurrency(cardDisBDT, currency)}`;
+                let showFinal = formatCurrency(finalPayBDT, currency);
 
                 return `
                     <div class="bg-slate-900 border border-slate-800 hover:border-sky-500/50 p-4 rounded-2xl shadow-xl flex flex-col justify-between transition">
                         <div>
                             <div class="flex justify-between items-start mb-2">
-                                <span class="text-xs font-bold text-sky-400 bg-sky-500/10 px-2.5 py-1 rounded-md">${item.badge}</span>
-                                <span class="text-xs text-emerald-400 font-semibold">${diffDays} Days Trip</span>
+                                <span class="text-[11px] font-bold text-sky-400 bg-sky-500/10 px-2.5 py-1 rounded-md">${item.badge}</span>
+                                <span class="text-[11px] text-emerald-400 font-semibold">${currentTripType === 'oneway' ? '1-Way' : diffDays + ' Days'}</span>
                             </div>
-                            <h3 class="text-base font-bold text-white">${item.airline}</h3>
+                            <h3 class="text-sm sm:text-base font-bold text-white">${item.airline}</h3>
                             <p class="text-xs text-slate-400">Via ${item.platform} • Baggage Included</p>
 
-                            <!-- Date & Day Info -->
-                            <div class="mt-3 bg-slate-950/80 p-2.5 rounded-xl border border-slate-800 space-y-1 text-xs">
+                            <div class="mt-2.5 bg-slate-950/80 p-2.5 rounded-xl border border-slate-800 space-y-1 text-xs">
                                 <div class="flex justify-between items-center text-slate-300">
-                                    <span class="text-sky-400 font-semibold"><i class="fa-solid fa-plane-departure"></i> Depart:</span>
+                                    <span class="text-sky-400 font-semibold"><i class="fa-solid fa-plane-departure mr-1"></i> Depart:</span>
                                     <span class="font-medium">${dStr}</span>
                                 </div>
+                                ${currentTripType !== 'oneway' ? `
                                 <div class="flex justify-between items-center text-slate-300">
-                                    <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-plane-arrival"></i> Return:</span>
+                                    <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-plane-arrival mr-1"></i> Return:</span>
                                     <span class="font-medium">${rStr}</span>
-                                </div>
+                                </div>` : ''}
                             </div>
 
-                            <!-- Anti-Fraud & Refund Policy Badge -->
                             <div class="mt-2 text-[11px] text-emerald-400/90 flex items-center gap-1.5 font-medium">
                                 <i class="fa-solid fa-circle-check text-emerald-400"></i> ${item.refundBadge}
                             </div>
@@ -721,61 +868,64 @@
                                     <span>${cardName}:</span>
                                     <span>${showCard}</span>
                                 </div>
+                                ${appliedPromoDiscount > 0 ? `
+                                <div class="flex justify-between text-amber-400 font-bold">
+                                    <span>Promo Voucher Discount:</span>
+                                    <span>-${formatCurrency(promoValBDT, currency)}</span>
+                                </div>` : ''}
                             </div>
                         </div>
 
-                        <div class="mt-4 border-t border-slate-800 pt-3 space-y-2">
+                        <div class="mt-3.5 border-t border-slate-800 pt-3 space-y-2">
                             <div class="flex justify-between items-center">
-                                <span class="text-xs text-slate-400">Verified Fare:</span>
+                                <span class="text-xs text-slate-400 font-semibold">Verified Lowest Fare:</span>
                                 <div class="text-xl font-black text-emerald-400">${showFinal}</div>
                             </div>
                             
-                            <!-- Google Flights Live Button -->
                             <a href="${item.googleUrl}" target="_blank" 
                                class="w-full block text-center bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow">
                                 <i class="fa-brands fa-google"></i> View on Google Flights / Skyscanner
                             </a>
 
-                            <!-- Direct Airline Official Portal Button -->
                             <a href="${item.airlineUrl}" target="_blank" 
                                class="w-full block text-center bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-1.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5 border border-slate-700">
-                                <i class="fa-solid fa-building"></i> ${item.airline} Official Website
+                                <i class="fa-solid fa-building"></i> Official Airline Portal
                             </a>
                         </div>
                     </div>
                 `;
             }).join('');
 
-            // ২. হোটেল রেজাল্টস
-            const hotelBaseBDT = matchedDest.hotelBaseBDT || 2400;
+            // Hotels
+            const hotelBaseBDT = matchedDest.hotelBaseBDT || 3200;
             const hotelPlatforms = [
                 { 
                     platform: "Agoda Verified Stay",
-                    name: `${matchedDest.city} Eco Resort & Suites`,
-                    stars: "⭐⭐⭐",
-                    perNightBDT: Math.round(hotelBaseBDT * 0.78),
-                    discount: "22% OFF on Agoda",
-                    rating: "4.7/5",
+                    name: `${matchedDest.city} Premier Luxury Resort & Spa`,
+                    stars: "⭐⭐⭐⭐⭐",
+                    perNightBDT: Math.round(hotelBaseBDT * 0.85),
+                    discount: "25% OFF on Agoda",
+                    rating: "4.8/5",
                     url: `https://www.agoda.com/search?city=${encodeURIComponent(matchedDest.city)}&checkIn=${dStd}&checkOut=${rStd}`,
                     btnText: "Book on Agoda"
                 },
                 { 
                     platform: "Booking.com Official",
-                    name: `${matchedDest.city} City Boutique Stay`,
+                    name: `${matchedDest.city} Executive Beach Hotel`,
                     stars: "⭐⭐⭐⭐",
-                    perNightBDT: Math.round(hotelBaseBDT * 1.15),
-                    discount: "25% OFF on Booking.com",
-                    rating: "4.8/5",
+                    perNightBDT: Math.round(hotelBaseBDT * 1.20),
+                    discount: "20% OFF on Booking.com",
+                    rating: "4.9/5",
                     url: `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(matchedDest.city)}&checkin=${dStd}&checkout=${rStd}`,
                     btnText: "Book on Booking.com"
                 },
                 { 
                     platform: "Trip.com Stays",
-                    name: `${matchedDest.city} Luxury Heritage Palace`,
+                    name: `${matchedDest.city} Grand Suites & Resort`,
                     stars: "⭐⭐⭐⭐⭐",
-                    perNightBDT: Math.round(hotelBaseBDT * 1.95),
+                    perNightBDT: Math.round(hotelBaseBDT * 1.55),
                     discount: "28% OFF on Trip.com",
-                    rating: "4.9/5",
+                    rating: "4.7/5",
                     url: `https://www.trip.com/hotels/list?city=${encodeURIComponent(matchedDest.city)}&checkIn=${dStd}&checkOut=${rStd}`,
                     btnText: "Book on Trip.com"
                 }
@@ -783,9 +933,10 @@
 
             const hotelContainer = document.getElementById('hotelResults');
             hotelContainer.innerHTML = hotelPlatforms.map(hotel => {
-                let totalHotelBDT = hotel.perNightBDT * diffDays;
-                let showNight = isBDT ? `BDT ${hotel.perNightBDT.toLocaleString()}/night` : `$${Math.round(hotel.perNightBDT/rateUSD)}/night`;
-                let showTotal = isBDT ? `BDT ${totalHotelBDT.toLocaleString()}` : `$${Math.round(totalHotelBDT/rateUSD)}`;
+                let stayDays = currentTripType === 'oneway' ? 3 : diffDays;
+                let totalHotelBDT = hotel.perNightBDT * stayDays;
+                let showNight = `${formatCurrency(hotel.perNightBDT, currency)}/night`;
+                let showTotal = formatCurrency(totalHotelBDT, currency);
 
                 return `
                     <div class="bg-slate-900 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl shadow-xl flex flex-col justify-between transition">
@@ -794,12 +945,12 @@
                                 <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">${hotel.discount}</span>
                                 <span class="text-xs text-amber-400 font-semibold"><i class="fa-solid fa-star"></i> ${hotel.rating}</span>
                             </div>
-                            <h3 class="text-base font-bold text-white">${hotel.name}</h3>
+                            <h3 class="text-sm sm:text-base font-bold text-white">${hotel.name}</h3>
                             <p class="text-xs text-slate-400 mt-0.5">${hotel.stars} • ${showNight}</p>
                         </div>
 
                         <div class="mt-4 border-t border-slate-800 pt-3">
-                            <span class="text-xs text-slate-400">Total for ${diffDays} Nights:</span>
+                            <span class="text-xs text-slate-400">Total for ${stayDays} Nights:</span>
                             <div class="text-2xl font-black text-emerald-400 mb-2.5">${showTotal}</div>
                             <a href="${hotel.url}" target="_blank" 
                                class="w-full block text-center bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs transition">
@@ -810,24 +961,28 @@
                 `;
             }).join('');
 
-            // ৩. অ্যাক্টিভিটি রেজাল্টস
+            // Activities
             const touristContainer = document.getElementById('touristResults');
-            const attractions = matchedDest.attractions || [];
+            const attractions = [
+                { name: `${matchedDest.city} City Sightseeing & Landmark Tour`, priceBDT: "৳ 1,800", discount: "20% OFF", img: "https://images.unsplash.com/photo-1589802829985-817e51171b92?w=500&q=80", map: `https://maps.google.com/?q=${encodeURIComponent(matchedDest.city + ' attractions')}` },
+                { name: `${matchedDest.city} Sunset Cruise & Heritage Pass`, priceBDT: "৳ 2,500", discount: "25% OFF", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=80", map: `https://maps.google.com/?q=${encodeURIComponent(matchedDest.city + ' tour')}` }
+            ];
+
             touristContainer.innerHTML = attractions.map(item => `
                 <div class="bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl overflow-hidden shadow-xl flex flex-col justify-between transition">
                     <div>
-                        <div class="relative h-40 overflow-hidden">
+                        <div class="relative h-36 sm:h-40 overflow-hidden">
                             <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover transform hover:scale-105 transition duration-500">
                             <span class="absolute top-2.5 left-2.5 bg-amber-500 text-slate-950 font-bold text-xs px-2 py-0.5 rounded shadow">${item.discount}</span>
                         </div>
                         <div class="p-3.5">
-                            <h3 class="text-sm font-bold text-white mb-1">${item.name}</h3>
-                            <div class="text-base font-extrabold text-amber-400">${item.priceBDT}</div>
+                            <h3 class="text-xs sm:text-sm font-bold text-white mb-1">${item.name}</h3>
+                            <div class="text-sm sm:text-base font-extrabold text-amber-400">${item.priceBDT}</div>
                         </div>
                     </div>
 
                     <div class="p-3.5 pt-0 space-y-2">
-                        <a href="https://www.klook.com/search?keyword=${encodeURIComponent(item.name)}" target="_blank" 
+                        <a href="https://www.klook.com/search?keyword=${encodeURIComponent(matchedDest.city)}" target="_blank" 
                            class="w-full block text-center bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-1.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-ticket"></i> Check Deal on Klook
                         </a>

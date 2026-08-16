@@ -96,7 +96,7 @@
                 <div>
                     <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Departure From</label>
                     <div onclick="openLocationModal('origin')" class="w-full bg-slate-950 border border-slate-700 hover:border-sky-500 active:scale-[0.99] rounded-xl p-3 text-white cursor-pointer flex justify-between items-center text-xs sm:text-sm transition shadow-inner">
-                        <span id="originDisplay" class="font-semibold text-slate-200 truncate">Dhaka - Hazrat Shahjalal (DAC)</span>
+                        <span id="originDisplay" class="font-semibold text-slate-200 truncate">Dhaka - Hazrat Shahjalal Int. (DAC)</span>
                         <i class="fa-solid fa-plane-departure text-sky-400"></i>
                     </div>
                 </div>
@@ -105,7 +105,7 @@
                 <div>
                     <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Destination To</label>
                     <div onclick="openLocationModal('dest')" class="w-full bg-slate-950 border border-slate-700 hover:border-emerald-500 active:scale-[0.99] rounded-xl p-3 text-white cursor-pointer flex justify-between items-center text-xs sm:text-sm transition shadow-inner">
-                        <span id="destDisplay" class="font-semibold text-slate-200 truncate">Cox's Bazar - Cox's Bazar Airport (CXB)</span>
+                        <span id="destDisplay" class="font-semibold text-slate-200 truncate">Cox's Bazar Airport (CXB)</span>
                         <i class="fa-solid fa-plane-arrival text-emerald-400"></i>
                     </div>
                 </div>
@@ -296,7 +296,7 @@
 
     </div>
 
-    <!-- Universal Location Modal Backdrop (100% Bug-Free Overlay) -->
+    <!-- Universal Location Modal Backdrop -->
     <div id="locationModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl p-5" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
@@ -305,7 +305,7 @@
             </div>
             <div class="relative mb-3">
                 <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
-                <input type="text" id="modalSearchInput" placeholder="Type city, country or code (e.g. Cox's Bazar, BKK, Dubai)..." oninput="filterModalAirports()" class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-sky-500">
+                <input type="text" id="modalSearchInput" placeholder="Type Cox's Bazar, Kolkata, Bangkok, Dubai..." oninput="filterModalAirports()" class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-sky-500">
             </div>
             <div id="modalAirportList" class="max-h-72 overflow-y-auto custom-scroll space-y-1.5 pr-1"></div>
         </div>
@@ -313,13 +313,13 @@
 
     <script>
         const COUNTRY_AIRPORTS = [
-            // Bangladesh 🇧🇩
+            // Cox's Bazar (Primary on top)
             { 
                 country: "Bangladesh 🇧🇩", 
                 city: "Cox's Bazar", 
                 name: "Cox's Bazar Airport (CXB)", 
                 code: "cxb", 
-                keywords: "coxsbazar coxs bazar cozbazar coz bazar cox cxb sea beach inani", 
+                keywords: "coxsbazar coxs bazar cozbazar coz bazar cox cxb sea beach inani himchari", 
                 baseRoundBDT: 9500, 
                 hotelBaseBDT: 3200, 
                 domesticAirlines: [{ name: "US-Bangla Airlines", website: "https://usbair.com" }, { name: "Air Astra", website: "https://airastra.com" }] 
@@ -451,7 +451,6 @@
             triggerFullScan();
         }
 
-        // Dedicated Modal Controls (Fixes Backdrop Bug)
         function openLocationModal(type) {
             activeModalType = type;
             const modal = document.getElementById('locationModal');
@@ -476,23 +475,23 @@
             if (e.target === this) closeLocationModal();
         });
 
-        function normalizeSearchText(str) {
-            return (str || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+        function cleanString(str) {
+            return (str || "").toLowerCase().replace(/['\s\-_]/g, "");
         }
 
         function filterModalAirports() {
-            const rawQuery = document.getElementById('modalSearchInput').value.trim().toLowerCase();
-            const normalizedQuery = normalizeSearchText(rawQuery);
+            const raw = document.getElementById('modalSearchInput').value.trim().toLowerCase();
+            const clean = cleanString(raw);
             const listContainer = document.getElementById('modalAirportList');
 
             const filtered = COUNTRY_AIRPORTS.filter(item => {
-                const searchString = `${item.country} ${item.city} ${item.name} ${item.code} ${item.keywords || ''}`.toLowerCase();
-                const normalizedItem = normalizeSearchText(searchString);
-                return searchString.includes(rawQuery) || normalizedItem.includes(normalizedQuery) || (normalizedQuery.includes("coz") && normalizedItem.includes("cox"));
+                const fullText = `${item.country} ${item.city} ${item.name} ${item.code} ${item.keywords || ''}`.toLowerCase();
+                const cleanFull = cleanString(fullText);
+                return fullText.includes(raw) || cleanFull.includes(clean) || (clean.startsWith('co') && cleanFull.includes('cox'));
             });
 
             if (filtered.length === 0) {
-                listContainer.innerHTML = `<div class="p-4 text-xs text-slate-400 text-center">No airport found matching "${rawQuery}"</div>`;
+                listContainer.innerHTML = `<div class="p-4 text-xs text-slate-400 text-center">No airport found for "${raw}"</div>`;
                 return;
             }
 
@@ -504,7 +503,7 @@
                 const activeBorder = isSelected ? 'border-sky-500 bg-sky-500/10' : 'border-slate-800 bg-slate-950/60 hover:bg-slate-800';
                 
                 return `
-                    <div onclick="selectAirportFromModal('${item.city} - ${item.name}', '${item.code}')" 
+                    <div onclick="selectAirportFromModal('${item.name}', '${item.code}')" 
                          class="p-2.5 rounded-xl border ${activeBorder} cursor-pointer flex justify-between items-center transition">
                         <div>
                             <div class="text-xs font-bold text-white">${item.name}</div>
