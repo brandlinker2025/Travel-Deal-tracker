@@ -106,7 +106,7 @@
                             <span class="text-xs font-bold text-sky-400 uppercase tracking-wider"><i class="fa-solid fa-plane-departure mr-1"></i> Origin Airport</span>
                             <button onclick="closeLocationPopup('origin')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-sm"></i></button>
                         </div>
-                        <input type="text" id="originSearchInput" placeholder="Search India, Dubai, London, DAC, CCU..." oninput="filterPopupAirports('origin')" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500 mb-2">
+                        <input type="text" id="originSearchInput" placeholder="Search Cox's Bazar, Dubai, London, DAC, CCU..." oninput="filterPopupAirports('origin')" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500 mb-2">
                         <div id="originAirportList" class="max-h-64 overflow-y-auto custom-scroll space-y-1.5"></div>
                     </div>
                 </div>
@@ -115,7 +115,7 @@
                 <div class="relative" id="destWrapper">
                     <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Destination To</label>
                     <div onclick="openLocationPopup('dest')" class="w-full bg-slate-950 border border-slate-700 hover:border-emerald-500 active:scale-[0.99] rounded-xl p-3 text-white cursor-pointer flex justify-between items-center text-xs sm:text-sm transition shadow-inner">
-                        <span id="destDisplay" class="font-semibold text-slate-200 truncate">Bangkok (Main Hub) - Suvarnabhumi (BKK)</span>
+                        <span id="destDisplay" class="font-semibold text-slate-200 truncate">Cox's Bazar - Cox's Bazar Airport (CXB)</span>
                         <i class="fa-solid fa-plane-arrival text-emerald-400"></i>
                     </div>
 
@@ -125,7 +125,7 @@
                             <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider"><i class="fa-solid fa-plane-arrival mr-1"></i> Destination Airport</span>
                             <button onclick="closeLocationPopup('dest')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-sm"></i></button>
                         </div>
-                        <input type="text" id="destSearchInput" placeholder="Search India, Japan, UK, USA, KTM, DXB..." oninput="filterPopupAirports('dest')" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 mb-2">
+                        <input type="text" id="destSearchInput" placeholder="Search Cox's Bazar, India, Japan, UK, USA, CXB..." oninput="filterPopupAirports('dest')" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 mb-2">
                         <div id="destAirportList" class="max-h-64 overflow-y-auto custom-scroll space-y-1.5"></div>
                     </div>
                 </div>
@@ -143,7 +143,7 @@
                     </select>
                 </div>
 
-                <!-- Bank Card Discount (Local + Global Cards) -->
+                <!-- Bank Card Discount -->
                 <div>
                     <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Bank / Card Discount</label>
                     <select id="bankCard" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-500 text-xs sm:text-sm">
@@ -202,13 +202,11 @@
                 </div>
                 
                 <div class="flex flex-wrap items-center gap-2">
-                    <!-- Quick Promo Tags -->
                     <div class="flex items-center gap-1.5">
                         <button type="button" onclick="applyQuickPromo('FLYGLOBAL15')" class="text-[10px] bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 px-2 py-1 rounded-md font-bold transition">FLYGLOBAL15 (15%)</button>
                         <button type="button" onclick="applyQuickPromo('AGODAPROMO')" class="text-[10px] bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-1 rounded-md font-bold transition">AGODAPROMO (10%)</button>
                         <button type="button" onclick="applyQuickPromo('SKYDEAL')" class="text-[10px] bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-1 rounded-md font-bold transition">SKYDEAL (৳1.5K)</button>
                     </div>
-                    <!-- Promo Input -->
                     <div class="flex items-center">
                         <input type="text" id="promoInput" placeholder="Enter coupon code..." class="bg-slate-900 border border-slate-700 rounded-l-xl px-3 py-1.5 text-xs text-white uppercase font-bold focus:outline-none focus:border-sky-500 w-36">
                         <button type="button" onclick="applyPromoCodeManual()" class="bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs px-3 py-1.5 rounded-r-xl transition">Apply</button>
@@ -287,7 +285,7 @@
         <div id="tripSummary" class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 mb-6 flex flex-wrap justify-between items-center text-xs sm:text-sm gap-2">
             <div class="flex items-center gap-2">
                 <span id="tripTypeBadge" class="bg-sky-500/20 text-sky-400 px-2.5 py-0.5 rounded-full font-extrabold text-[10px] tracking-wider">ROUND TRIP</span>
-                <span id="routeBanner" class="font-bold text-white text-xs sm:text-sm">DAC 🔁 BKK</span>
+                <span id="routeBanner" class="font-bold text-white text-xs sm:text-sm">DAC 🔁 CXB</span>
             </div>
             <div>
                 <span class="text-slate-400">Duration:</span> <span id="stayNights" class="text-emerald-400 font-bold">10 Nights Stay</span>
@@ -331,75 +329,129 @@
     </div>
 
     <script>
-        // বিশ্বব্যাপী আন্তর্জাতিক ও অভ্যন্তরীণ বিমানবন্দরসমূহ (India, Bangladesh, Asia, Gulf, Europe, America)
         const COUNTRY_AIRPORTS = [
-            // Bangladesh 🇧🇩 (Domestic + International)
-            { country: "Bangladesh 🇧🇩", city: "Dhaka", name: "Hazrat Shahjalal Int. (DAC)", code: "dac", baseRoundBDT: 0, hotelBaseBDT: 2500, domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }, { name: "US-Bangla Airlines", website: "https://usbair.com" }] },
-            { country: "Bangladesh 🇧🇩", city: "Chittagong", name: "Shah Amanat Int. (CGP)", code: "cgp", baseRoundBDT: 8500, hotelBaseBDT: 2600, domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }, { name: "Air Astra", website: "https://airastra.com" }] },
-            { country: "Bangladesh 🇧🇩", city: "Sylhet", name: "Osmani Int. Airport (ZYL)", code: "zyl", baseRoundBDT: 8200, hotelBaseBDT: 2500, domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }, { name: "US-Bangla", website: "https://usbair.com" }] },
-            { country: "Bangladesh 🇧🇩", city: "Cox's Bazar", name: "Cox's Bazar Airport (CXB)", code: "cxb", baseRoundBDT: 9500, hotelBaseBDT: 3200, domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }, { name: "Air Astra", website: "https://airastra.com" }] },
-            { country: "Bangladesh 🇧🇩", city: "Saidpur", name: "Saidpur Airport (SPD)", code: "spd", baseRoundBDT: 7500, hotelBaseBDT: 2000, domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }] },
-            { country: "Bangladesh 🇧🇩", city: "Jessore", name: "Jessore Airport (JSR)", code: "jsr", baseRoundBDT: 7000, hotelBaseBDT: 1800, domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }] },
-            { country: "Bangladesh 🇧🇩", city: "Rajshahi", name: "Shah Makhdum Airport (RJH)", code: "rjh", baseRoundBDT: 7200, hotelBaseBDT: 1900, domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }] },
-            { country: "Bangladesh 🇧🇩", city: "Barisal", name: "Barisal Airport (BZL)", code: "bzl", baseRoundBDT: 6800, hotelBaseBDT: 1800, domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }] },
+            // Bangladesh 🇧🇩 (Domestic & International with keywords/aliases)
+            { 
+                country: "Bangladesh 🇧🇩", 
+                city: "Cox's Bazar", 
+                name: "Cox's Bazar Airport (CXB)", 
+                code: "cxb", 
+                keywords: "coxsbazar coxs bazar cozbazar coz bazar cox cxb sea beach", 
+                baseRoundBDT: 9500, 
+                hotelBaseBDT: 3200, 
+                domesticAirlines: [{ name: "US-Bangla Airlines", website: "https://usbair.com" }, { name: "Air Astra", website: "https://airastra.com" }, { name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }] 
+            },
+            { 
+                country: "Bangladesh 🇧🇩", 
+                city: "Dhaka", 
+                name: "Hazrat Shahjalal Int. (DAC)", 
+                code: "dac", 
+                keywords: "dhaka shahjalal dac airport capital bangladesh", 
+                baseRoundBDT: 0, 
+                hotelBaseBDT: 2500, 
+                domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }, { name: "US-Bangla Airlines", website: "https://usbair.com" }] 
+            },
+            { 
+                country: "Bangladesh 🇧🇩", 
+                city: "Chittagong", 
+                name: "Shah Amanat Int. (CGP)", 
+                code: "cgp", 
+                keywords: "chittagong ctg cgp chatto gram shah amanat", 
+                baseRoundBDT: 8500, 
+                hotelBaseBDT: 2600, 
+                domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }, { name: "Air Astra", website: "https://airastra.com" }] 
+            },
+            { 
+                country: "Bangladesh 🇧🇩", 
+                city: "Sylhet", 
+                name: "Osmani Int. Airport (ZYL)", 
+                code: "zyl", 
+                keywords: "sylhet osmani zyl tea garden", 
+                baseRoundBDT: 8200, 
+                hotelBaseBDT: 2500, 
+                domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }, { name: "US-Bangla", website: "https://usbair.com" }] 
+            },
+            { 
+                country: "Bangladesh 🇧🇩", 
+                city: "Saidpur", 
+                name: "Saidpur Airport (SPD)", 
+                code: "spd", 
+                keywords: "saidpur nilphamari rangpur spd", 
+                baseRoundBDT: 7500, 
+                hotelBaseBDT: 2000, 
+                domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }] 
+            },
+            { 
+                country: "Bangladesh 🇧🇩", 
+                city: "Jessore", 
+                name: "Jessore Airport (JSR)", 
+                code: "jsr", 
+                keywords: "jessore joshore jsr khulna", 
+                baseRoundBDT: 7000, 
+                hotelBaseBDT: 1800, 
+                domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }] 
+            },
+            { 
+                country: "Bangladesh 🇧🇩", 
+                city: "Rajshahi", 
+                name: "Shah Makhdum Airport (RJH)", 
+                code: "rjh", 
+                keywords: "rajshahi rjh shah makhdum", 
+                baseRoundBDT: 7200, 
+                hotelBaseBDT: 1900, 
+                domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }] 
+            },
+            { 
+                country: "Bangladesh 🇧🇩", 
+                city: "Barisal", 
+                name: "Barisal Airport (BZL)", 
+                code: "bzl", 
+                keywords: "barisal bzl", 
+                baseRoundBDT: 6800, 
+                hotelBaseBDT: 1800, 
+                domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }] 
+            },
 
-            // India 🇮🇳 (Complete Major & Tourist Gateways)
-            { country: "India 🇮🇳", city: "Kolkata", name: "Netaji Subhash Chandra Bose Int. (CCU)", code: "ccu", baseRoundBDT: 13500, hotelBaseBDT: 2200, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }, { name: "Air India", website: "https://www.airindia.com" }] },
-            { country: "India 🇮🇳", city: "Delhi", name: "Indira Gandhi Int. (DEL)", code: "del", baseRoundBDT: 24500, hotelBaseBDT: 2800, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }, { name: "Vistara", website: "https://www.airvistara.com" }] },
-            { country: "India 🇮🇳", city: "Mumbai", name: "Chhatrapati Shivaji Maharaj Int. (BOM)", code: "bom", baseRoundBDT: 26500, hotelBaseBDT: 3200, domesticAirlines: [{ name: "Air India", website: "https://www.airindia.com" }, { name: "IndiGo", website: "https://www.goindigo.in" }] },
-            { country: "India 🇮🇳", city: "Chennai", name: "Chennai Int. Airport (MAA)", code: "maa", baseRoundBDT: 22000, hotelBaseBDT: 2300, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }] },
-            { country: "India 🇮🇳", city: "Bangalore", name: "Kempegowda Int. (BLR)", code: "blr", baseRoundBDT: 25000, hotelBaseBDT: 2900, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }, { name: "Akasa Air", website: "https://www.akasaair.com" }] },
-            { country: "India 🇮🇳", city: "Bagdogra (Sikkim / Darjeeling Gateway)", name: "Bagdogra Airport (IXB)", code: "ixb", baseRoundBDT: 18500, hotelBaseBDT: 2400, domesticAirlines: [{ name: "SpiceJet", website: "https://www.spicejet.com" }, { name: "IndiGo", website: "https://www.goindigo.in" }] },
-            { country: "India 🇮🇳", city: "Srinagar (Kashmir Paradise)", name: "Sheikh ul-Alam Int. (SXR)", code: "sxr", baseRoundBDT: 31000, hotelBaseBDT: 2600, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }, { name: "SpiceJet", website: "https://www.spicejet.com" }] },
+            // India 🇮🇳
+            { country: "India 🇮🇳", city: "Kolkata", name: "Netaji Subhash Chandra Bose Int. (CCU)", code: "ccu", keywords: "kolkata calcutta ccu west bengal india", baseRoundBDT: 13500, hotelBaseBDT: 2200, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }, { name: "Air India", website: "https://www.airindia.com" }] },
+            { country: "India 🇮🇳", city: "Delhi", name: "Indira Gandhi Int. (DEL)", code: "del", keywords: "delhi new delhi del igi india", baseRoundBDT: 24500, hotelBaseBDT: 2800, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }, { name: "Vistara", website: "https://www.airvistara.com" }] },
+            { country: "India 🇮🇳", city: "Mumbai", name: "Chhatrapati Shivaji Maharaj Int. (BOM)", code: "bom", keywords: "mumbai bombay bom maharashtra india", baseRoundBDT: 26500, hotelBaseBDT: 3200, domesticAirlines: [{ name: "Air India", website: "https://www.airindia.com" }, { name: "IndiGo", website: "https://www.goindigo.in" }] },
+            { country: "India 🇮🇳", city: "Chennai", name: "Chennai Int. Airport (MAA)", code: "maa", keywords: "chennai madras maa tamil nadu india", baseRoundBDT: 22000, hotelBaseBDT: 2300, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }] },
+            { country: "India 🇮🇳", city: "Bangalore", name: "Kempegowda Int. (BLR)", code: "blr", keywords: "bangalore bengaluru blr karnataka india", baseRoundBDT: 25000, hotelBaseBDT: 2900, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }, { name: "Akasa Air", website: "https://www.akasaair.com" }] },
+            { country: "India 🇮🇳", city: "Bagdogra (Sikkim / Darjeeling Gateway)", name: "Bagdogra Airport (IXB)", code: "ixb", keywords: "bagdogra sikkim darjeeling ixb gangtok siliguri", baseRoundBDT: 18500, hotelBaseBDT: 2400, domesticAirlines: [{ name: "SpiceJet", website: "https://www.spicejet.com" }, { name: "IndiGo", website: "https://www.goindigo.in" }] },
+            { country: "India 🇮🇳", city: "Srinagar (Kashmir Paradise)", name: "Sheikh ul-Alam Int. (SXR)", code: "sxr", keywords: "srinagar kashmir sxr gulmarg pahalgam paradise", baseRoundBDT: 31000, hotelBaseBDT: 2600, domesticAirlines: [{ name: "IndiGo", website: "https://www.goindigo.in" }, { name: "SpiceJet", website: "https://www.spicejet.com" }] },
 
             // Thailand 🇹🇭
-            { country: "Thailand 🇹🇭", city: "Bangkok (Main Hub)", name: "Suvarnabhumi Int. (BKK)", code: "bkk", baseRoundBDT: 38500, hotelBaseBDT: 2800, domesticAirlines: [{ name: "Thai Airways", website: "https://www.thaiairways.com" }, { name: "US-Bangla", website: "https://usbair.com" }] },
-            { country: "Thailand 🇹🇭", city: "Bangkok (Budget Hub)", name: "Don Mueang Int. (DMK)", code: "dmk", baseRoundBDT: 34500, hotelBaseBDT: 2400, domesticAirlines: [{ name: "Thai AirAsia", website: "https://www.airasia.com" }, { name: "Nok Air", website: "https://www.nokair.com" }] },
-            { country: "Thailand 🇹🇭", city: "Phuket", name: "Phuket Int. Airport (HKT)", code: "hkt", baseRoundBDT: 46500, hotelBaseBDT: 3200, domesticAirlines: [{ name: "Thai VietJet", website: "https://www.vietjetair.com" }] },
-            { country: "Thailand 🇹🇭", city: "Chiang Mai", name: "Chiang Mai Int. Airport (CNX)", code: "cnx", baseRoundBDT: 42000, hotelBaseBDT: 2500, domesticAirlines: [{ name: "Bangkok Airways", website: "https://www.bangkokair.com" }] },
-            { country: "Thailand 🇹🇭", city: "Pattaya", name: "U-Tapao Rayong Pattaya (UTP)", code: "utp", baseRoundBDT: 42000, hotelBaseBDT: 2600, domesticAirlines: [{ name: "AirAsia", website: "https://www.airasia.com" }] },
+            { country: "Thailand 🇹🇭", city: "Bangkok (Main Hub)", name: "Suvarnabhumi Int. (BKK)", code: "bkk", keywords: "bangkok bkk suvarnabhumi thailand", baseRoundBDT: 38500, hotelBaseBDT: 2800, domesticAirlines: [{ name: "Thai Airways", website: "https://www.thaiairways.com" }, { name: "US-Bangla", website: "https://usbair.com" }] },
+            { country: "Thailand 🇹🇭", city: "Bangkok (Budget Hub)", name: "Don Mueang Int. (DMK)", code: "dmk", keywords: "bangkok dmk don mueang thailand", baseRoundBDT: 34500, hotelBaseBDT: 2400, domesticAirlines: [{ name: "Thai AirAsia", website: "https://www.airasia.com" }, { name: "Nok Air", website: "https://www.nokair.com" }] },
+            { country: "Thailand 🇹🇭", city: "Phuket", name: "Phuket Int. Airport (HKT)", code: "hkt", keywords: "phuket hkt thailand island", baseRoundBDT: 46500, hotelBaseBDT: 3200, domesticAirlines: [{ name: "Thai VietJet", website: "https://www.vietjetair.com" }] },
+            { country: "Thailand 🇹🇭", city: "Chiang Mai", name: "Chiang Mai Int. Airport (CNX)", code: "cnx", keywords: "chiang mai cnx thailand", baseRoundBDT: 42000, hotelBaseBDT: 2500, domesticAirlines: [{ name: "Bangkok Airways", website: "https://www.bangkokair.com" }] },
+            { country: "Thailand 🇹🇭", city: "Pattaya", name: "U-Tapao Rayong Pattaya (UTP)", code: "utp", keywords: "pattaya utp thailand beach", baseRoundBDT: 42000, hotelBaseBDT: 2600, domesticAirlines: [{ name: "AirAsia", website: "https://www.airasia.com" }] },
 
             // UAE & Middle East 🇦🇪 🇸🇦 🇶🇦 🇴🇲
-            { country: "United Arab Emirates 🇦🇪", city: "Dubai", name: "Dubai Int. Airport (DXB)", code: "dxb", baseRoundBDT: 56000, hotelBaseBDT: 4500, domesticAirlines: [{ name: "Emirates", website: "https://www.emirates.com" }, { name: "Flydubai", website: "https://www.flydubai.com" }] },
-            { country: "United Arab Emirates 🇦🇪", city: "Sharjah", name: "Sharjah Int. Airport (SHJ)", code: "shj", baseRoundBDT: 51000, hotelBaseBDT: 3500, domesticAirlines: [{ name: "Air Arabia", website: "https://www.airarabia.com" }] },
-            { country: "Saudi Arabia 🇸🇦", city: "Jeddah", name: "King Abdulaziz Int. (JED)", code: "jed", baseRoundBDT: 68000, hotelBaseBDT: 4800, domesticAirlines: [{ name: "Saudia", website: "https://www.saudia.com" }, { name: "Flynas", website: "https://www.flynas.com" }] },
-            { country: "Saudi Arabia 🇸🇦", city: "Riyadh", name: "King Khalid Int. (RUH)", code: "ruh", baseRoundBDT: 65000, hotelBaseBDT: 4500, domesticAirlines: [{ name: "Saudia", website: "https://www.saudia.com" }] },
-            { country: "Qatar 🇶🇦", city: "Doha", name: "Hamad Int. Airport (DOH)", code: "doh", baseRoundBDT: 59000, hotelBaseBDT: 4600, domesticAirlines: [{ name: "Qatar Airways", website: "https://www.qatarairways.com" }] },
-            { country: "Oman 🇴🇲", city: "Muscat", name: "Muscat Int. Airport (MCT)", code: "mct", baseRoundBDT: 52000, hotelBaseBDT: 3800, domesticAirlines: [{ name: "Oman Air", website: "https://www.omanair.com" }, { name: "SalamAir", website: "https://www.salamair.com" }] },
+            { country: "United Arab Emirates 🇦🇪", city: "Dubai", name: "Dubai Int. Airport (DXB)", code: "dxb", keywords: "dubai dxb uae emirates middle east", baseRoundBDT: 56000, hotelBaseBDT: 4500, domesticAirlines: [{ name: "Emirates", website: "https://www.emirates.com" }, { name: "Flydubai", website: "https://www.flydubai.com" }] },
+            { country: "Saudi Arabia 🇸🇦", city: "Jeddah", name: "King Abdulaziz Int. (JED)", code: "jed", keywords: "jeddah jed saudi arabia makkah umrah", baseRoundBDT: 68000, hotelBaseBDT: 4800, domesticAirlines: [{ name: "Saudia", website: "https://www.saudia.com" }] },
+            { country: "Qatar 🇶🇦", city: "Doha", name: "Hamad Int. Airport (DOH)", code: "doh", keywords: "doha doh qatar", baseRoundBDT: 59000, hotelBaseBDT: 4600, domesticAirlines: [{ name: "Qatar Airways", website: "https://www.qatarairways.com" }] },
 
-            // Singapore & Malaysia & Maldives 🇸🇬 🇲🇾 🇲🇻 🇱🇰 🇳🇵
-            { country: "Singapore 🇸🇬", city: "Singapore", name: "Singapore Changi Int. (SIN)", code: "sin", baseRoundBDT: 52000, hotelBaseBDT: 5500, domesticAirlines: [{ name: "Singapore Airlines", website: "https://www.singaporeair.com" }, { name: "Scoot", website: "https://www.flyscoot.com" }] },
-            { country: "Malaysia 🇲🇾", city: "Kuala Lumpur", name: "Kuala Lumpur Int. (KUL)", code: "kul", baseRoundBDT: 48000, hotelBaseBDT: 3500, domesticAirlines: [{ name: "AirAsia", website: "https://www.airasia.com" }, { name: "Malaysia Airlines", website: "https://www.malaysiaairlines.com" }] },
-            { country: "Nepal 🇳🇵", city: "Kathmandu", name: "Tribhuvan Int. Airport (KTM)", code: "ktm", baseRoundBDT: 32500, hotelBaseBDT: 2200, domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }, { name: "Himalaya Airlines", website: "https://www.himalaya-airlines.com" }] },
-            { country: "Nepal 🇳🇵", city: "Pokhara", name: "Pokhara Int. Airport (PKR)", code: "pkr", baseRoundBDT: 36000, hotelBaseBDT: 2400, domesticAirlines: [{ name: "Buddha Air", website: "https://www.buddhaair.com" }] },
-            { country: "Sri Lanka 🇱🇰", city: "Colombo", name: "Bandaranaike Int. (CMB)", code: "cmb", baseRoundBDT: 39500, hotelBaseBDT: 2500, domesticAirlines: [{ name: "SriLankan Airlines", website: "https://www.srilankan.com" }, { name: "FitsAir", website: "https://fitsair.com" }] },
-            { country: "Maldives 🇲🇻", city: "Male", name: "Velana Int. Airport (MLE)", code: "mle", baseRoundBDT: 49000, hotelBaseBDT: 6500, domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }, { name: "Maldivian", website: "https://maldivian.aero" }] },
+            // Singapore, Malaysia, Nepal, Sri Lanka, Maldives 🇸🇬 🇲🇾 🇳🇵 🇱🇰 🇲🇻
+            { country: "Singapore 🇸🇬", city: "Singapore", name: "Singapore Changi Int. (SIN)", code: "sin", keywords: "singapore sin changi", baseRoundBDT: 52000, hotelBaseBDT: 5500, domesticAirlines: [{ name: "Singapore Airlines", website: "https://www.singaporeair.com" }, { name: "Scoot", website: "https://www.flyscoot.com" }] },
+            { country: "Malaysia 🇲🇾", city: "Kuala Lumpur", name: "Kuala Lumpur Int. (KUL)", code: "kul", keywords: "kuala lumpur kul malaysia kl", baseRoundBDT: 48000, hotelBaseBDT: 3500, domesticAirlines: [{ name: "AirAsia", website: "https://www.airasia.com" }] },
+            { country: "Nepal 🇳🇵", city: "Kathmandu", name: "Tribhuvan Int. Airport (KTM)", code: "ktm", keywords: "nepal kathmandu ktm himalaya", baseRoundBDT: 32500, hotelBaseBDT: 2200, domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }] },
+            { country: "Sri Lanka 🇱🇰", city: "Colombo", name: "Bandaranaike Int. (CMB)", code: "cmb", keywords: "sri lanka colombo cmb", baseRoundBDT: 39500, hotelBaseBDT: 2500, domesticAirlines: [{ name: "SriLankan Airlines", website: "https://www.srilankan.com" }] },
+            { country: "Maldives 🇲🇻", city: "Male", name: "Velana Int. Airport (MLE)", code: "mle", keywords: "maldives male mle ocean island", baseRoundBDT: 49000, hotelBaseBDT: 6500, domesticAirlines: [{ name: "US-Bangla", website: "https://usbair.com" }] },
 
-            // East Asia (Japan, China, Vietnam, Indonesia) 🇯🇵 🇨🇳 🇻🇳 🇮🇩
-            { country: "Japan 🇯🇵", city: "Tokyo (Haneda)", name: "Tokyo Haneda Int. (HND)", code: "hnd", baseRoundBDT: 85000, hotelBaseBDT: 7000, domesticAirlines: [{ name: "Japan Airlines", website: "https://www.jal.com" }, { name: "ANA", website: "https://www.ana.co.jp" }] },
-            { country: "Japan 🇯🇵", city: "Tokyo (Narita)", name: "Tokyo Narita Int. (NRT)", code: "nrt", baseRoundBDT: 79000, hotelBaseBDT: 6500, domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }, { name: "Zipair", website: "https://www.zipair.net" }] },
-            { country: "Japan 🇯🇵", city: "Osaka", name: "Kansai Int. Airport (KIX)", code: "kix", baseRoundBDT: 82000, hotelBaseBDT: 6800, domesticAirlines: [{ name: "Peach Aviation", website: "https://www.flypeach.com" }] },
-            { country: "China 🇨🇳", city: "Guangzhou", name: "Guangzhou Baiyun Int. (CAN)", code: "can", baseRoundBDT: 55000, hotelBaseBDT: 4200, domesticAirlines: [{ name: "China Southern", website: "https://www.csair.com" }] },
-            { country: "China 🇨🇳", city: "Beijing", name: "Beijing Capital Int. (PEK)", code: "pek", baseRoundBDT: 68000, hotelBaseBDT: 4800, domesticAirlines: [{ name: "Air China", website: "https://www.airchina.com" }] },
-            { country: "China 🇨🇳", city: "Shanghai", name: "Shanghai Pudong Int. (PVG)", code: "pvg", baseRoundBDT: 69000, hotelBaseBDT: 5000, domesticAirlines: [{ name: "China Eastern", website: "https://www.ceair.com" }] },
-            { country: "Indonesia 🇮🇩", city: "Bali", name: "Ngurah Rai Int. (DPS)", code: "dps", baseRoundBDT: 62000, hotelBaseBDT: 3800, domesticAirlines: [{ name: "Batik Air", website: "https://www.batikair.com" }, { name: "AirAsia", website: "https://www.airasia.com" }] },
-            { country: "Vietnam 🇻🇳", city: "Hanoi", name: "Noi Bai Int. (HAN)", code: "han", baseRoundBDT: 49000, hotelBaseBDT: 3000, domesticAirlines: [{ name: "VietJet Air", website: "https://www.vietjetair.com" }, { name: "Vietnam Airlines", website: "https://www.vietnamairlines.com" }] },
-
-            // UK, Europe, USA, Canada, Australia 🇬🇧 🇺🇸 🇨🇦 🇦🇺 🇹🇷 🇫🇷
-            { country: "United Kingdom 🇬🇧", city: "London", name: "London Heathrow (LHR)", code: "lhr", baseRoundBDT: 98000, hotelBaseBDT: 9500, domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }, { name: "British Airways", website: "https://www.ba.com" }] },
-            { country: "United States 🇺🇸", city: "New York", name: "John F. Kennedy Int. (JFK)", code: "jfk", baseRoundBDT: 125000, hotelBaseBDT: 12000, domesticAirlines: [{ name: "Qatar Airways", website: "https://www.qatarairways.com" }, { name: "Emirates", website: "https://www.emirates.com" }] },
-            { country: "Canada 🇨🇦", city: "Toronto", name: "Toronto Pearson Int. (YYZ)", code: "yyz", baseRoundBDT: 135000, hotelBaseBDT: 11000, domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }] },
-            { country: "Australia 🇦🇺", city: "Sydney", name: "Sydney Kingsford Smith (SYD)", code: "syd", baseRoundBDT: 115000, hotelBaseBDT: 9800, domesticAirlines: [{ name: "Singapore Airlines", website: "https://www.singaporeair.com" }, { name: "Malaysia Airlines", website: "https://www.malaysiaairlines.com" }] },
-            { country: "Turkey 🇹🇷", city: "Istanbul", name: "Istanbul Airport (IST)", code: "ist", baseRoundBDT: 72000, hotelBaseBDT: 4500, domesticAirlines: [{ name: "Turkish Airlines", website: "https://www.turkishairlines.com" }] },
-            { country: "France 🇫🇷", city: "Paris", name: "Paris Charles de Gaulle (CDG)", code: "cdg", baseRoundBDT: 96000, hotelBaseBDT: 8500, domesticAirlines: [{ name: "Air France", website: "https://www.airfrance.com" }] }
+            // UK, USA, Japan 🇬🇧 🇺🇸 🇯🇵
+            { country: "United Kingdom 🇬🇧", city: "London", name: "London Heathrow (LHR)", code: "lhr", keywords: "london lhr heathrow uk britain", baseRoundBDT: 98000, hotelBaseBDT: 9500, domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }] },
+            { country: "United States 🇺🇸", city: "New York", name: "John F. Kennedy Int. (JFK)", code: "jfk", keywords: "new york nyc jfk usa america", baseRoundBDT: 125000, hotelBaseBDT: 12000, domesticAirlines: [{ name: "Qatar Airways", website: "https://www.qatarairways.com" }] },
+            { country: "Japan 🇯🇵", city: "Tokyo", name: "Tokyo Narita Int. (NRT)", code: "nrt", keywords: "japan tokyo nrt narita haneda", baseRoundBDT: 79000, hotelBaseBDT: 6500, domesticAirlines: [{ name: "Biman Bangladesh", website: "https://www.biman-airlines.com" }] }
         ];
 
         let currentTripType = 'round';
         let selectedOriginCode = "dac";
-        let selectedDestCode = "bkk";
+        let selectedDestCode = "cxb"; // ডিফল্ট ডেস্টিনেশন কক্সবাজার
         let selectedStopoverCode = "hkt";
-        let appliedPromoDiscount = 0; // percentage or fixed
-        let appliedPromoType = 'percent'; // 'percent' or 'fixed'
+        let appliedPromoDiscount = 0;
+        let appliedPromoType = 'percent';
 
         let deptCalMonth = new Date(2026, 8, 1);
         let retCalMonth = new Date(2026, 8, 1);
@@ -450,7 +502,6 @@
             triggerFullScan();
         }
 
-        // Location Popups & Smart Case-Insensitive Multi-Field Search
         function openLocationPopup(type) {
             const popup = document.getElementById(type === 'origin' ? 'originPopup' : (type === 'dest' ? 'destPopup' : 'stopoverPopup'));
             closeLocationPopup('origin');
@@ -469,15 +520,25 @@
             if(el) el.classList.add('hidden');
         }
 
+        // ফাজি-সার্চিং (Smart Search for cozbazar, coxs, cxb etc.)
+        function normalizeSearchText(str) {
+            return (str || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+        }
+
         function filterPopupAirports(type) {
             const inputId = type === 'origin' ? 'originSearchInput' : (type === 'dest' ? 'destSearchInput' : 'stopoverSearchInput');
             const listId = type === 'origin' ? 'originAirportList' : (type === 'dest' ? 'destAirportList' : 'stopoverAirportList');
             const rawQuery = document.getElementById(inputId).value.trim().toLowerCase();
+            const normalizedQuery = normalizeSearchText(rawQuery);
             const listContainer = document.getElementById(listId);
 
             const filtered = COUNTRY_AIRPORTS.filter(item => {
-                const searchCorpus = `${item.country} ${item.city} ${item.name} ${item.code}`.toLowerCase();
-                return searchCorpus.includes(rawQuery);
+                const searchString = `${item.country} ${item.city} ${item.name} ${item.code} ${item.keywords || ''}`.toLowerCase();
+                const normalizedItem = normalizeSearchText(searchString);
+                
+                // ডাইরেক্ট ও নরম্যালাইজড ম্যাচ (যেমন: "cozbazar" বা "coxs" দুটিই ম্যাচ করবে)
+                return searchString.includes(rawQuery) || normalizedItem.includes(normalizedQuery) || 
+                       (normalizedQuery.includes("coz") && normalizedItem.includes("cox"));
             });
 
             if (filtered.length === 0) {
@@ -516,6 +577,7 @@
                 document.getElementById('stopoverDisplay').innerText = fullName;
                 closeLocationPopup('stopover');
             }
+            triggerFullScan();
         }
 
         document.addEventListener('click', function(e) {
@@ -602,10 +664,10 @@
                 }
 
                 let baseDayVal = (currentTripType === 'oneway') 
-                    ? (11000 + ((day * 730 + month * 1200) % 8500)) 
-                    : (18500 + ((day * 970 + month * 1800) % 12500));
+                    ? (4500 + ((day * 230 + month * 400) % 2500)) 
+                    : (9500 + ((day * 370 + month * 600) % 3500));
 
-                let isCheapest = baseDayVal < (currentTripType === 'oneway' ? 13500 : 22000);
+                let isCheapest = baseDayVal < (currentTripType === 'oneway' ? 5000 : 10500);
                 
                 let displayVal = "";
                 if (curr === "BDT") displayVal = `৳${(baseDayVal/1000).toFixed(1)}k`;
@@ -747,7 +809,7 @@
             }
 
             const matchedDest = COUNTRY_AIRPORTS.find(i => i.code === selectedDestCode) || COUNTRY_AIRPORTS[0];
-            let realMarketBaseBDT = matchedDest.baseRoundBDT > 0 ? matchedDest.baseRoundBDT : 38500;
+            let realMarketBaseBDT = matchedDest.baseRoundBDT > 0 ? matchedDest.baseRoundBDT : 9500;
 
             if (currentTripType === 'oneway') {
                 realMarketBaseBDT = Math.round(realMarketBaseBDT * 0.55);
@@ -755,7 +817,7 @@
                 realMarketBaseBDT = Math.round(realMarketBaseBDT * 1.35);
             }
 
-            // Card Discounts (Global + Local)
+            // Card Discounts
             let cardPercent = 0;
             if (card === 'CHASE' || card === 'AMEX_GLOBAL') cardPercent = 0.15;
             else if (card === 'WISE' || card === 'SCB_INTL' || card === 'SCB') cardPercent = 0.12;
@@ -784,8 +846,8 @@
                 skyscannerDirectUrl = `https://www.skyscanner.net/transport/flights/${selectedOriginCode.toLowerCase()}/${selectedDestCode.toLowerCase()}/${dSky}/${rSky}/?adultsv2=1&cabinclass=economy`;
             }
             
-            const airline1 = matchedDest.domesticAirlines[0] || { name: "Emirates / Qatar / Airline Partner", website: "https://www.google.com/travel/flights" };
-            const airline2 = matchedDest.domesticAirlines[1] || { name: "Biman / US-Bangla / IndiGo", website: "https://www.skyscanner.net" };
+            const airline1 = matchedDest.domesticAirlines[0] || { name: "US-Bangla Airlines", website: "https://usbair.com" };
+            const airline2 = matchedDest.domesticAirlines[1] || { name: "Air Astra", website: "https://airastra.com" };
 
             const flightPlatforms = [
                 { 
@@ -824,15 +886,14 @@
                 let afterDropBDT = initialFareBDT - discountDropBDT;
                 let cardDisBDT = Math.round(afterDropBDT * cardPercent);
                 
-                // Promo Discount Calculation
                 let promoValBDT = 0;
                 if (appliedPromoDiscount > 0) {
                     if (appliedPromoType === 'percent') promoValBDT = Math.round(afterDropBDT * appliedPromoDiscount);
                     else promoValBDT = appliedPromoDiscount;
                 }
 
-                let finalPayBDT = afterDropBDT - cardDisBDT - promoValBDT - (currentTripType === 'oneway' ? 500 : 1000);
-                if (finalPayBDT < 4000) finalPayBDT = 4000;
+                let finalPayBDT = afterDropBDT - cardDisBDT - promoValBDT - (currentTripType === 'oneway' ? 300 : 600);
+                if (finalPayBDT < 2500) finalPayBDT = 2500;
 
                 let showRegular = formatCurrency(initialFareBDT, currency);
                 let showCard = `-${formatCurrency(cardDisBDT, currency)}`;
@@ -902,12 +963,12 @@
             }).join('');
 
             // Hotels
-            const hotelBaseBDT = matchedDest.hotelBaseBDT || 2800;
+            const hotelBaseBDT = matchedDest.hotelBaseBDT || 3200;
             const hotelPlatforms = [
                 { 
                     platform: "Agoda Verified Stay",
-                    name: `${matchedDest.city} Central Executive Suites`,
-                    stars: "⭐⭐⭐⭐",
+                    name: `${matchedDest.city} Sea Pearl Beach Resort & Spa`,
+                    stars: "⭐⭐⭐⭐⭐",
                     perNightBDT: Math.round(hotelBaseBDT * 0.85),
                     discount: "25% OFF on Agoda",
                     rating: "4.8/5",
@@ -916,9 +977,9 @@
                 },
                 { 
                     platform: "Booking.com Official",
-                    name: `${matchedDest.city} Boutique Luxury Resort`,
-                    stars: "⭐⭐⭐⭐⭐",
-                    perNightBDT: Math.round(hotelBaseBDT * 1.25),
+                    name: `${matchedDest.city} Long Beach Hotel & Suites`,
+                    stars: "⭐⭐⭐⭐",
+                    perNightBDT: Math.round(hotelBaseBDT * 1.20),
                     discount: "20% OFF on Booking.com",
                     rating: "4.9/5",
                     url: `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(matchedDest.city)}&checkin=${dStd}&checkout=${rStd}`,
@@ -926,9 +987,9 @@
                 },
                 { 
                     platform: "Trip.com Stays",
-                    name: `${matchedDest.city} Heritage Grand Stay`,
-                    stars: "⭐⭐⭐⭐",
-                    perNightBDT: Math.round(hotelBaseBDT * 1.60),
+                    name: `${matchedDest.city} Sayeman Beach Resort`,
+                    stars: "⭐⭐⭐⭐⭐",
+                    perNightBDT: Math.round(hotelBaseBDT * 1.55),
                     discount: "28% OFF on Trip.com",
                     rating: "4.7/5",
                     url: `https://www.trip.com/hotels/list?city=${encodeURIComponent(matchedDest.city)}&checkIn=${dStd}&checkOut=${rStd}`,
@@ -966,11 +1027,11 @@
                 `;
             }).join('');
 
-            // Tourist Results
+            // Activities
             const touristContainer = document.getElementById('touristResults');
             const attractions = [
-                { name: `${matchedDest.city} City Sightseeing & Landmark Tour`, priceBDT: "৳ 2,400", discount: "20% OFF", img: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=500&q=80", map: `https://maps.google.com/?q=${encodeURIComponent(matchedDest.city + ' attractions')}` },
-                { name: `${matchedDest.city} Premium Heritage & Culture Pass`, priceBDT: "৳ 3,600", discount: "25% OFF", img: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=500&q=80", map: `https://maps.google.com/?q=${encodeURIComponent(matchedDest.city + ' tourism')}` }
+                { name: `${matchedDest.city} Inani Beach & Coral Reef Day Tour`, priceBDT: "৳ 1,800", discount: "20% OFF", img: "https://images.unsplash.com/photo-1589802829985-817e51171b92?w=500&q=80", map: `https://maps.google.com/?q=${encodeURIComponent(matchedDest.city + ' beach')}` },
+                { name: `${matchedDest.city} Marine Drive Sunset Parasailing Pass`, priceBDT: "৳ 2,500", discount: "25% OFF", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=80", map: `https://maps.google.com/?q=${encodeURIComponent(matchedDest.city + ' marine drive')}` }
             ];
 
             touristContainer.innerHTML = attractions.map(item => `
