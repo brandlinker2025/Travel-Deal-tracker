@@ -59,22 +59,47 @@
         .radar-scanning {
             animation: radar-scan 1s infinite ease-in-out;
         }
+
+        .hero-glow {
+            background:
+                radial-gradient(circle at 20% 20%, rgba(14,165,233,.18), transparent 30%),
+                radial-gradient(circle at 80% 10%, rgba(16,185,129,.12), transparent 28%),
+                radial-gradient(circle at 50% 90%, rgba(168,85,247,.10), transparent 30%);
+        }
+        .glass-card {
+            background: linear-gradient(180deg, rgba(15,23,42,.88), rgba(2,6,23,.88));
+            border: 1px solid rgba(148,163,184,.12);
+            box-shadow: 0 12px 30px rgba(2,6,23,.28);
+        }
+        .deal-chip {
+            border: 1px solid rgba(56,189,248,.22);
+            background: rgba(14,165,233,.08);
+        }
+        .soft-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(148,163,184,.18), transparent);
+        }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen pb-16 antialiased selection:bg-sky-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-16 antialiased selection:bg-sky-500 selection:text-white hero-glow">
 
     <div class="max-w-6xl mx-auto px-3 sm:px-6 py-5 sm:py-8">
         
         <!-- Header -->
-        <header class="text-center mb-5 sm:mb-6">
-            <h1 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight flex items-center justify-center gap-2.5">
+        <header class="text-center mb-6 sm:mb-8">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full deal-chip text-[10px] sm:text-xs font-bold text-sky-300 mb-3">
+                <i class="fa-solid fa-radar"></i> Global Deal Radar • Fare + Hotel + Package Discovery
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight flex items-center justify-center gap-2.5">
                 <i class="fa-solid fa-plane-departure text-sky-400"></i> Global Travel Tracker
             </h1>
-            <p class="text-slate-400 text-xs sm:text-sm mt-1 max-w-md mx-auto">Worldwide Travel Deal Planner • Estimated Rates, Cards & Promo Scenarios</p>
+            <p class="text-slate-400 text-xs sm:text-sm mt-2 max-w-2xl mx-auto leading-5">
+                Search airports worldwide, compare flight/hotel options, discover airline holiday packages, and verify current offers on official provider sites.
+            </p>
         </header>
 
         <!-- Search & Control Dashboard -->
-        <div class="bg-slate-900/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-2xl mb-6">
+        <div class="glass-card backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-2xl mb-6">
             
             <!-- Trip Type Toggle -->
             <div class="flex items-center justify-center gap-2 mb-5 p-1 bg-slate-950/80 rounded-xl border border-slate-800 max-w-md mx-auto">
@@ -278,6 +303,87 @@
             <div id="hotelResults" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
         </div>
 
+
+        <!-- Bangladesh Offer Watch -->
+        <div class="mb-8">
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+                <h2 class="text-sm sm:text-lg font-bold text-fuchsia-400 flex items-center gap-2">
+                    <i class="fa-solid fa-badge-percent"></i> Bangladesh Offer Watch
+                </h2>
+                <span class="text-[10px] sm:text-xs bg-fuchsia-500/10 text-fuchsia-300 px-2.5 py-0.5 rounded-full font-semibold border border-fuchsia-500/20">Official-source links • verify before payment</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+                <a href="https://gozayaan.com/campaign/id/699" target="_blank" rel="noopener noreferrer" class="block bg-slate-900 border border-slate-800 hover:border-fuchsia-500/50 p-4 rounded-2xl transition">
+                    <div class="text-[10px] text-fuchsia-300 font-bold uppercase">GoZayaan + bKash</div>
+                    <div class="text-base font-black text-white mt-1">Up to 10% off base fare</div>
+                    <div class="text-xs text-slate-400 mt-1">International flights • bKash payment • campaign shown valid through Aug 2026.</div>
+                    <div class="text-[10px] text-slate-500 mt-2">Terms, caps and availability apply. Open official campaign ↗</div>
+                </a>
+
+                <a href="https://gozayaan.com/campaign/id/701" target="_blank" rel="noopener noreferrer" class="block bg-slate-900 border border-slate-800 hover:border-fuchsia-500/50 p-4 rounded-2xl transition">
+                    <div class="text-[10px] text-fuchsia-300 font-bold uppercase">GoZayaan Card Payment</div>
+                    <div class="text-base font-black text-white mt-1">Up to 7% off base fare</div>
+                    <div class="text-xs text-slate-400 mt-1">Domestic + international • eligible card payments • one-way/round/multi-city.</div>
+                    <div class="text-[10px] text-slate-500 mt-2">Open official campaign and confirm current validity ↗</div>
+                </a>
+
+                <a href="https://gozayaan.com/campaign/id/697" target="_blank" rel="noopener noreferrer" class="block bg-slate-900 border border-slate-800 hover:border-fuchsia-500/50 p-4 rounded-2xl transition">
+                    <div class="text-[10px] text-fuchsia-300 font-bold uppercase">Selected Bangladesh Cards</div>
+                    <div class="text-base font-black text-white mt-1">Up to 10% off base fare</div>
+                    <div class="text-xs text-slate-400 mt-1">International • BRAC, City AMEX, DBBL, EBL, LankaBangla, MTB, Prime, StanChart, IBBL, Dhaka Bank, UCB and listed cards.</div>
+                    <div class="text-[10px] text-slate-500 mt-2">Issuer/card eligibility must be checked on official page ↗</div>
+                </a>
+
+                <a href="https://gozayaan.com/campaign/id/691" target="_blank" rel="noopener noreferrer" class="block bg-slate-900 border border-slate-800 hover:border-fuchsia-500/50 p-4 rounded-2xl transition">
+                    <div class="text-[10px] text-fuchsia-300 font-bold uppercase">Domestic Selected Cards</div>
+                    <div class="text-base font-black text-white mt-1">7% off base fare</div>
+                    <div class="text-xs text-slate-400 mt-1">Domestic flights • selected Bangladesh debit/credit cards • subject to campaign terms.</div>
+                    <div class="text-[10px] text-slate-500 mt-2">Open official campaign ↗</div>
+                </a>
+            </div>
+
+            <p class="mt-2 text-[10px] leading-4 text-slate-500">
+                Offer data is not fetched live by this static page. Campaigns can expire, change caps or exclude routes; always confirm the provider page immediately before payment.
+            </p>
+        </div>
+
+        <!-- Lowest Fare Playbook -->
+        <div class="mb-8 bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <h2 class="text-sm sm:text-lg font-bold text-cyan-300 flex items-center gap-2">
+                    <i class="fa-solid fa-route"></i> Lowest-Fare Playbook
+                </h2>
+                <span class="text-[10px] text-slate-400">Legitimate methods — no risky booking bypass</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3">
+                    <div class="font-bold text-white">1. Flexible date check</div>
+                    <div class="text-slate-400 mt-1">Compare ±3 days and nearby months. A weekday shift can matter more than a coupon.</div>
+                </div>
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3">
+                    <div class="font-bold text-white">2. Compare final payable</div>
+                    <div class="text-slate-400 mt-1">Compare airline direct, Google Flights/Skyscanner and Bangladesh OTAs after taxes + payment fees.</div>
+                </div>
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3">
+                    <div class="font-bold text-white">3. Stack only allowed offers</div>
+                    <div class="text-slate-400 mt-1">Use bank/wallet/OTA promotions only when the campaign permits combining them.</div>
+                </div>
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3">
+                    <div class="font-bold text-white">4. Check alternate airports</div>
+                    <div class="text-slate-400 mt-1">For large countries, compare nearby international airports and include ground-transfer cost.</div>
+                </div>
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3">
+                    <div class="font-bold text-white">5. Split tickets carefully</div>
+                    <div class="text-slate-400 mt-1">Two one-way tickets can be cheaper, but baggage, missed-connection and visa risks must be priced in.</div>
+                </div>
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3">
+                    <div class="font-bold text-white">6. Avoid “hidden-city” tricks</div>
+                    <div class="text-slate-400 mt-1">They can violate airline conditions and create baggage/return-ticket problems. This app does not recommend them.</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Section 3: Tourist Activities -->
         <div>
             <div class="flex justify-between items-center mb-3">
@@ -300,14 +406,360 @@
             </div>
             <div class="relative mb-3">
                 <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
-                <input type="text" id="modalSearchInput" placeholder="Type Cox's Bazar, Kolkata, Bangkok, Dubai, Singapore..." oninput="filterModalAirports()" class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-sky-500">
+                <input type="text" id="modalSearchInput" placeholder="Type country, city, airport or IATA code — e.g. India, Sri Lanka, CMB, DEL..." oninput="filterModalAirports()" class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-sky-500">
             </div>
+            <div id="airportDataStatus" class="mb-2 text-[10px] text-slate-500">Major worldwide airports are built in. Extended airport database loads automatically when available.</div>
             <div id="modalAirportList" class="max-h-72 overflow-y-auto custom-scroll space-y-1.5 pr-1"></div>
         </div>
     </div>
 
     <script>
         const COUNTRY_AIRPORTS = [
+
+            // Built-in worldwide fallback airports — works even if remote airport data fails
+            {
+                country: "Nepal \ud83c\uddf3\ud83c\uddf5", city: "Kathmandu", name: "Tribhuvan International Airport (KTM)", code: "ktm",
+                keywords: "nepal kathmandu tribhuvan ktm",
+                baseRoundBDT: 42000, hotelBaseBDT: 2600,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Nepal \ud83c\uddf3\ud83c\uddf5", city: "Pokhara", name: "Pokhara International Airport (PKR)", code: "pkr",
+                keywords: "nepal pokhara pkr",
+                baseRoundBDT: 45500, hotelBaseBDT: 2800,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Nepal \ud83c\uddf3\ud83c\uddf5", city: "Bhairahawa", name: "Gautam Buddha International Airport (BWA)", code: "bwa",
+                keywords: "nepal bhairahawa lumbini gautam buddha bwa",
+                baseRoundBDT: 47000, hotelBaseBDT: 2400,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Nepal \ud83c\uddf3\ud83c\uddf5", city: "Biratnagar", name: "Biratnagar Airport (BIR)", code: "bir",
+                keywords: "nepal biratnagar bir",
+                baseRoundBDT: 48000, hotelBaseBDT: 2200,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Nepal \ud83c\uddf3\ud83c\uddf5", city: "Nepalgunj", name: "Nepalgunj Airport (KEP)", code: "kep",
+                keywords: "nepal nepalgunj kep",
+                baseRoundBDT: 50000, hotelBaseBDT: 2200,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Sri Lanka \ud83c\uddf1\ud83c\uddf0", city: "Colombo", name: "Bandaranaike International Airport (CMB)", code: "cmb",
+                keywords: "sri lanka colombo bandaranaike cmb",
+                baseRoundBDT: 39000, hotelBaseBDT: 3200,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Sri Lanka \ud83c\uddf1\ud83c\uddf0", city: "Colombo", name: "Ratmalana International Airport (RML)", code: "rml",
+                keywords: "sri lanka colombo ratmalana rml",
+                baseRoundBDT: 42000, hotelBaseBDT: 3000,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Sri Lanka \ud83c\uddf1\ud83c\uddf0", city: "Hambantota", name: "Mattala Rajapaksa International Airport (HRI)", code: "hri",
+                keywords: "sri lanka hambantota mattala hri",
+                baseRoundBDT: 47000, hotelBaseBDT: 2900,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Sri Lanka \ud83c\uddf1\ud83c\uddf0", city: "Jaffna", name: "Jaffna International Airport (JAF)", code: "jaf",
+                keywords: "sri lanka jaffna jaf",
+                baseRoundBDT: 49000, hotelBaseBDT: 2500,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "India \ud83c\uddee\ud83c\uddf3", city: "Mumbai", name: "Chhatrapati Shivaji Maharaj International Airport (BOM)", code: "bom",
+                keywords: "india mumbai bombay bom",
+                baseRoundBDT: 26000, hotelBaseBDT: 3200,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "India \ud83c\uddee\ud83c\uddf3", city: "Chennai", name: "Chennai International Airport (MAA)", code: "maa",
+                keywords: "india chennai madras maa",
+                baseRoundBDT: 24000, hotelBaseBDT: 2800,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "India \ud83c\uddee\ud83c\uddf3", city: "Bengaluru", name: "Kempegowda International Airport (BLR)", code: "blr",
+                keywords: "india bengaluru bangalore blr",
+                baseRoundBDT: 28500, hotelBaseBDT: 3200,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "India \ud83c\uddee\ud83c\uddf3", city: "Hyderabad", name: "Rajiv Gandhi International Airport (HYD)", code: "hyd",
+                keywords: "india hyderabad hyd",
+                baseRoundBDT: 28500, hotelBaseBDT: 3000,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "India \ud83c\uddee\ud83c\uddf3", city: "Kochi", name: "Cochin International Airport (COK)", code: "cok",
+                keywords: "india kochi cochin kerala cok",
+                baseRoundBDT: 30000, hotelBaseBDT: 2800,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "India \ud83c\uddee\ud83c\uddf3", city: "Goa", name: "Dabolim Airport (GOI)", code: "goi",
+                keywords: "india goa dabolim goi",
+                baseRoundBDT: 31000, hotelBaseBDT: 3500,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "India \ud83c\uddee\ud83c\uddf3", city: "Goa", name: "Manohar International Airport (GOX)", code: "gox",
+                keywords: "india goa mopa gox",
+                baseRoundBDT: 32000, hotelBaseBDT: 3500,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "India \ud83c\uddee\ud83c\uddf3", city: "Ahmedabad", name: "Sardar Vallabhbhai Patel International Airport (AMD)", code: "amd",
+                keywords: "india ahmedabad amd",
+                baseRoundBDT: 29000, hotelBaseBDT: 2700,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "India \ud83c\uddee\ud83c\uddf3", city: "Jaipur", name: "Jaipur International Airport (JAI)", code: "jai",
+                keywords: "india jaipur rajasthan jai",
+                baseRoundBDT: 30000, hotelBaseBDT: 2600,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "India \ud83c\uddee\ud83c\uddf3", city: "Lucknow", name: "Chaudhary Charan Singh International Airport (LKO)", code: "lko",
+                keywords: "india lucknow lko",
+                baseRoundBDT: 28000, hotelBaseBDT: 2500,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "India \ud83c\uddee\ud83c\uddf3", city: "Guwahati", name: "Lokpriya Gopinath Bordoloi International Airport (GAU)", code: "gau",
+                keywords: "india guwahati assam gau",
+                baseRoundBDT: 22000, hotelBaseBDT: 2400,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Malaysia \ud83c\uddf2\ud83c\uddfe", city: "Kuala Lumpur", name: "Kuala Lumpur International Airport (KUL)", code: "kul",
+                keywords: "malaysia kuala lumpur kul klia",
+                baseRoundBDT: 36000, hotelBaseBDT: 3300,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Malaysia \ud83c\uddf2\ud83c\uddfe", city: "Penang", name: "Penang International Airport (PEN)", code: "pen",
+                keywords: "malaysia penang pen",
+                baseRoundBDT: 42000, hotelBaseBDT: 3000,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Malaysia \ud83c\uddf2\ud83c\uddfe", city: "Langkawi", name: "Langkawi International Airport (LGK)", code: "lgk",
+                keywords: "malaysia langkawi lgk",
+                baseRoundBDT: 45000, hotelBaseBDT: 3600,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Malaysia \ud83c\uddf2\ud83c\uddfe", city: "Kota Kinabalu", name: "Kota Kinabalu International Airport (BKI)", code: "bki",
+                keywords: "malaysia kota kinabalu sabah bki",
+                baseRoundBDT: 48000, hotelBaseBDT: 3300,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Maldives \ud83c\uddf2\ud83c\uddfb", city: "Mal\u00e9", name: "Velana International Airport (MLE)", code: "mle",
+                keywords: "maldives male velana mle",
+                baseRoundBDT: 42000, hotelBaseBDT: 8500,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Maldives \ud83c\uddf2\ud83c\uddfb", city: "Gan", name: "Gan International Airport (GAN)", code: "gan",
+                keywords: "maldives gan addu gan",
+                baseRoundBDT: 52000, hotelBaseBDT: 6500,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Indonesia \ud83c\uddee\ud83c\udde9", city: "Bali / Denpasar", name: "I Gusti Ngurah Rai International Airport (DPS)", code: "dps",
+                keywords: "indonesia bali denpasar dps",
+                baseRoundBDT: 55000, hotelBaseBDT: 4800,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Indonesia \ud83c\uddee\ud83c\udde9", city: "Jakarta", name: "Soekarno-Hatta International Airport (CGK)", code: "cgk",
+                keywords: "indonesia jakarta cgk",
+                baseRoundBDT: 52000, hotelBaseBDT: 3600,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Vietnam \ud83c\uddfb\ud83c\uddf3", city: "Hanoi", name: "Noi Bai International Airport (HAN)", code: "han",
+                keywords: "vietnam hanoi han",
+                baseRoundBDT: 50000, hotelBaseBDT: 3200,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Vietnam \ud83c\uddfb\ud83c\uddf3", city: "Ho Chi Minh City", name: "Tan Son Nhat International Airport (SGN)", code: "sgn",
+                keywords: "vietnam ho chi minh saigon sgn",
+                baseRoundBDT: 52000, hotelBaseBDT: 3400,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Vietnam \ud83c\uddfb\ud83c\uddf3", city: "Da Nang", name: "Da Nang International Airport (DAD)", code: "dad",
+                keywords: "vietnam da nang dad",
+                baseRoundBDT: 56000, hotelBaseBDT: 3600,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Japan \ud83c\uddef\ud83c\uddf5", city: "Tokyo", name: "Narita International Airport (NRT)", code: "nrt",
+                keywords: "japan tokyo narita nrt",
+                baseRoundBDT: 85000, hotelBaseBDT: 7000,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Japan \ud83c\uddef\ud83c\uddf5", city: "Tokyo", name: "Haneda Airport (HND)", code: "hnd",
+                keywords: "japan tokyo haneda hnd",
+                baseRoundBDT: 90000, hotelBaseBDT: 7600,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Japan \ud83c\uddef\ud83c\uddf5", city: "Osaka", name: "Kansai International Airport (KIX)", code: "kix",
+                keywords: "japan osaka kansai kix",
+                baseRoundBDT: 88000, hotelBaseBDT: 6500,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "South Korea \ud83c\uddf0\ud83c\uddf7", city: "Seoul", name: "Incheon International Airport (ICN)", code: "icn",
+                keywords: "south korea seoul incheon icn korea",
+                baseRoundBDT: 78000, hotelBaseBDT: 5800,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "South Korea \ud83c\uddf0\ud83c\uddf7", city: "Seoul", name: "Gimpo International Airport (GMP)", code: "gmp",
+                keywords: "south korea seoul gimpo gmp",
+                baseRoundBDT: 80000, hotelBaseBDT: 5600,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Hong Kong \ud83c\udded\ud83c\uddf0", city: "Hong Kong", name: "Hong Kong International Airport (HKG)", code: "hkg",
+                keywords: "hong kong hkg",
+                baseRoundBDT: 62000, hotelBaseBDT: 6500,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "China \ud83c\udde8\ud83c\uddf3", city: "Guangzhou", name: "Guangzhou Baiyun International Airport (CAN)", code: "can",
+                keywords: "china guangzhou canton can",
+                baseRoundBDT: 62000, hotelBaseBDT: 4200,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "China \ud83c\udde8\ud83c\uddf3", city: "Shanghai", name: "Shanghai Pudong International Airport (PVG)", code: "pvg",
+                keywords: "china shanghai pudong pvg",
+                baseRoundBDT: 68000, hotelBaseBDT: 5000,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "China \ud83c\udde8\ud83c\uddf3", city: "Beijing", name: "Beijing Capital International Airport (PEK)", code: "pek",
+                keywords: "china beijing pek",
+                baseRoundBDT: 70000, hotelBaseBDT: 5200,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Qatar \ud83c\uddf6\ud83c\udde6", city: "Doha", name: "Hamad International Airport (DOH)", code: "doh",
+                keywords: "qatar doha hamad doh",
+                baseRoundBDT: 60000, hotelBaseBDT: 5500,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Saudi Arabia \ud83c\uddf8\ud83c\udde6", city: "Jeddah", name: "King Abdulaziz International Airport (JED)", code: "jed",
+                keywords: "saudi arabia jeddah jed makkah umrah",
+                baseRoundBDT: 65000, hotelBaseBDT: 5200,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Saudi Arabia \ud83c\uddf8\ud83c\udde6", city: "Riyadh", name: "King Khalid International Airport (RUH)", code: "ruh",
+                keywords: "saudi arabia riyadh ruh",
+                baseRoundBDT: 68000, hotelBaseBDT: 5000,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "Oman \ud83c\uddf4\ud83c\uddf2", city: "Muscat", name: "Muscat International Airport (MCT)", code: "mct",
+                keywords: "oman muscat mct",
+                baseRoundBDT: 62000, hotelBaseBDT: 4500,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "T\u00fcrkiye \ud83c\uddf9\ud83c\uddf7", city: "Istanbul", name: "Istanbul Airport (IST)", code: "ist",
+                keywords: "turkey turkiye istanbul ist",
+                baseRoundBDT: 78000, hotelBaseBDT: 5200,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "United Kingdom \ud83c\uddec\ud83c\udde7", city: "London", name: "Heathrow Airport (LHR)", code: "lhr",
+                keywords: "uk united kingdom london heathrow lhr",
+                baseRoundBDT: 110000, hotelBaseBDT: 8500,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "United Kingdom \ud83c\uddec\ud83c\udde7", city: "London", name: "Gatwick Airport (LGW)", code: "lgw",
+                keywords: "uk united kingdom london gatwick lgw",
+                baseRoundBDT: 105000, hotelBaseBDT: 7800,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "United States \ud83c\uddfa\ud83c\uddf8", city: "New York", name: "John F. Kennedy International Airport (JFK)", code: "jfk",
+                keywords: "usa united states new york jfk",
+                baseRoundBDT: 135000, hotelBaseBDT: 11000,
+                domesticAirlines: [],
+                attractions: []
+            },
+            {
+                country: "United States \ud83c\uddfa\ud83c\uddf8", city: "Newark", name: "Newark Liberty International Airport (EWR)", code: "ewr",
+                keywords: "usa united states newark new york ewr",
+                baseRoundBDT: 132000, hotelBaseBDT: 10500,
+                domesticAirlines: [],
+                attractions: []
+            },
             // Thailand 🇹🇭
             { 
                 country: "Thailand 🇹🇭", city: "Bangkok (Main Hub)", name: "Suvarnabhumi Int. (BKK)", code: "bkk", 
@@ -467,6 +919,118 @@
             }
         ];
 
+        // Worldwide airport search (lazy-loaded from MIT-licensed JSON-Airports on GitHub).
+        // Built-in airports remain the fallback if the network is unavailable.
+        const GLOBAL_AIRPORTS_URLS = [
+            "https://raw.githubusercontent.com/jbrooksuk/JSON-Airports/master/airports.json",
+            "https://cdn.jsdelivr.net/gh/jbrooksuk/JSON-Airports@master/airports.json"
+        ];
+        let worldwideAirports = [];
+        let worldwideAirportsLoaded = false;
+        let worldwideAirportsLoading = false;
+
+        function getCountryName(iso) {
+            try {
+                if (!iso) return "Unknown Country";
+                return new Intl.DisplayNames(['en'], { type: 'region' }).of(String(iso).toUpperCase()) || iso;
+            } catch (e) {
+                return String(iso || "Unknown").toUpperCase();
+            }
+        }
+
+        function normalizeRemoteAirport(item) {
+            if (!item || item.status === 0 || !item.iata || !item.name) return null;
+            const iata = String(item.iata).trim().toLowerCase();
+            if (!/^[a-z0-9]{3}$/i.test(iata)) return null;
+
+            const countryName = getCountryName(item.iso);
+            const size = item.size ? String(item.size) : "airport";
+            const cityGuess = String(item.name)
+                .replace(/\bInternational\b/gi, '')
+                .replace(/\bAirport\b/gi, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+
+            return {
+                country: `${countryName}`,
+                city: cityGuess || item.name,
+                name: `${item.name} (${iata.toUpperCase()})`,
+                code: iata,
+                keywords: `${countryName} ${item.iso || ''} ${item.name} ${iata} ${size}`,
+                baseRoundBDT: 0,
+                hotelBaseBDT: 3200,
+                domesticAirlines: [],
+                attractions: [],
+                lat: item.lat ? Number(item.lat) : null,
+                lon: item.lon ? Number(item.lon) : null,
+                source: "global"
+            };
+        }
+
+        function setAirportStatus(message, tone = 'muted') {
+            const el = document.getElementById('airportDataStatus');
+            if (!el) return;
+            el.textContent = message;
+            el.className = tone === 'ok'
+                ? "mb-2 text-[10px] text-emerald-400"
+                : tone === 'error'
+                    ? "mb-2 text-[10px] text-amber-400"
+                    : "mb-2 text-[10px] text-slate-500";
+        }
+
+        async function ensureWorldwideAirportsLoaded() {
+            if (worldwideAirportsLoaded || worldwideAirportsLoading) return;
+            worldwideAirportsLoading = true;
+            setAirportStatus("Loading worldwide airport database…");
+
+            try {
+                let data = null;
+                let lastError = null;
+
+                for (const url of GLOBAL_AIRPORTS_URLS) {
+                    try {
+                        const response = await fetch(url, { cache: "force-cache" });
+                        if (!response.ok) throw new Error(`Airport data HTTP ${response.status}`);
+                        data = await response.json();
+                        if (Array.isArray(data) && data.length) break;
+                    } catch (error) {
+                        lastError = error;
+                    }
+                }
+
+                if (!Array.isArray(data) || !data.length) {
+                    throw lastError || new Error("Worldwide airport data unavailable");
+                }
+
+                const seen = new Set(COUNTRY_AIRPORTS.map(a => a.code.toLowerCase()));
+                worldwideAirports = data
+                    .map(normalizeRemoteAirport)
+                    .filter(Boolean)
+                    .filter(a => {
+                        if (seen.has(a.code)) return false;
+                        seen.add(a.code);
+                        return true;
+                    });
+
+                worldwideAirportsLoaded = true;
+                setAirportStatus(`Worldwide database ready: ${worldwideAirports.length.toLocaleString()} additional IATA airports.`, 'ok');
+
+                // Re-run the user's current search after the data arrives.
+                filterModalAirports(false);
+            } catch (error) {
+                console.warn("Worldwide airport database unavailable:", error);
+                setAirportStatus("Worldwide database could not load. Built-in airports are still available.", 'error');
+            } finally {
+                worldwideAirportsLoading = false;
+            }
+        }
+
+        function getAllAirports() {
+            return worldwideAirportsLoaded
+                ? COUNTRY_AIRPORTS.concat(worldwideAirports)
+                : COUNTRY_AIRPORTS;
+        }
+
         let currentTripType = 'round';
         let activeModalType = 'dest';
         let selectedOriginCode = "dac";
@@ -533,7 +1097,8 @@
 
             modal.classList.remove('hidden');
             input.value = '';
-            filterModalAirports();
+            filterModalAirports(false);
+            ensureWorldwideAirportsLoaded();
             setTimeout(() => input.focus(), 50);
         }
 
@@ -545,35 +1110,85 @@
             if (e.target === this) closeLocationModal();
         });
 
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         function cleanString(str) {
             return (str || "").toLowerCase().replace(/['\s\-_]/g, "");
         }
 
-        function filterModalAirports() {
-            const raw = document.getElementById('modalSearchInput').value.trim().toLowerCase();
+        function filterModalAirports(loadIfNeeded = true) {
+            const rawOriginal = document.getElementById('modalSearchInput').value.trim();
+            const raw = rawOriginal.toLowerCase();
             const clean = cleanString(raw);
             const listContainer = document.getElementById('modalAirportList');
 
-            const filtered = COUNTRY_AIRPORTS.filter(item => {
+            if (loadIfNeeded && raw.length >= 2 && !worldwideAirportsLoaded) {
+                ensureWorldwideAirportsLoaded();
+            }
+
+            const airports = getAllAirports();
+            let filtered = airports.filter(item => {
                 const fullText = `${item.country} ${item.city} ${item.name} ${item.code} ${item.keywords || ''}`.toLowerCase();
                 const cleanFull = cleanString(fullText);
-                return fullText.includes(raw) || cleanFull.includes(clean) || (clean.startsWith('co') && cleanFull.includes('cox'));
+                return !raw || fullText.includes(raw) || cleanFull.includes(clean) || (clean.startsWith('co') && cleanFull.includes('cox'));
             });
+
+            // Rank exact IATA / country / city matches ahead of loose text matches.
+            filtered = filtered
+                .map(item => {
+                    const code = String(item.code || '').toLowerCase();
+                    const country = String(item.country || '').toLowerCase();
+                    const city = String(item.city || '').toLowerCase();
+                    const name = String(item.name || '').toLowerCase();
+                    let score = 0;
+                    if (raw && code === raw) score += 100;
+                    if (raw && country === raw) score += 80;
+                    if (raw && city === raw) score += 70;
+                    if (raw && country.startsWith(raw)) score += 50;
+                    if (raw && city.startsWith(raw)) score += 40;
+                    if (raw && name.startsWith(raw)) score += 30;
+                    if (item.source !== 'global') score += 5;
+                    return { item, score };
+                })
+                .sort((a, b) => b.score - a.score || a.item.country.localeCompare(b.item.country) || a.item.name.localeCompare(b.item.name))
+                .slice(0, raw ? 250 : 80)
+                .map(x => x.item);
+
+            if (!filtered.length) {
+                const loadingNote = !worldwideAirportsLoaded
+                    ? `<div class="text-[10px] text-slate-500 mt-1">Worldwide airport data is still loading; results may appear automatically.</div>`
+                    : '';
+                listContainer.innerHTML = `
+                    <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-4 text-center">
+                        <div class="text-sm font-bold text-slate-300">No airport found for “${escapeHtml(rawOriginal)}”</div>
+                        <div class="text-[11px] text-slate-500 mt-1">Try a country, city, airport name or IATA code.</div>
+                        ${loadingNote}
+                    </div>
+                `;
+                return;
+            }
 
             listContainer.innerHTML = filtered.map(item => `
                 <div onclick="selectAirportFromModal('${item.code}')" 
                      class="p-2.5 rounded-xl border border-slate-800 bg-slate-950/60 hover:bg-slate-800 cursor-pointer flex justify-between items-center transition">
-                    <div>
-                        <div class="text-xs font-bold text-white">${item.name}</div>
-                        <div class="text-[11px] text-slate-400">${item.city} • <span class="text-sky-400 font-semibold">${item.country}</span></div>
+                    <div class="min-w-0 pr-2">
+                        <div class="text-xs font-bold text-white truncate">${escapeHtml(item.name)}</div>
+                        <div class="text-[11px] text-slate-400 truncate">${escapeHtml(item.city)} • <span class="text-sky-400 font-semibold">${escapeHtml(item.country)}</span></div>
                     </div>
-                    <span class="text-[11px] font-black px-2 py-0.5 rounded bg-slate-800 text-sky-400 border border-slate-700 uppercase">${item.code}</span>
+                    <span class="shrink-0 text-[11px] font-black px-2 py-0.5 rounded bg-slate-800 text-sky-400 border border-slate-700 uppercase">${escapeHtml(item.code)}</span>
                 </div>
             `).join('');
         }
 
         function selectAirportFromModal(code) {
-            const airport = COUNTRY_AIRPORTS.find(item => item.code === code);
+            const airport = getAllAirports().find(item => item.code === code);
             if (!airport) return;
 
             if (activeModalType === 'origin') {
@@ -655,7 +1270,7 @@
                     else if (inRange) classes += " sk-day-in-range";
                 }
 
-                const matchedDest = COUNTRY_AIRPORTS.find(i => i.code === selectedDestCode) || COUNTRY_AIRPORTS[0];
+                const matchedDest = getAllAirports().find(i => i.code === selectedDestCode) || COUNTRY_AIRPORTS[0];
                 let baseDayVal = matchedDest.baseRoundBDT > 0 ? matchedDest.baseRoundBDT : 9500;
                 if (currentTripType === 'oneway') baseDayVal *= 0.55;
                 else if (currentTripType === 'multicity') baseDayVal *= 1.35;
@@ -775,7 +1390,7 @@
             const btnText = document.getElementById('btnText');
 
             icon.className = "fa-solid fa-arrows-rotate fa-spin";
-            btnText.innerText = "Scanning Rates...";
+            btnText.innerText = "Preparing Searches...";
             toast.classList.remove('hidden');
 
             setTimeout(() => {
@@ -827,8 +1442,10 @@
                 document.getElementById('dateBanner').innerText = `${dStr} ➔ ${rStr}`;
             }
 
-            const matchedDest = COUNTRY_AIRPORTS.find(i => i.code === selectedDestCode) || COUNTRY_AIRPORTS[0];
-            let realMarketBaseBDT = matchedDest.baseRoundBDT > 0 ? matchedDest.baseRoundBDT : 38500;
+            const matchedDest = getAllAirports().find(i => i.code === selectedDestCode) || COUNTRY_AIRPORTS[0];
+            let realMarketBaseBDT = matchedDest.baseRoundBDT > 0 ? matchedDest.baseRoundBDT : 65000;
+            // Generic planning reference for airports loaded from the global dataset.
+            // It is deliberately not presented as a live market fare.
             
             if (currentTripType === 'oneway') {
                 realMarketBaseBDT = Math.round(realMarketBaseBDT * 0.55);
@@ -875,9 +1492,10 @@
                 goZayanUrl = `https://www.gozayan.com/flight/list?tripType=2&origin=${origCode}&destination=${destCode}&departDate=${dStd}&returnDate=${rStd}&adult=1`;
             }
 
-            const airline1 = matchedDest.domesticAirlines[0] || { name: "US-Bangla Airlines", website: "https://usbair.com" };
-            const airline2 = matchedDest.domesticAirlines[1] || { name: "Thai Airways", website: "https://www.thaiairways.com" };
-            const airline3 = matchedDest.domesticAirlines[2] || { name: "Biman Bangladesh", website: "https://www.biman-airlines.com" };
+            const knownAirlines = Array.isArray(matchedDest.domesticAirlines) ? matchedDest.domesticAirlines : [];
+            const airline1 = knownAirlines[0] || { name: "Google Flights Comparison", website: googleFlightsUrl };
+            const airline2 = knownAirlines[1] || { name: "Skyscanner Comparison", website: skyscannerDirectUrl };
+            const airline3 = knownAirlines[2] || { name: "Airline Direct / Meta Search", website: googleFlightsUrl };
 
             // ১. টপ ৩টি ফ্লাইট প্ল্যাটফর্ম
             const flightPlatforms = [
@@ -1050,10 +1668,10 @@
 
             // ৩. টপ ৩টি ট্যুরিস্ট অ্যাক্টিভিটিজ
             const touristContainer = document.getElementById('touristResults');
-            const attractions = matchedDest.attractions || [
-                { name: `${matchedDest.city} City Sightseeing & Landmark Tour`, priceBDT: "৳ 1,800", discount: "20% OFF", img: "https://images.unsplash.com/photo-1589802829985-817e51171b92?w=500&q=80" },
-                { name: `${matchedDest.city} Sunset Cruise & Heritage Pass`, priceBDT: "৳ 2,500", discount: "25% OFF", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=80" },
-                { name: `${matchedDest.city} Local Culture & Highlights Pass`, priceBDT: "৳ 1,200", discount: "15% OFF", img: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=500&q=80" }
+            const attractions = (matchedDest.attractions && matchedDest.attractions.length) ? matchedDest.attractions : [
+                { name: `${matchedDest.city} — browse top attractions`, priceBDT: "Check live price", discount: "Klook Search", img: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=500&q=80" },
+                { name: `${matchedDest.city} — landmarks & things to do`, priceBDT: "Explore map", discount: "Google Maps", img: "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=500&q=80" },
+                { name: `${matchedDest.city} — local experiences`, priceBDT: "Check provider", discount: "Compare", img: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=500&q=80" }
             ];
 
             touristContainer.innerHTML = attractions.map(item => `
