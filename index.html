@@ -7,6 +7,7 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
     <style>
         .custom-scroll::-webkit-scrollbar { width: 5px; }
         .custom-scroll::-webkit-scrollbar-thumb { background-color: #38bdf8; border-radius: 4px; }
@@ -138,7 +139,7 @@
                 <!-- Currency Selector -->
                 <div>
                     <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Currency</label>
-                    <select id="currencySelect" onchange="renderCalendars(); calculateDeal();" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-500 text-xs sm:text-sm">
+                    <select id="currencySelect" onchange="renderCalendars(); calculateDeal(); updateTourPackages();" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-500 text-xs sm:text-sm">
                         <option value="BDT" selected>BDT (৳ Bangladesh Taka)</option>
                         <option value="USD">USD ($ US Dollar)</option>
                         <option value="INR">INR (₹ Indian Rupee)</option>
@@ -282,7 +283,7 @@
         </div>
 
         <!-- Section 1: Top 3 Lowest Flight Deals -->
-        <div class="mb-8">
+        <div class="mb-8" data-aos="fade-up">
             <div class="flex justify-between items-center mb-3">
                 <h2 class="text-sm sm:text-lg font-bold text-sky-400 flex items-center gap-2">
                     <i class="fa-solid fa-plane-arrival"></i> Top 3 Estimated Flight Options (Pre-filled Links)
@@ -293,7 +294,7 @@
         </div>
 
         <!-- Section 2: Top 3 Estimated Hotel Options -->
-        <div class="mb-8" id="hotelSectionWrapper">
+        <div class="mb-8" id="hotelSectionWrapper" data-aos="fade-up">
             <div class="flex justify-between items-center mb-3">
                 <h2 class="text-sm sm:text-lg font-bold text-emerald-400 flex items-center gap-2">
                     <i class="fa-solid fa-hotel"></i> Top 3 Estimated Hotel Options
@@ -384,6 +385,39 @@
             </div>
         </div>
 
+
+        <!-- Destination Weather Forecast -->
+        <div class="mb-8" id="weatherSection" data-aos="fade-up">
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+                <div>
+                    <h2 class="text-sm sm:text-lg font-bold text-cyan-300 flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-sun"></i> Destination Weather Forecast
+                    </h2>
+                    <p id="weatherMeta" class="text-[10px] text-slate-500 mt-1">Select a destination to load the latest available 7-day forecast.</p>
+                </div>
+                <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer" class="text-[10px] text-sky-400 hover:text-sky-300">Weather data: Open-Meteo ↗</a>
+            </div>
+            <div id="weatherLoading" class="glass-card rounded-2xl p-4 text-xs text-slate-400">
+                <i class="fa-solid fa-circle-notch fa-spin text-cyan-300 mr-2"></i> Preparing destination forecast…
+            </div>
+            <div id="weatherError" class="hidden rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-300"></div>
+            <div id="weatherCards" class="hidden grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2"></div>
+        </div>
+
+        <!-- Smart Tour Packages -->
+        <div class="mb-8" id="packageSection" data-aos="fade-up">
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+                <div>
+                    <h2 class="text-sm sm:text-lg font-bold text-pink-300 flex items-center gap-2">
+                        <i class="fa-solid fa-suitcase-rolling"></i> Smart Tour Packages
+                    </h2>
+                    <p class="text-[10px] text-slate-500 mt-1">Planning estimates only — final hotel, transfers, activities, taxes and availability are confirmed on provider sites.</p>
+                </div>
+                <span class="text-[10px] text-slate-400">Budget + Luxury</span>
+            </div>
+            <div id="tourPackageResults" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+        </div>
+
         <!-- Section 3: Tourist Activities -->
         <div>
             <div class="flex justify-between items-center mb-3">
@@ -413,6 +447,8 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
     <script>
         const COUNTRY_AIRPORTS = [
 
@@ -1048,6 +1084,167 @@
         const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const dayNamesShort = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+
+        const WEATHER_CODE_MAP = {
+            0:["Clear sky","fa-sun"],1:["Mainly clear","fa-sun"],2:["Partly cloudy","fa-cloud-sun"],3:["Overcast","fa-cloud"],
+            45:["Fog","fa-smog"],48:["Rime fog","fa-smog"],51:["Light drizzle","fa-cloud-rain"],53:["Drizzle","fa-cloud-rain"],
+            55:["Heavy drizzle","fa-cloud-showers-heavy"],61:["Light rain","fa-cloud-rain"],63:["Rain","fa-cloud-showers-heavy"],
+            65:["Heavy rain","fa-cloud-showers-heavy"],71:["Light snow","fa-snowflake"],73:["Snow","fa-snowflake"],
+            75:["Heavy snow","fa-snowflake"],80:["Rain showers","fa-cloud-showers-heavy"],81:["Rain showers","fa-cloud-showers-heavy"],
+            82:["Heavy showers","fa-cloud-showers-heavy"],95:["Thunderstorm","fa-cloud-bolt"],96:["Thunderstorm + hail","fa-cloud-bolt"],
+            99:["Severe thunderstorm","fa-cloud-bolt"]
+        };
+
+        function getCountryText(item) {
+            return String(item?.country || '').replace(/[\u{1F1E6}-\u{1F1FF}]{2}/gu, '').trim();
+        }
+
+        async function geocodeDestination(item) {
+            if (Number.isFinite(item?.lat) && Number.isFinite(item?.lon)) {
+                return { latitude:item.lat, longitude:item.lon, name:item.city, country:getCountryText(item) };
+            }
+            const country = getCountryText(item);
+            const city = String(item.city || '').replace(/\([^)]*\)/g, '').trim();
+            const queries = [`${city}, ${country}`, city];
+
+            for (const q of queries) {
+                const response = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=5&language=en&format=json`);
+                if (!response.ok) continue;
+                const data = await response.json();
+                const results = Array.isArray(data.results) ? data.results : [];
+                if (results.length) {
+                    return results.find(r => !country || String(r.country || '').toLowerCase().includes(country.toLowerCase())) || results[0];
+                }
+            }
+            throw new Error("Destination coordinates were not found.");
+        }
+
+        function weatherIcon(code) {
+            return WEATHER_CODE_MAP[code] || ["Weather","fa-cloud-sun"];
+        }
+
+        async function updateDestinationWeather() {
+            const loading = document.getElementById('weatherLoading');
+            const errorBox = document.getElementById('weatherError');
+            const cards = document.getElementById('weatherCards');
+            const meta = document.getElementById('weatherMeta');
+            if (!loading || !errorBox || !cards || !meta) return;
+
+            const destination = getAllAirports().find(i => i.code === selectedDestCode) || COUNTRY_AIRPORTS[0];
+            loading.classList.remove('hidden');
+            errorBox.classList.add('hidden');
+            cards.classList.add('hidden');
+
+            try {
+                const place = await geocodeDestination(destination);
+                const params = new URLSearchParams({
+                    latitude: place.latitude,
+                    longitude: place.longitude,
+                    daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max",
+                    timezone: "auto",
+                    forecast_days: "7"
+                });
+                const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
+                if (!response.ok) throw new Error("Weather request failed");
+                const data = await response.json();
+                const d = data.daily;
+                if (!d || !Array.isArray(d.time)) throw new Error("Weather data incomplete");
+
+                meta.textContent = `${destination.city} • ${place.country || getCountryText(destination)} • 7-day forecast • ${data.timezone || 'local time'}`;
+                cards.innerHTML = d.time.map((date, idx) => {
+                    const [label, icon] = weatherIcon(d.weather_code?.[idx]);
+                    const dt = new Date(`${date}T12:00:00`);
+                    const rain = d.precipitation_probability_max?.[idx] ?? 0;
+                    const wind = Math.round(d.wind_speed_10m_max?.[idx] ?? 0);
+                    return `
+                        <div class="glass-card rounded-2xl p-3 text-center">
+                            <div class="text-[10px] font-black text-sky-300 uppercase">${dt.toLocaleDateString('en-US',{weekday:'short'})}</div>
+                            <div class="text-[10px] text-slate-500">${dt.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
+                            <i class="fa-solid ${icon} text-2xl text-cyan-300 my-3"></i>
+                            <div class="text-xs font-bold text-white">${Math.round(d.temperature_2m_max?.[idx])}° / ${Math.round(d.temperature_2m_min?.[idx])}°C</div>
+                            <div class="text-[10px] text-slate-400 mt-1">${label}</div>
+                            <div class="text-[10px] text-slate-500 mt-2"><i class="fa-solid fa-droplet text-sky-400"></i> ${rain}% • <i class="fa-solid fa-wind"></i> ${wind} km/h</div>
+                        </div>`;
+                }).join('');
+                loading.classList.add('hidden');
+                cards.classList.remove('hidden');
+                if (window.AOS) AOS.refreshHard();
+            } catch (err) {
+                console.warn(err);
+                loading.classList.add('hidden');
+                errorBox.textContent = "Weather forecast is temporarily unavailable for this destination. Flight/hotel search still works normally.";
+                errorBox.classList.remove('hidden');
+            }
+        }
+
+        function updateTourPackages() {
+            const container = document.getElementById('tourPackageResults');
+            if (!container) return;
+
+            const destination = getAllAirports().find(i => i.code === selectedDestCode) || COUNTRY_AIRPORTS[0];
+            const currency = document.getElementById('currencySelect').value;
+            let nights = 3;
+            if (currentTripType !== 'oneway' && selectedDeptDate && selectedRetDate) {
+                nights = Math.max(1, Math.round((selectedRetDate - selectedDeptDate) / 86400000));
+            }
+
+            const hotelBase = destination.hotelBaseBDT || 3200;
+            const budgetHotel = Math.round(hotelBase * 0.85) * nights;
+            const budgetTransport = Math.max(900, Math.round(hotelBase * 0.25)) * nights;
+            const budgetActivities = Math.max(1200, Math.round(hotelBase * 0.35)) * Math.min(nights,4);
+            const budgetTotal = budgetHotel + budgetTransport + budgetActivities;
+
+            const luxuryHotel = Math.round(hotelBase * 2.8) * nights;
+            const luxuryTransport = Math.max(2500, Math.round(hotelBase * 0.8)) * nights;
+            const luxuryActivities = Math.max(3500, Math.round(hotelBase * 0.85)) * Math.min(nights,5);
+            const luxuryTotal = luxuryHotel + luxuryTransport + luxuryActivities;
+
+            const city = String(destination.city || '').replace(/\([^)]*\)/g,'').trim();
+            const agoda = `https://www.agoda.com/search?text=${encodeURIComponent(city)}`;
+            const booking = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(city)}`;
+            const klook = `https://www.klook.com/search?query=${encodeURIComponent(city)}`;
+            const maps = `https://maps.google.com/?q=${encodeURIComponent(city + ' attractions')}`;
+
+            container.innerHTML = `
+                <div class="glass-card rounded-2xl p-4 sm:p-5 border border-emerald-500/20">
+                    <div class="flex items-start justify-between gap-3">
+                        <div><span class="text-[10px] uppercase font-black tracking-wider text-emerald-300">Smart Budget</span>
+                        <h3 class="text-xl font-black text-white mt-1">${escapeHtml(city)} Value Trip</h3>
+                        <p class="text-xs text-slate-400 mt-1">${nights} night${nights===1?'':'s'} • value hotel • local/shared transport • essential attractions</p></div>
+                        <i class="fa-solid fa-piggy-bank text-2xl text-emerald-400"></i>
+                    </div>
+                    <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-slate-950/70 rounded-xl p-2"><div class="text-[10px] text-slate-500">Hotel</div><div class="text-xs font-bold text-white">${formatCurrency(budgetHotel,currency)}</div></div>
+                        <div class="bg-slate-950/70 rounded-xl p-2"><div class="text-[10px] text-slate-500">Travel</div><div class="text-xs font-bold text-white">${formatCurrency(budgetTransport,currency)}</div></div>
+                        <div class="bg-slate-950/70 rounded-xl p-2"><div class="text-[10px] text-slate-500">Activities</div><div class="text-xs font-bold text-white">${formatCurrency(budgetActivities,currency)}</div></div>
+                    </div>
+                    <div class="mt-4"><div class="text-[10px] text-slate-500">Estimated land package (airfare excluded)</div><div class="text-2xl font-black text-emerald-400">${formatCurrency(budgetTotal,currency)}</div></div>
+                    <div class="grid grid-cols-2 gap-2 mt-4">
+                        <a href="${agoda}" target="_blank" rel="noopener noreferrer" class="text-center rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white py-2 text-xs font-bold">Value Hotels</a>
+                        <a href="${klook}" target="_blank" rel="noopener noreferrer" class="text-center rounded-xl bg-slate-800 hover:bg-slate-700 text-white py-2 text-xs font-bold border border-slate-700">Cheap Activities</a>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 sm:p-5 border border-amber-500/20">
+                    <div class="flex items-start justify-between gap-3">
+                        <div><span class="text-[10px] uppercase font-black tracking-wider text-amber-300">Luxury Escape</span>
+                        <h3 class="text-xl font-black text-white mt-1">${escapeHtml(city)} Premium Trip</h3>
+                        <p class="text-xs text-slate-400 mt-1">${nights} night${nights===1?'':'s'} • premium hotel • private transfer • curated experiences</p></div>
+                        <i class="fa-solid fa-gem text-2xl text-amber-400"></i>
+                    </div>
+                    <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-slate-950/70 rounded-xl p-2"><div class="text-[10px] text-slate-500">Hotel</div><div class="text-xs font-bold text-white">${formatCurrency(luxuryHotel,currency)}</div></div>
+                        <div class="bg-slate-950/70 rounded-xl p-2"><div class="text-[10px] text-slate-500">Private travel</div><div class="text-xs font-bold text-white">${formatCurrency(luxuryTransport,currency)}</div></div>
+                        <div class="bg-slate-950/70 rounded-xl p-2"><div class="text-[10px] text-slate-500">Experiences</div><div class="text-xs font-bold text-white">${formatCurrency(luxuryActivities,currency)}</div></div>
+                    </div>
+                    <div class="mt-4"><div class="text-[10px] text-slate-500">Estimated land package (airfare excluded)</div><div class="text-2xl font-black text-amber-400">${formatCurrency(luxuryTotal,currency)}</div></div>
+                    <div class="grid grid-cols-2 gap-2 mt-4">
+                        <a href="${booking}" target="_blank" rel="noopener noreferrer" class="text-center rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 py-2 text-xs font-black">Premium Hotels</a>
+                        <a href="${maps}" target="_blank" rel="noopener noreferrer" class="text-center rounded-xl bg-slate-800 hover:bg-slate-700 text-white py-2 text-xs font-bold border border-slate-700">Experiences</a>
+                    </div>
+                </div>`;
+        }
+
         function setTripType(type) {
             currentTripType = type;
             const btnRound = document.getElementById('btnRoundTrip');
@@ -1203,6 +1400,8 @@
             }
             closeLocationModal();
             triggerFullScan();
+            updateDestinationWeather();
+            updateTourPackages();
         }
 
         // Promo Engine
@@ -1333,6 +1532,7 @@
             deptCalMonth = new Date(selectedDeptDate.getFullYear(), selectedDeptDate.getMonth(), 1);
             renderCalendars();
             triggerFullScan();
+            updateTourPackages();
         }
 
         function formatDate(d) {
@@ -1702,6 +1902,16 @@
         renderCalendars();
         validateRoute();
         calculateDeal();
+        updateTourPackages();
+        updateDestinationWeather();
+
+        if (window.AOS) {
+            AOS.init({ duration: 650, easing: 'ease-out-cubic', once: true, offset: 40 });
+        }
+        if (window.Motion && Motion.animate) {
+            Motion.animate("header h1", { opacity: [0, 1], transform: ["translateY(-14px)", "translateY(0px)"] }, { duration: 0.7 });
+            Motion.animate("#searchBtn", { scale: [0.98, 1] }, { duration: 0.55, delay: 0.15 });
+        }
     </script>
 </body>
 </html>
