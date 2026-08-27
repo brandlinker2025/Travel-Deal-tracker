@@ -386,6 +386,106 @@
         </div>
 
 
+
+        <!-- Interactive Destination Map -->
+        <div class="mb-8" id="mapSection" data-aos="fade-up">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div>
+                    <h2 class="text-sm sm:text-lg font-bold text-sky-300 flex items-center gap-2">
+                        <i class="fa-solid fa-map-location-dot"></i> Interactive Destination Map
+                    </h2>
+                    <p id="mapMeta" class="text-[10px] text-slate-500 mt-1">Destination map updates automatically when you choose an airport.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <a id="mapOpenLink" href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="text-[10px] px-2.5 py-1 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-300 font-bold">
+                        Open in Google Maps ↗
+                    </a>
+                    <a id="mapHotelsLink" href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="text-[10px] px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 font-bold">
+                        Nearby hotels
+                    </a>
+                    <a id="mapAttractionsLink" href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="text-[10px] px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 font-bold">
+                        Attractions
+                    </a>
+                </div>
+            </div>
+            <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+                <iframe id="destinationMap"
+                        title="Destination map"
+                        class="w-full h-[320px] sm:h-[420px] border-0"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                        allowfullscreen></iframe>
+            </div>
+            <p class="mt-2 text-[10px] text-slate-500">Map visualisation is provided by Google Maps. Exact venue details, opening hours and local routing should be confirmed in Google Maps before travel.</p>
+        </div>
+
+        <!-- Verified Agency Direct Offers -->
+        <div class="mb-8" id="verifiedAgencySection" data-aos="fade-up">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div>
+                    <h2 class="text-sm sm:text-lg font-bold text-emerald-300 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved"></i> Verified Agency Direct Offers
+                    </h2>
+                    <p class="text-[10px] text-slate-500 mt-1">Only official airline/holiday-operator pages are listed here. Prices and availability can change before payment.</p>
+                </div>
+                <span class="text-[10px] px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 font-bold">Official-source verified</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+                <a href="https://www.qatarairwaysholidays.com/" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-4 hover:border-emerald-500/40 transition">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <div class="text-[10px] uppercase font-black text-emerald-300">Official airline holidays</div>
+                            <h3 class="text-sm font-black text-white mt-1">Qatar Airways Holidays</h3>
+                        </div>
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2 leading-5">Flight + hotel, multi-city and Qatar stopover packages. Official site currently advertises stopover hotel packages from very low promotional rates.</p>
+                    <div class="text-[10px] text-sky-300 font-bold mt-3">Open official offers ↗</div>
+                </a>
+
+                <a href="https://holidays.turkishairlines.com/" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-4 hover:border-emerald-500/40 transition">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <div class="text-[10px] uppercase font-black text-emerald-300">Official airline holidays</div>
+                            <h3 class="text-sm font-black text-white mt-1">Turkish Airlines Holidays</h3>
+                        </div>
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2 leading-5">Flight + hotel packages with optional transfers, activities and insurance. Official site also promotes last-minute and seasonal offers.</p>
+                    <div class="text-[10px] text-sky-300 font-bold mt-3">Open official offers ↗</div>
+                </a>
+
+                <a href="https://holidays.flydubai.com/en-bd/cheap-holiday-packages/" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-4 hover:border-emerald-500/40 transition">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <div class="text-[10px] uppercase font-black text-emerald-300">Official Bangladesh market page</div>
+                            <h3 class="text-sm font-black text-white mt-1">flydubai Holidays</h3>
+                        </div>
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2 leading-5">Packages from Bangladesh can include flights, hotels, activities and transfers, including last-minute bookings when inventory is available.</p>
+                    <div class="text-[10px] text-sky-300 font-bold mt-3">Open Bangladesh offers ↗</div>
+                </a>
+
+                <a href="https://airastra.com/holiday-packages" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-4 hover:border-emerald-500/40 transition">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <div class="text-[10px] uppercase font-black text-emerald-300">Official Bangladesh airline</div>
+                            <h3 class="text-sm font-black text-white mt-1">AIR ASTRA Holidays</h3>
+                        </div>
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2 leading-5">Official Cox's Bazar packages bundle return airfare, hotel, breakfast and airport transfer. Current offers are subject to seat/room availability.</p>
+                    <div class="text-[10px] text-sky-300 font-bold mt-3">Open official packages ↗</div>
+                </a>
+            </div>
+
+            <div class="mt-3 rounded-xl border border-slate-800 bg-slate-950/60 p-3 text-[10px] leading-4 text-slate-500">
+                “Verified” here means the link points to the airline or operator's official website and the offer type was checked against that official source. It does not guarantee the quoted price remains available at checkout.
+            </div>
+        </div>
+
         <!-- Destination Weather Forecast -->
         <div class="mb-8" id="weatherSection" data-aos="fade-up">
             <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
@@ -1245,6 +1345,31 @@
                 </div>`;
         }
 
+
+        function updateDestinationMap() {
+            const destination = getAllAirports().find(i => i.code === selectedDestCode) || COUNTRY_AIRPORTS[0];
+            const city = String(destination.city || '').replace(/\([^)]*\)/g, '').trim();
+            const country = getCountryText(destination);
+            const airportName = String(destination.name || '').replace(/\s*\([A-Z0-9]{3}\)\s*$/i, '').trim();
+
+            let query = `${airportName}, ${city}, ${country}`;
+            if (Number.isFinite(destination.lat) && Number.isFinite(destination.lon)) {
+                query = `${destination.lat},${destination.lon}`;
+            }
+
+            const embed = document.getElementById('destinationMap');
+            const meta = document.getElementById('mapMeta');
+            const open = document.getElementById('mapOpenLink');
+            const hotels = document.getElementById('mapHotelsLink');
+            const attractions = document.getElementById('mapAttractionsLink');
+
+            if (embed) embed.src = `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
+            if (meta) meta.textContent = `${destination.name} • ${city} • ${country}`;
+            if (open) open.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+            if (hotels) hotels.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`hotels near ${city}, ${country}`)}`;
+            if (attractions) attractions.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`top attractions in ${city}, ${country}`)}`;
+        }
+
         function setTripType(type) {
             currentTripType = type;
             const btnRound = document.getElementById('btnRoundTrip');
@@ -1402,6 +1527,7 @@
             triggerFullScan();
             updateDestinationWeather();
             updateTourPackages();
+            updateDestinationMap();
         }
 
         // Promo Engine
@@ -1904,6 +2030,7 @@
         calculateDeal();
         updateTourPackages();
         updateDestinationWeather();
+        updateDestinationMap();
 
         if (window.AOS) {
             AOS.init({ duration: 650, easing: 'ease-out-cubic', once: true, offset: 40 });
