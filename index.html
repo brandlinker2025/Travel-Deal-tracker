@@ -2115,6 +2115,38 @@
             `).join('');
         }
 
+
+        // Auto-refresh the whole app after 60 seconds of user inactivity.
+        // Any interaction resets the timer so active users are never interrupted.
+        const INACTIVITY_REFRESH_MS = 60 * 1000;
+        let inactivityRefreshTimer = null;
+
+        function scheduleInactivityRefresh() {
+            if (inactivityRefreshTimer) clearTimeout(inactivityRefreshTimer);
+
+            inactivityRefreshTimer = setTimeout(() => {
+                // Persist a tiny marker only in the URL-free browser state is unnecessary;
+                // a normal reload gives weather/maps/remote airport data a clean refresh.
+                window.location.reload();
+            }, INACTIVITY_REFRESH_MS);
+        }
+
+        function resetInactivityRefreshTimer() {
+            scheduleInactivityRefresh();
+        }
+
+        ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 'pointerdown', 'wheel'].forEach(eventName => {
+            window.addEventListener(eventName, resetInactivityRefreshTimer, { passive: true });
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                scheduleInactivityRefresh();
+            }
+        });
+
+        scheduleInactivityRefresh();
+
         renderCalendars();
         validateRoute();
         calculateDeal();
