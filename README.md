@@ -7,7 +7,7 @@ Search From / To / dates (Dhaka `DAC` is the default origin). Results are dated 
 - Google Flights `/travel/flights/search?tfs=...` (not the empty `q=` landing page), Skyscanner `sortby=cheapest`, Kayak `sort=price_a`
 - A date-wise cheapest path: ±7 days and a month calendar of provider deep-links (no invented ৳ amounts)
 - Official airline booking pages for the route
-- Official discount paths to verify on that site: airline sale pages, GoZayaan campaigns, bKash and bank offer hubs (we never subtract a promo here)
+- Official discount intel: BD bank/card campaign pages (SCB, City Amex, EBL, BRAC, bKash) quoted from the official URL, plus published airline/OTA promo codes to enter at checkout. We never subtract a guessed ৳ amount.
 - Google Hotels and Booking.com
 - Official holiday packages
 - GoZayaan dated `flight/list` search and a short list of real free tools
