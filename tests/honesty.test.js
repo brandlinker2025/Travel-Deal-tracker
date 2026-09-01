@@ -18,7 +18,9 @@ const forbidden = [
     "appliedPromoDiscount",
     "cardPercent",
     "formatCurrency",
-    "Calculating estimated rates"
+    "Calculating estimated rates",
+    "Top 3 Estimated Flight Options",
+    "planning estimates, not live quotes"
 ];
 
 forbidden.forEach((needle) => {
