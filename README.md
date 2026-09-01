@@ -15,6 +15,8 @@ Click a provider to open that site with the same dates and buy there. The live p
 
 Live site: https://global-travel-tracker.netlify.app
 
+ShareTrip is not linked: `sharetrip.net/flight/search` returns 404 and there is no working dated search URL.
+
 ## What this is not
 
 - No estimated fares
