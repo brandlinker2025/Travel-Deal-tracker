@@ -19,8 +19,24 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: 114a2783-3747-4f2e-bcd4-399ddf0c15dc
         run: |
-          if [ -z "$NETLIFY_AUTH_TOKEN" ]; then
-            echo "NETLIFY_AUTH_TOKEN is not set. Relying on Netlify Git integration (ignore=exit 1)."
-            exit 0
+          if [ -n "$NETLIFY_AUTH_TOKEN" ]; then
+            npx --yes netlify-cli api updateSite --data '{"stop_builds":false}' --site-id "$NETLIFY_SITE_ID" || true
+            npx --yes netlify-cli deploy --dir=. --prod --site "$NETLIFY_SITE_ID" --message "GitHub Actions: offer intel live"
+          else
+            echo "NETLIFY_AUTH_TOKEN is not set. Relying on Netlify Git integration."
           fi
-          npx --yes netlify-cli deploy --dir=. --prod --site "$NETLIFY_SITE_ID" --message "GitHub Actions: structured dated flight links"
+      - name: Verify canonical production
+        run: |
+          set -e
+          JS="$(curl -fsS 'https://global-travel-tracker.netlify.app/js/booking-links.js')"
+          HTML="$(curl -fsS 'https://global-travel-tracker.netlify.app/')"
+          echo "$HTML$JS" | grep -q 'sharetrip.net/flight/search' && {
+            echo "LIVE still contains sharetrip.net/flight/search"
+            exit 1
+          }
+          echo "$HTML$JS" | grep -Eq 'gozayaan.com/campaign/sc|bracbank.com/en/offers|AIRASTRA15' || {
+            echo "LIVE missing official BD bank/card or promo intel"
+            exit 1
+          }
+          echo "Live HTML/JS looks current"
+        continue-on-error: true

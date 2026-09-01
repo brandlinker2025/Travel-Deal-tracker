@@ -4,7 +4,7 @@
  *
  * Never use Google Flights `?q=` natural-language URLs (empty landing page).
  * ShareTrip `/flight/search` 404s — do not add it back without a working dated URL.
- * Stamp: offer-intel-2026-09-01
+ * Stamp: offer-intel-live-20260901
  */
 (function (root, factory) {
     const api = factory();
