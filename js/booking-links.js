@@ -4,7 +4,7 @@
  *
  * Never use Google Flights `?q=` natural-language URLs (empty landing page).
  * ShareTrip `/flight/search` 404s — do not add it back without a working dated URL.
- * Stamp: official-discounts-2026-09-01
+ * Stamp: offer-intel-2026-09-01
  */
 (function (root, factory) {
     const api = factory();
@@ -736,38 +736,9 @@
     };
 
     function officialDiscountLinks(opts) {
-        const hubs = [
-            {
-                id: "gozayaan-city-amex",
-                name: "GoZayaan × City Bank Amex",
-                blurb: "Official GoZayaan campaign (listed valid through 31 Dec 2026). Confirm it still applies at their checkout — we do not subtract it here.",
-                url: "https://gozayaan.com/campaign/id/644"
-            },
-            {
-                id: "airastra-bank-bkash",
-                name: "AIR ASTRA bank / bKash / Nagad fares",
-                blurb: "Official AIR ASTRA page for bank-card, bKash and Nagad base-fare discounts. Verify eligibility there.",
-                url: "https://airastra.com/offer/offers-deals/10-discount-base-fare"
-            },
-            {
-                id: "bkash-campaigns",
-                name: "bKash campaign list",
-                blurb: "Official bKash Find Your Offer page. Check whether a travel/flight campaign is running this week.",
-                url: "https://www.bkash.com/en/campaign"
-            },
-            {
-                id: "brac-bank-offers",
-                name: "BRAC Bank offers",
-                blurb: "Official BRAC Bank offers hub (cards, travel partners). Confirm the live campaign on the bank site.",
-                url: "https://www.bracbank.com/en/offers"
-            },
-            {
-                id: "citybank-travel",
-                name: "City Bank travel offers",
-                blurb: "City Bank official travel/Amex page pointing at GoZayaan. Verify current terms on City Bank.",
-                url: "https://www.citybankplc.com/ramadan2026/travel.php"
-            }
-        ];
+        const hubs = bankCardOfferIntel().map((item) => Object.assign({
+            blurb: `${item.claim} ${item.validity}. We do not subtract this on our page.`
+        }, item));
         const seen = new Set(hubs.map((item) => item.url));
         airlinesForRoute(opts).forEach((airline) => {
             const offer = AIRLINE_OFFER_PAGES[airline.id];
@@ -775,12 +746,147 @@
             seen.add(offer.url);
             hubs.push({
                 id: `${airline.id}-offers`,
+                bank: airline.name,
                 name: offer.name,
+                claim: offer.blurb,
+                validity: "Confirm live sale dates on the airline page",
                 blurb: offer.blurb,
                 url: offer.url
             });
         });
         return hubs;
+    }
+
+    function bankCardOfferIntel() {
+        return [
+            {
+                id: "scb-gozayaan",
+                bank: "Standard Chartered (SCB)",
+                name: "SCB cards on GoZayaan",
+                claim: "Official GoZayaan SCB page currently claims up to 10% off international base fare and up to 7% off domestic base fare for StanChart debit and credit cards. Not for EMI or internet banking.",
+                validity: "Official page says valid till 31 October 2026",
+                url: "https://gozayaan.com/campaign/sc"
+            },
+            {
+                id: "scb-airline-hub",
+                bank: "Standard Chartered (SCB)",
+                name: "SCB airline offers hub",
+                claim: "Official Standard Chartered Bangladesh airline-offers page currently claims up to 20% off when booking air tickets with an SCB debit or credit card. Terms are on that page.",
+                validity: "No end date printed on the landing page — confirm there",
+                url: "https://av.sc.com/bd/edm/airline-offers/"
+            },
+            {
+                id: "city-amex-gozayaan",
+                bank: "City Bank American Express",
+                name: "City Amex on GoZayaan",
+                claim: "Official GoZayaan campaign currently claims up to 18% off international base fare (max BDT 30,000) for Platinum / Platinum Reserve, and up to 15% (max BDT 25,000) for Gold. Card BIN is checked at GoZayaan payment.",
+                validity: "Official page says valid till 31 December 2026",
+                url: "https://gozayaan.com/campaign/id/644"
+            },
+            {
+                id: "citybank-travel",
+                bank: "City Bank",
+                name: "City Bank travel page",
+                claim: "City Bank’s official travel page describes the same Amex × GoZayaan savings. Confirm live terms on City Bank.",
+                validity: "See the City Bank page",
+                url: "https://www.citybankplc.com/ramadan2026/travel.php"
+            },
+            {
+                id: "ebl-stellar",
+                bank: "Eastern Bank (EBL)",
+                name: "EBL Stellar Platinum card",
+                claim: "Official EBL Stellar page currently claims up to 15% off selected-airline base fares, and publishes checkout codes STLRPIQ326 (international) and STLRPDQ326 (domestic) for ShareTrip. Caps and quarterly limits are on that page.",
+                validity: "Quarter codes as printed on the EBL page (Q3 2026 naming) — confirm there",
+                url: "https://www.ebl.com.bd/retail/eblcard/ebl-stellar-platinum-credit-card"
+            },
+            {
+                id: "ebl-cards-hub",
+                bank: "Eastern Bank (EBL)",
+                name: "EBL cards hub",
+                claim: "Official EBL Cards page lists ShareTrip co-brand and Infinite card travel perks (including a GoZayaan voucher on Infinite). Open it for the current product list.",
+                validity: "Ongoing card benefits — verify on EBL",
+                url: "https://www.ebl.com.bd/retail/EBL-Cards"
+            },
+            {
+                id: "brac-offers",
+                bank: "BRAC Bank",
+                name: "BRAC Bank offers hub",
+                claim: "Official BRAC Bank /en/offers page currently shows “No available offer found.” We do not invent a BRAC percentage. Recheck that hub for a new campaign.",
+                validity: "None listed on the official hub right now",
+                url: "https://www.bracbank.com/en/offers"
+            },
+            {
+                id: "airastra-banks-bkash",
+                bank: "AIR ASTRA partner banks / bKash / Nagad",
+                name: "AIR ASTRA outlet card & wallet fares",
+                claim: "Official AIR ASTRA page currently claims 10% off base fare at sales outlets for listed BD bank cards, bKash and Nagad. Not for taxes; cannot be clubbed; blackouts apply.",
+                validity: "No end date printed — except blackout dates on their page",
+                url: "https://airastra.com/offer/offers-deals/10-discount-base-fare"
+            },
+            {
+                id: "bkash-campaigns",
+                bank: "bKash",
+                name: "bKash campaign list",
+                claim: "Official bKash Find Your Offer page. Check whether a flight/travel campaign is running this week. We do not assume a bKash %.",
+                validity: "Whatever bKash currently lists",
+                url: "https://www.bkash.com/en/campaign"
+            },
+            {
+                id: "mastercard-priceless",
+                bank: "Mastercard Priceless (global)",
+                name: "Mastercard Priceless Asia-Pacific",
+                claim: "Official Mastercard Priceless AP hub for cardholder travel/hotel offers. Only use if your card is listed there.",
+                validity: "See the Mastercard page",
+                url: "https://specials.priceless.com/en-ap/homepage"
+            }
+        ];
+    }
+
+    function publishedPromoCodes(opts) {
+        const astra = AIRLINE_DIRECTORY.find((a) => a.id === "airastra");
+        const qatar = AIRLINE_DIRECTORY.find((a) => a.id === "qatar");
+        return [
+            {
+                id: "airastra15",
+                airline: "AIR ASTRA",
+                code: "AIRASTRA15",
+                appliesTo: "Official AIR ASTRA offers page: book on website or app, 15% on base fare, except blackout dates. Enter the code at AIR ASTRA checkout.",
+                expiry: "No expiry date printed on the official offers page",
+                sourceUrl: "https://www.airastra.com/node?field_offers_type_target_id=All",
+                checkoutUrl: astra ? astra.url(opts) : "https://airastra.com",
+                checkoutLabel: "Open AIR ASTRA with your dates"
+            },
+            {
+                id: "ebl-intl-code",
+                airline: "EBL Stellar → ShareTrip checkout",
+                code: "STLRPIQ326",
+                appliesTo: "Published on EBL’s official Stellar card page for international flights: up to 15% on base fare, max BDT 3,000, max 4 times per quarter per card. Enter at ShareTrip checkout (use sharetrip.net home — not /flight/search, which 404s).",
+                expiry: "Quarterly code as printed on the EBL page — confirm there",
+                sourceUrl: "https://www.ebl.com.bd/retail/eblcard/ebl-stellar-platinum-credit-card",
+                checkoutUrl: "https://sharetrip.net/",
+                checkoutLabel: "Open ShareTrip home to search, then enter code"
+            },
+            {
+                id: "ebl-dom-code",
+                airline: "EBL Stellar → ShareTrip checkout",
+                code: "STLRPDQ326",
+                appliesTo: "Published on EBL’s official Stellar card page for domestic flights: up to 15% on base fare, max BDT 1,000, max 20 times per quarter per card. Enter at ShareTrip checkout.",
+                expiry: "Quarterly code as printed on the EBL page — confirm there",
+                sourceUrl: "https://www.ebl.com.bd/retail/eblcard/ebl-stellar-platinum-credit-card",
+                checkoutUrl: "https://sharetrip.net/",
+                checkoutLabel: "Open ShareTrip home to search, then enter code"
+            },
+            {
+                id: "qatar-f1fans",
+                airline: "Qatar Airways",
+                code: "F1FANS",
+                appliesTo: "Official Qatar Airways Bangladesh F1 page: up to 12% off base fare to listed Formula 1® race cities only, on Qatar-operated itineraries. Enter the code before you search on Qatar’s site. Not a general DAC–CAN code.",
+                expiry: "See the official F1 offer page for race-by-race travel windows",
+                sourceUrl: "https://www.qatarairways.com/en-bd/offers/f1-fans-flight-deals.html",
+                checkoutUrl: qatar ? qatar.url(opts) : "https://www.qatarairways.com/en-bd/offers.html",
+                checkoutLabel: "Open Qatar booking with your dates (enter code there)"
+            }
+        ];
     }
 
     function hotelLinks(opts) {
@@ -823,6 +929,8 @@
         comparatorLinks,
         bangladeshSearchLinks,
         officialDiscountLinks,
+        bankCardOfferIntel,
+        publishedPromoCodes,
         hotelLinks,
         addDaysISO,
         stayLengthDays,

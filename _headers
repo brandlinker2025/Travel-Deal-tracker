@@ -1,11 +1,11 @@
 /*
   Cache-Control: public, max-age=0, must-revalidate
-  X-Deploy-Stamp: official-discounts-2026-09-01
+  X-Deploy-Stamp: offer-intel-2026-09-01
 
 /js/*
   Cache-Control: public, max-age=0, must-revalidate
-  X-Deploy-Stamp: official-discounts-2026-09-01
+  X-Deploy-Stamp: offer-intel-2026-09-01
 
 /index.html
   Cache-Control: public, max-age=0, must-revalidate
-  X-Deploy-Stamp: official-discounts-2026-09-01
+  X-Deploy-Stamp: offer-intel-2026-09-01
