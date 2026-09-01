@@ -193,6 +193,33 @@
             <div class="text-slate-300 text-xs font-semibold" id="dateBanner"></div>
         </div>
 
+        <div class="mb-8" id="flexibleSection">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div>
+                    <h2 class="text-sm sm:text-lg font-bold text-amber-200 flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-week"></i> Date-wise cheapest path
+                    </h2>
+                    <p class="text-[10px] text-slate-500 mt-1">Flexible dates first. We do not invent fares — each day opens Google Flights, Skyscanner or Kayak with that date already filled. Compare cheap-looking days there, then buy on the provider.</p>
+                </div>
+                <span class="text-[10px] sm:text-xs bg-amber-500/10 text-amber-200 px-2.5 py-0.5 rounded-full font-semibold border border-amber-500/20">No fake ৳ on this page</span>
+            </div>
+            <div id="monthOverview" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4"></div>
+            <div class="mb-3">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Nearby dates (±7 days)</div>
+                <div id="nearbyDateStrip" class="flex gap-2 overflow-x-auto custom-scroll pb-1"></div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 sm:p-4">
+                <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">This month — tap a date, then a provider</div>
+                    <span id="flexibleMonthLabel" class="text-xs font-bold text-white"></span>
+                </div>
+                <div class="grid grid-cols-7 text-center text-[11px] font-bold text-slate-500 mb-1">
+                    <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
+                </div>
+                <div id="flexibleMonthGrid" class="grid grid-cols-7 gap-1"></div>
+            </div>
+        </div>
+
         <div class="mb-8">
             <div class="flex justify-between items-center mb-3 gap-2">
                 <h2 class="text-sm sm:text-lg font-bold text-sky-400 flex items-center gap-2">
@@ -228,9 +255,9 @@
             <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <div>
                     <h2 class="text-sm sm:text-lg font-bold text-fuchsia-300 flex items-center gap-2">
-                        <i class="fa-solid fa-flag"></i> Bangladesh search sites
+                        <i class="fa-solid fa-flag"></i> Bangladesh search
                     </h2>
-                    <p class="text-[10px] text-slate-500 mt-1">Official OTAs. No invented discounts — confirm the live fare there.</p>
+                    <p class="text-[10px] text-slate-500 mt-1">GoZayaan official dated search. Live fare is on their site.</p>
                 </div>
             </div>
             <div id="bdResults" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
@@ -1300,6 +1327,71 @@
             }, "emerald")).join("");
 
             document.getElementById('bdResults').innerHTML = BookingLinks.bangladeshSearchLinks(opts).map(item => providerCard(item, "fuchsia")).join("");
+
+            renderFlexibleDates(opts);
+        }
+
+        function dateChip(day) {
+            const label = day.returnDate ? `${day.depart.slice(8)}→${day.returnDate.slice(8)}` : day.depart.slice(8);
+            const title = day.returnDate ? `${day.depart} → ${day.returnDate}` : day.depart;
+            return `
+                <div class="shrink-0 min-w-[7.5rem] bg-slate-950 border border-slate-800 rounded-xl p-2.5">
+                    <div class="text-[11px] font-black text-white mb-2">${escapeHtml(title)}</div>
+                    <div class="flex flex-col gap-1">
+                        <a href="${day.google}" target="_blank" rel="noopener noreferrer" class="text-center text-[10px] font-bold py-1 rounded-lg bg-sky-500/15 text-sky-300 hover:bg-sky-500/25">Google</a>
+                        <a href="${day.skyscanner}" target="_blank" rel="noopener noreferrer" class="text-center text-[10px] font-bold py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700">Skyscanner</a>
+                        <a href="${day.kayak}" target="_blank" rel="noopener noreferrer" class="text-center text-[10px] font-bold py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700">Kayak</a>
+                    </div>
+                    <div class="hidden">${escapeHtml(label)}</div>
+                </div>
+            `;
+        }
+
+        function renderFlexibleDates(opts) {
+            const overview = document.getElementById('monthOverview');
+            const strip = document.getElementById('nearbyDateStrip');
+            const grid = document.getElementById('flexibleMonthGrid');
+            const monthLabel = document.getElementById('flexibleMonthLabel');
+            if (!overview || !strip || !grid) return;
+
+            overview.innerHTML = BookingLinks.monthOverviewLinks(opts).map(item => providerCard(item, "sky")).join("");
+            strip.innerHTML = BookingLinks.flexibleNearbyDays(opts, 7).map(dateChip).join("");
+
+            const { y, m } = (function () {
+                const iso = BookingLinks.toISODate(opts.depart);
+                const [yy, mm] = iso.split("-");
+                return { y: Number(yy), m: Number(mm) };
+            })();
+            monthLabel.textContent = `${monthNames[m - 1]} ${y}`;
+
+            const monthDays = BookingLinks.flexibleMonthDays(opts);
+            const byDate = {};
+            monthDays.forEach((day) => { byDate[day.depart] = day; });
+            const firstWeekday = new Date(y, m - 1, 1).getDay();
+            const startOffset = firstWeekday === 0 ? 6 : firstWeekday - 1;
+            const last = new Date(y, m, 0).getDate();
+            let html = "";
+            for (let i = 0; i < startOffset; i++) {
+                html += `<div class="sk-day empty opacity-20"></div>`;
+            }
+            const selected = BookingLinks.toISODate(opts.depart);
+            for (let day = 1; day <= last; day++) {
+                const iso = `${y}-${String(m).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                const bundle = byDate[iso];
+                if (!bundle) {
+                    html += `<div class="sk-day empty opacity-30 text-slate-600 text-xs">${day}</div>`;
+                    continue;
+                }
+                const selectedClass = iso === selected ? " ring-1 ring-sky-400" : "";
+                html += `
+                    <div class="rounded-lg border border-slate-800 bg-slate-950 p-1 text-center${selectedClass}">
+                        <div class="text-[11px] font-bold text-white">${day}</div>
+                        <a href="${bundle.google}" target="_blank" rel="noopener noreferrer" class="block text-[8px] font-bold text-sky-300 hover:underline">G</a>
+                        <a href="${bundle.skyscanner}" target="_blank" rel="noopener noreferrer" class="block text-[8px] font-bold text-slate-300 hover:underline">S</a>
+                    </div>
+                `;
+            }
+            grid.innerHTML = html;
         }
 
         function triggerFullScan() {

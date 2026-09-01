@@ -20,7 +20,9 @@ const forbidden = [
     "formatCurrency",
     "Calculating estimated rates",
     "Top 3 Estimated Flight Options",
-    "planning estimates, not live quotes"
+    "planning estimates, not live quotes",
+    "sharetrip.net/flight/search",
+    "Open Flight Search"
 ];
 
 forbidden.forEach((needle) => {
@@ -36,7 +38,8 @@ const required = [
     "Booking.com",
     "Hazrat Shahjalal Int. (DAC)",
     "js/booking-links.js",
-    "final price is on the provider"
+    "final price is on the provider",
+    "Date-wise cheapest path"
 ];
 
 required.forEach((needle) => {
@@ -48,6 +51,9 @@ assert.ok(!links.includes("base_price"), "booking-links.js must not invent fares
 assert.ok(!links.includes("travel/flights?q="), "Google Flights must not use the natural-language q= URL");
 assert.ok(links.includes("/travel/flights/search?tfs="), "Google Flights must use structured tfs search URLs");
 assert.ok(links.includes("sort=price_a"), "Kayak must sort by price");
+assert.ok(!links.includes("sharetrip.net/flight/search"), "ShareTrip dead search URLs must be removed");
+assert.ok(links.includes("gozayaan.com/flight/list"), "GoZayaan must use dated flight/list search");
 assert.ok(html.includes("Official packages"), "index.html should keep official packages");
+assert.ok(html.includes("flexibleMonthGrid"), "index.html should render a date-wise cheapest calendar");
 
 console.log("honesty.test.js passed");

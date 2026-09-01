@@ -207,39 +207,132 @@
         return `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(city)}&checkin=${checkin}&checkout=${checkout}`;
     }
 
-    function shareTripUrl(opts) {
-        const o = upper(opts.origin);
-        const d = upper(opts.dest);
-        const dep = toISODate(opts.depart);
-        if (opts.tripType === "oneway") {
-            return `https://sharetrip.net/flight/search?tripType=OneWay&origin=${o}&destination=${d}&departDate=${dep}&adults=1`;
-        }
-        if (opts.tripType === "multicity") {
-            return "https://sharetrip.net/flight";
-        }
-        const ret = toISODate(opts.returnDate);
-        return `https://sharetrip.net/flight/search?tripType=RoundTrip&origin=${o}&destination=${d}&departDate=${dep}&returnDate=${ret}&adults=1`;
-    }
-
     function gozayaanUrl(opts) {
         const o = upper(opts.origin);
         const d = upper(opts.dest);
         const dep = toISODate(opts.depart);
-        const params = new URLSearchParams({
-            origin: o,
-            destination: d,
-            departDate: dep,
-            adult: "1"
-        });
-        if (opts.tripType === "oneway") {
-            params.set("tripType", "1");
-        } else if (opts.tripType === "multicity") {
-            return "https://gozayaan.com/";
-        } else {
-            params.set("tripType", "2");
-            params.set("returnDate", toISODate(opts.returnDate));
+        if (opts.tripType === "multicity") {
+            return "https://gozayaan.com/flight";
         }
-        return `https://gozayaan.com/?${params.toString()}`;
+        let trips = `${o},${d},${dep}`;
+        if (opts.tripType !== "oneway" && opts.returnDate) {
+            trips = `${o},${d},${dep},${d},${o},${toISODate(opts.returnDate)}`;
+        }
+        const params = new URLSearchParams({
+            adult: "1",
+            cabin_class: "Economy",
+            child: "0",
+            infant: "0",
+            trips
+        });
+        return `https://gozayaan.com/flight/list?${params.toString()}`;
+    }
+
+    function stayLengthDays(opts) {
+        if (opts.tripType === "oneway") return 0;
+        const dep = toISODate(opts.depart);
+        const ret = toISODate(opts.returnDate);
+        if (!dep || !ret) return 7;
+        const a = Date.parse(`${dep}T00:00:00`);
+        const b = Date.parse(`${ret}T00:00:00`);
+        return Math.max(1, Math.round((b - a) / 86400000));
+    }
+
+    function todayISO() {
+        return toISODate(new Date());
+    }
+
+    function optsForDepartDate(base, departISO) {
+        const stay = stayLengthDays(base);
+        const next = {
+            origin: base.origin,
+            dest: base.dest,
+            stop: base.stop,
+            tripType: base.tripType,
+            knownAirlines: base.knownAirlines,
+            depart: departISO
+        };
+        if (base.tripType !== "oneway") {
+            next.returnDate = addDaysISO(departISO, stay || 7);
+        }
+        return next;
+    }
+
+    function dateLinkBundle(base, departISO) {
+        const o = optsForDepartDate(base, departISO);
+        return {
+            depart: toISODate(o.depart),
+            returnDate: o.tripType === "oneway" ? null : toISODate(o.returnDate),
+            google: googleFlightsUrl(o),
+            skyscanner: skyscannerUrl(o),
+            kayak: kayakUrl(o),
+            gozayaan: gozayaanUrl(o)
+        };
+    }
+
+    function flexibleNearbyDays(opts, radius = 7) {
+        const center = toISODate(opts.depart);
+        const today = todayISO();
+        const days = [];
+        for (let delta = -radius; delta <= radius; delta++) {
+            const iso = addDaysISO(center, delta);
+            if (iso < today) continue;
+            days.push(dateLinkBundle(opts, iso));
+        }
+        return days;
+    }
+
+    function flexibleMonthDays(opts) {
+        const { y, m } = fromISO(opts.depart);
+        const today = todayISO();
+        const last = new Date(y, m, 0).getDate();
+        const days = [];
+        for (let day = 1; day <= last; day++) {
+            const iso = `${y}-${pad(m)}-${pad(day)}`;
+            if (iso < today) continue;
+            days.push(dateLinkBundle(opts, iso));
+        }
+        return days;
+    }
+
+    function skyscannerMonthUrl(opts) {
+        const o = lower(opts.origin);
+        const d = lower(opts.dest);
+        const ym = toSkyDate(opts.depart).slice(0, 4);
+        if (opts.tripType === "oneway") {
+            return `https://www.skyscanner.net/transport/flights/${o}/${d}/${ym}/?adultsv2=1&cabinclass=economy`;
+        }
+        const rym = toSkyDate(opts.returnDate || opts.depart).slice(0, 4);
+        return `https://www.skyscanner.net/transport/flights/${o}/${d}/${ym}/${rym}/?adultsv2=1&cabinclass=economy`;
+    }
+
+    function kayakExploreUrl(opts) {
+        return `https://www.kayak.com/explore/${upper(opts.origin)}-${upper(opts.dest)}`;
+    }
+
+    function monthOverviewLinks(opts) {
+        const monthDays = flexibleMonthDays(opts);
+        const sample = monthDays[0] || dateLinkBundle(opts, toISODate(opts.depart));
+        return [
+            {
+                id: "google-date-grid",
+                name: "Google Flights date grid",
+                blurb: "Opens a filled Google Flights search for this route. Use Date grid / Cheapest on their page.",
+                url: sample.google
+            },
+            {
+                id: "skyscanner-month",
+                name: "Skyscanner whole month",
+                blurb: "Skyscanner month view for this From/To. Real fares are on their calendar.",
+                url: skyscannerMonthUrl(opts)
+            },
+            {
+                id: "kayak-explore",
+                name: "Kayak explore",
+                blurb: "Kayak flexible-date explorer for this route.",
+                url: kayakExploreUrl(opts)
+            }
+        ];
     }
 
     function withQuery(base, params) {
@@ -590,15 +683,9 @@
     function bangladeshSearchLinks(opts) {
         return [
             {
-                id: "sharetrip",
-                name: "ShareTrip",
-                blurb: "Bangladesh OTA — open their search with these dates.",
-                url: shareTripUrl(opts)
-            },
-            {
                 id: "gozayaan",
                 name: "GoZayaan",
-                blurb: "Bangladesh OTA — confirm live fare on their site.",
+                blurb: "Official Bangladesh search with these airports and dates. Live fare is on GoZayaan.",
                 url: gozayaanUrl(opts)
             }
         ];
@@ -639,12 +726,18 @@
         kayakUrl,
         googleHotelsUrl,
         bookingUrl,
-        shareTripUrl,
         gozayaanUrl,
         airlinesForRoute,
         comparatorLinks,
         bangladeshSearchLinks,
         hotelLinks,
-        addDaysISO
+        addDaysISO,
+        stayLengthDays,
+        flexibleNearbyDays,
+        flexibleMonthDays,
+        skyscannerMonthUrl,
+        kayakExploreUrl,
+        monthOverviewLinks,
+        dateLinkBundle
     };
 });
