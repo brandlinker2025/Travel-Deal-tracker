@@ -152,8 +152,9 @@ assert.ok(sky.includes("/flights/dac/bkk/260908/260917/"));
 const skyOne = BookingLinks.skyscannerUrl(oneway);
 assert.strictEqual(
     skyOne,
-    "https://www.skyscanner.net/transport/flights/dac/can/260907/?adultsv2=1&cabinclass=economy"
+    "https://www.skyscanner.net/transport/flights/dac/can/260907/?adultsv2=1&cabinclass=economy&sortby=cheapest"
 );
+assert.ok(sky.includes("sortby=cheapest"));
 assert.ok(!skyOne.includes("260907/26"));
 
 const kayak = BookingLinks.kayakUrl(round);
@@ -238,7 +239,7 @@ assert.strictEqual(decodedDacCan.tripType, 2);
 assert.deepStrictEqual(decodedDacCan.legs[0], { date: "2026-09-03", origin: "DAC", dest: "CAN" });
 assert.strictEqual(
     BookingLinks.skyscannerUrl(dacCan),
-    "https://www.skyscanner.net/transport/flights/dac/can/260903/?adultsv2=1&cabinclass=economy"
+    "https://www.skyscanner.net/transport/flights/dac/can/260903/?adultsv2=1&cabinclass=economy&sortby=cheapest"
 );
 assert.strictEqual(
     BookingLinks.kayakUrl(dacCan),
@@ -256,7 +257,19 @@ assert.ok(!JSON.stringify(bd).toLowerCase().includes("sharetrip"));
 
 const skyMonth = BookingLinks.skyscannerMonthUrl(dacCan);
 assert.ok(skyMonth.includes("/transport/flights/dac/can/2609/"));
+assert.ok(skyMonth.includes("sortby=cheapest"));
 assert.ok(!skyMonth.includes("2609/260"));
+
+const offers = BookingLinks.officialDiscountLinks(dacCan);
+const offerUrls = offers.map((item) => item.url).join(" ");
+assert.ok(offers.length >= 5);
+assert.ok(offerUrls.includes("gozayaan.com/campaign/id/644"));
+assert.ok(offerUrls.includes("bkash.com/en/campaign"));
+assert.ok(offerUrls.includes("bracbank.com/en/offers"));
+assert.ok(offerUrls.includes("usbair.com/offers") || offerUrls.includes("airastra.com"));
+assert.ok(!offerUrls.toLowerCase().includes("sharetrip"));
+assert.ok(!JSON.stringify(offers).includes("FLYGLOBAL15"));
+assert.ok(!JSON.stringify(offers).includes("discount_percent"));
 
 const nearby = BookingLinks.flexibleNearbyDays(dacCan, 3);
 assert.ok(nearby.length >= 1);
@@ -264,7 +277,9 @@ nearby.forEach((day) => {
     assert.ok(day.google.includes("/travel/flights/search?tfs="));
     assert.ok(!day.google.includes("flights?q="));
     assert.ok(day.skyscanner.includes(`/transport/flights/dac/can/${day.depart.slice(2).replace(/-/g, "")}/`));
+    assert.ok(day.skyscanner.includes("sortby=cheapest"));
     assert.ok(day.kayak.includes(`/flights/DAC-CAN/${day.depart}`));
+    assert.ok(day.kayak.includes("sort=price_a"));
     assert.ok(!day.kayak.split(day.depart)[1].includes("2026-"));
 });
 const exact = nearby.find((day) => day.depart === "2026-09-03");

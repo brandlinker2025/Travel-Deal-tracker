@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cheapest Ticket Finder — dated search links from DAC</title>
-    <meta name="deploy" content="structured-links-2026-09-01-main">
+    <meta name="deploy" content="official-discounts-2026-09-01">
     <meta name="description" content="We do not sell tickets. Search From/To/dates and open Google Flights, Skyscanner, Kayak, official airlines, Google Hotels and Booking.com with the same dates. Final price is on the provider.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -76,7 +76,7 @@
                 <i class="fa-solid fa-plane-departure text-sky-400"></i> Cheapest Ticket Finder
             </h1>
             <p class="text-slate-400 text-xs sm:text-sm mt-2 max-w-2xl mx-auto leading-5">
-                Search From / To / dates (Dhaka DAC by default). We open Google Flights, Skyscanner, Kayak, official airline pages, Google Hotels and Booking.com with the same dates. The final price is on the provider.
+                Search From / To / dates (Dhaka DAC by default). We open Google Flights, Skyscanner and Kayak with those dates already filled and sorted cheap-first. Official airline, GoZayaan and bank/bKash campaign pages are listed separately so you can verify real discounts there. We do not invent ৳ fares.
             </p>
         </header>
 
@@ -180,7 +180,7 @@
 
         <div class="mb-4 rounded-xl border border-sky-500/20 bg-sky-950/40 px-3.5 py-3 text-[11px] leading-5 text-slate-300">
             <i class="fa-solid fa-circle-info text-sky-400 mr-1"></i>
-            We do not sell tickets. This page only builds search links. Compare Google Flights, Skyscanner, Kayak and official airline sites — the final price is on the provider.
+            We do not sell tickets. This page only builds search links. Compare live cheap-first results on Google Flights, Skyscanner and Kayak. Official discounts are separate links to verify on that site — we never subtract a promo or card rate here.
         </div>
 
         <div id="tripSummary" class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 mb-6 flex flex-wrap justify-between items-center text-xs sm:text-sm gap-2">
@@ -262,6 +262,19 @@
                 </div>
             </div>
             <div id="bdResults" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+        </div>
+
+        <div class="mb-8" id="officialDiscountSection">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div>
+                    <h2 class="text-sm sm:text-lg font-bold text-rose-200 flex items-center gap-2">
+                        <i class="fa-solid fa-tags"></i> Official discounts to verify
+                    </h2>
+                    <p class="text-[10px] text-slate-500 mt-1">Airline sale pages, GoZayaan campaigns, bKash and bank offer hubs. We do not apply these on this page — open the official URL and confirm the live offer.</p>
+                </div>
+                <span class="text-[10px] sm:text-xs bg-rose-500/10 text-rose-200 px-2.5 py-0.5 rounded-full font-semibold border border-rose-500/20">Offers to verify there</span>
+            </div>
+            <div id="discountResults" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
         </div>
 
         <div class="mb-8" id="verifiedAgencySection">
@@ -356,7 +369,7 @@
         </div>
     </div>
 
-    <script src="js/booking-links.js?v=structured-links-2026-09-01-main"></script>
+    <script src="js/booking-links.js?v=official-discounts-2026-09-01"></script>
     <script>
         const COUNTRY_AIRPORTS = [
 
@@ -1256,7 +1269,8 @@
                 sky: { border: "hover:border-sky-500/50", badge: "text-sky-400 bg-sky-500/10", btn: "bg-sky-500 hover:bg-sky-600 text-white" },
                 amber: { border: "hover:border-amber-500/50", badge: "text-amber-300 bg-amber-500/10", btn: "bg-amber-500 hover:bg-amber-600 text-slate-950" },
                 emerald: { border: "hover:border-emerald-500/50", badge: "text-emerald-400 bg-emerald-500/10", btn: "bg-emerald-500 hover:bg-emerald-600 text-white" },
-                fuchsia: { border: "hover:border-fuchsia-500/50", badge: "text-fuchsia-300 bg-fuchsia-500/10", btn: "bg-fuchsia-500 hover:bg-fuchsia-600 text-white" }
+                fuchsia: { border: "hover:border-fuchsia-500/50", badge: "text-fuchsia-300 bg-fuchsia-500/10", btn: "bg-fuchsia-500 hover:bg-fuchsia-600 text-white" },
+                rose: { border: "hover:border-rose-500/50", badge: "text-rose-200 bg-rose-500/10", btn: "bg-rose-500 hover:bg-rose-600 text-white" }
             }[tone];
             return `
                 <div class="bg-slate-900 border border-slate-800 ${colors.border} p-4 rounded-2xl shadow-xl flex flex-col justify-between transition">
@@ -1328,6 +1342,11 @@
             }, "emerald")).join("");
 
             document.getElementById('bdResults').innerHTML = BookingLinks.bangladeshSearchLinks(opts).map(item => providerCard(item, "fuchsia")).join("");
+
+            const discountBox = document.getElementById('discountResults');
+            if (discountBox) {
+                discountBox.innerHTML = BookingLinks.officialDiscountLinks(opts).map(item => providerCard(item, "rose")).join("");
+            }
 
             renderFlexibleDates(opts);
         }

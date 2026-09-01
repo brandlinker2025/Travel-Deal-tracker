@@ -55,7 +55,12 @@ assert.ok(!links.includes("sharetrip.net/flight/search"), "ShareTrip dead search
 assert.ok(links.includes("gozayaan.com/flight/list"), "GoZayaan must use dated flight/list search");
 assert.ok(html.includes("Official packages"), "index.html should keep official packages");
 assert.ok(html.includes("flexibleMonthGrid"), "index.html should render a date-wise cheapest calendar");
-assert.ok(html.includes("structured-links-2026-09-01-main"), "index.html should carry the production deploy stamp");
+assert.ok(html.includes("Official discounts to verify"), "index.html should list official discount paths separately");
+assert.ok(html.includes("discountResults"), "index.html should render official discount cards");
+assert.ok(html.includes("official-discounts-2026-09-01"), "index.html should carry the production deploy stamp");
 assert.ok(!html.includes("travel/flights?q="), "index.html must not link Google Flights via q=");
+assert.ok(links.includes("sortby=cheapest"), "Skyscanner must sort cheapest-first");
+assert.ok(links.includes("gozayaan.com/campaign/id/644"), "GoZayaan official campaign URL must be listed");
+assert.ok(links.includes("bkash.com/en/campaign"), "bKash official campaign hub must be listed");
 
 console.log("honesty.test.js passed");
