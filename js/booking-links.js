@@ -4,7 +4,7 @@
  *
  * Never use Google Flights `?q=` natural-language URLs (empty landing page).
  * ShareTrip `/flight/search` 404s — do not add it back without a working dated URL.
- * Stamp: structured-links-2026-09-01-main
+ * Stamp: official-discounts-2026-09-01
  */
 (function (root, factory) {
     const api = factory();
@@ -167,16 +167,17 @@
         const o = lower(opts.origin);
         const d = lower(opts.dest);
         const dep = toSkyDate(opts.depart);
+        const cheap = "adultsv2=1&cabinclass=economy&sortby=cheapest";
         if (opts.tripType === "oneway") {
-            return `https://www.skyscanner.net/transport/flights/${o}/${d}/${dep}/?adultsv2=1&cabinclass=economy`;
+            return `https://www.skyscanner.net/transport/flights/${o}/${d}/${dep}/?${cheap}`;
         }
         if (opts.tripType === "multicity" && opts.stop && opts.returnDate) {
             const s = lower(opts.stop);
             const ret = toSkyDate(opts.returnDate);
-            return `https://www.skyscanner.net/transport/flights/${o}/${d}/${dep}/${d}/${s}/${ret}/?adultsv2=1&cabinclass=economy`;
+            return `https://www.skyscanner.net/transport/flights/${o}/${d}/${dep}/${d}/${s}/${ret}/?${cheap}`;
         }
         const ret = toSkyDate(opts.returnDate);
-        return `https://www.skyscanner.net/transport/flights/${o}/${d}/${dep}/${ret}/?adultsv2=1&cabinclass=economy`;
+        return `https://www.skyscanner.net/transport/flights/${o}/${d}/${dep}/${ret}/?${cheap}`;
     }
 
     function kayakUrl(opts) {
@@ -303,11 +304,12 @@
         const o = lower(opts.origin);
         const d = lower(opts.dest);
         const ym = toSkyDate(opts.depart).slice(0, 4);
+        const cheap = "adultsv2=1&cabinclass=economy&sortby=cheapest";
         if (opts.tripType === "oneway") {
-            return `https://www.skyscanner.net/transport/flights/${o}/${d}/${ym}/?adultsv2=1&cabinclass=economy`;
+            return `https://www.skyscanner.net/transport/flights/${o}/${d}/${ym}/?${cheap}`;
         }
         const rym = toSkyDate(opts.returnDate || opts.depart).slice(0, 4);
-        return `https://www.skyscanner.net/transport/flights/${o}/${d}/${ym}/${rym}/?adultsv2=1&cabinclass=economy`;
+        return `https://www.skyscanner.net/transport/flights/${o}/${d}/${ym}/${rym}/?${cheap}`;
     }
 
     function kayakExploreUrl(opts) {
@@ -666,19 +668,19 @@
             {
                 id: "google-flights",
                 name: "Google Flights",
-                blurb: "Filled search (From/To/dates) sorted toward cheapest. Live fare is on Google.",
+                blurb: "Filled From/To/dates via tfs, cheap-first. Live fare is on Google — we do not invent a ৳ amount.",
                 url: googleFlightsUrl(opts)
             },
             {
                 id: "skyscanner",
                 name: "Skyscanner",
-                blurb: "Structured path with airports and YYMMDD dates already in the URL.",
+                blurb: "Airports and YYMMDD in the path, sorted cheapest. Compare live prices there.",
                 url: skyscannerUrl(opts)
             },
             {
                 id: "kayak",
                 name: "Kayak",
-                blurb: "Same airports and dates, sorted by price. Buy on the provider Kayak opens.",
+                blurb: "Same airports and dates, sorted cheapest (price_a). Buy on the provider Kayak opens.",
                 url: kayakUrl(opts)
             }
         ];
@@ -693,6 +695,92 @@
                 url: gozayaanUrl(opts)
             }
         ];
+    }
+
+    const AIRLINE_OFFER_PAGES = {
+        usbangla: {
+            name: "US-Bangla official offers",
+            url: "https://usbair.com/offers",
+            blurb: "Current US-Bangla sale/promo pages. Confirm the live fare and any code on their site."
+        },
+        novoair: {
+            name: "Novoair official offers",
+            url: "https://www.flynovoair.com/offers",
+            blurb: "Novoair current-offers list. Validity and price are only on Novoair."
+        },
+        airastra: {
+            name: "AIR ASTRA fares & offers",
+            url: "https://www.airastra.com/node?field_offers_type_target_id=All",
+            blurb: "AIR ASTRA official deals list. Check blackout dates there before you buy."
+        },
+        qatar: {
+            name: "Qatar Airways offers (Bangladesh)",
+            url: "https://www.qatarairways.com/en-bd/offers.html",
+            blurb: "Official Qatar sale/offers hub for Bangladesh. Live fare is on Qatar Airways."
+        },
+        emirates: {
+            name: "Emirates special offers (Bangladesh)",
+            url: "https://www.emirates.com/bd/english/special-offers/",
+            blurb: "Official Emirates special-offers page for Bangladesh. Verify the live fare there."
+        },
+        turkish: {
+            name: "Turkish Airlines campaigns",
+            url: "https://www.turkishairlines.com/en-int/flights/campaigns/",
+            blurb: "Official Turkish Airlines campaign list. Confirm dates and fare on their site."
+        },
+        flydubai: {
+            name: "flydubai offers",
+            url: "https://www.flydubai.com/en/offers/",
+            blurb: "Official flydubai offers hub. Live price is on flydubai."
+        }
+    };
+
+    function officialDiscountLinks(opts) {
+        const hubs = [
+            {
+                id: "gozayaan-city-amex",
+                name: "GoZayaan × City Bank Amex",
+                blurb: "Official GoZayaan campaign (listed valid through 31 Dec 2026). Confirm it still applies at their checkout — we do not subtract it here.",
+                url: "https://gozayaan.com/campaign/id/644"
+            },
+            {
+                id: "airastra-bank-bkash",
+                name: "AIR ASTRA bank / bKash / Nagad fares",
+                blurb: "Official AIR ASTRA page for bank-card, bKash and Nagad base-fare discounts. Verify eligibility there.",
+                url: "https://airastra.com/offer/offers-deals/10-discount-base-fare"
+            },
+            {
+                id: "bkash-campaigns",
+                name: "bKash campaign list",
+                blurb: "Official bKash Find Your Offer page. Check whether a travel/flight campaign is running this week.",
+                url: "https://www.bkash.com/en/campaign"
+            },
+            {
+                id: "brac-bank-offers",
+                name: "BRAC Bank offers",
+                blurb: "Official BRAC Bank offers hub (cards, travel partners). Confirm the live campaign on the bank site.",
+                url: "https://www.bracbank.com/en/offers"
+            },
+            {
+                id: "citybank-travel",
+                name: "City Bank travel offers",
+                blurb: "City Bank official travel/Amex page pointing at GoZayaan. Verify current terms on City Bank.",
+                url: "https://www.citybankplc.com/ramadan2026/travel.php"
+            }
+        ];
+        const seen = new Set(hubs.map((item) => item.url));
+        airlinesForRoute(opts).forEach((airline) => {
+            const offer = AIRLINE_OFFER_PAGES[airline.id];
+            if (!offer || seen.has(offer.url)) return;
+            seen.add(offer.url);
+            hubs.push({
+                id: `${airline.id}-offers`,
+                name: offer.name,
+                blurb: offer.blurb,
+                url: offer.url
+            });
+        });
+        return hubs;
     }
 
     function hotelLinks(opts) {
@@ -734,6 +822,7 @@
         airlinesForRoute,
         comparatorLinks,
         bangladeshSearchLinks,
+        officialDiscountLinks,
         hotelLinks,
         addDaysISO,
         stayLengthDays,
