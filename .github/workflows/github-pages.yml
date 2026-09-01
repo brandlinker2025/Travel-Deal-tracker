@@ -1,7 +1,7 @@
 name: GitHub Pages
 
-# Public fallback while Netlify production auto-publishing is stopped.
-# Live canonical URL remains https://global-travel-tracker.netlify.app
+# Optional public fallback. Canonical URL is Netlify.
+# GITHUB_TOKEN cannot enable Pages; skip cleanly until the owner turns it on.
 on:
   push:
     branches: [main]
@@ -17,9 +17,32 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  probe:
+    name: Pages enabled?
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.check.outputs.enabled }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          code=$(curl -sS -o /tmp/pages.json -w '%{http_code}' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/pages" || true)
+          echo "pages HTTP ${code}"
+          if [ "${code}" = "200" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "GitHub Pages is not enabled; skipping deploy. Canonical host is https://global-travel-tracker.netlify.app"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          fi
+
   deploy:
     name: Publish static site
-    continue-on-error: true
+    needs: probe
+    if: needs.probe.outputs.enabled == 'true'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -32,9 +55,6 @@ jobs:
           cp index.html .nojekyll PRODUCTION_SHIP.txt _site/
           cp js/booking-links.js _site/js/
       - uses: actions/configure-pages@v5
-        with:
-          enablement: false
-        continue-on-error: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
