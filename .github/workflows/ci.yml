@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main, cursor/**]
+  pull_request:
+
+jobs:
+  test:
+    name: Honesty and dated-link tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run tests
+        run: |
+          node tests/booking-links.test.js
+          node tests/honesty.test.js
+      - name: Confirm no scrape helpers
+        run: |
+          if grep -nE "puppeteer|playwright|cheerio|beautifulsoup" index.html js/booking-links.js tracker.py scripts/tracker.py; then
+            echo "Scraping-related code is not allowed"
+            exit 1
+          fi
+          echo "No scrape helpers found"

@@ -1,25 +1,25 @@
-# 🌍 Global Travel Deal & Price Drop Tracker
+# Cheapest Ticket Finder
 
-A smart travel price tracker and deal finder for flights, hotels, and tours worldwide.
+A static, Bangladesh-friendly search page. It does **not** sell tickets and it does **not** invent fares.
 
----
+Search From / To / dates (Dhaka `DAC` is the default origin). Results are dated deep-links to:
 
-## 🎯 Core Features
-- **Price Drop Alerts:** Automated tracking for flight and hotel prices.
-- **Deal Aggregator:** Collects coupons and special discount deals.
-- **Zero-Cost Engine:** Runs on free-tier APIs and automated background workflows.
+- Google Flights, Skyscanner, Kayak
+- Official airline booking pages for the route
+- Google Hotels and Booking.com
+- Official holiday packages
+- A short list of real free tools
 
----
+Click a provider to open that site with the same dates and buy there. The live price is always on the provider.
 
-## 🛠️ Free Tech Stack
-- **Code & Version Control:** GitHub
-- **Editor:** Cursor
-- **Automations:** GitHub Actions / n8n
-- **Database & Auth:** Supabase / Firebase (Free Tier)
-- **Data APIs:** Free Travel APIs (RapidAPI / Amadeus)
+Live site: https://global-travel-tracker.netlify.app
 
----
+## What this is not
 
-## 📁 Project Structure
-- `/scripts` : Automation scripts for fetching and comparing prices.
-- `/docs` : API configurations, keys guide, and project setup logs.
+- No estimated fares
+- No card-discount or promo-voucher math
+- No airline scraping
+
+## Tech
+
+Static `index.html` on Netlify. Dated URLs are built in `js/booking-links.js`.
