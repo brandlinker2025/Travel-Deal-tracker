@@ -331,5 +331,19 @@ assert.deepStrictEqual(decodedFlexible.legs[0], { date: "2026-09-03", origin: "D
 const monthDays = BookingLinks.flexibleMonthDays(dacCan);
 assert.ok(monthDays.some((day) => day.depart === "2026-09-03"));
 assert.ok(monthDays.every((day) => day.depart.startsWith("2026-09-")));
+monthDays.forEach((day) => {
+    assert.ok(day.google.includes("/travel/flights/search?tfs="));
+    assert.ok(day.skyscanner.includes("sortby=cheapest"));
+    assert.ok(day.kayak.includes("sort=price_a"));
+    assert.ok(day.skyscannerMonth.includes("/transport/flights/dac/can/2609/"));
+    assert.ok(!JSON.stringify(day).includes("৳"));
+});
+const octDays = BookingLinks.flexibleMonthDays(dacCan, 2026, 10);
+assert.ok(octDays.every((day) => day.depart.startsWith("2026-10-")));
+assert.ok(octDays[0].skyscannerMonth.includes("/transport/flights/dac/can/2610/"));
+const overview = BookingLinks.monthOverviewLinks(dacCan);
+assert.ok(overview.some((item) => item.url.includes("/travel/flights/search?tfs=")));
+assert.ok(overview.some((item) => item.id === "skyscanner-month" && item.url.includes("/2609/")));
+assert.ok(overview.some((item) => item.id === "kayak-explore" && item.url.includes("kayak.com/explore/DAC-CAN")));
 
 console.log("booking-links.test.js passed");

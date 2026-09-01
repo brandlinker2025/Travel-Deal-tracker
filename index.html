@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cheapest Ticket Finder — dated search links from DAC</title>
-    <meta name="deploy" content="airline-promo-20260901">
+    <meta name="deploy" content="price-calendar-20260901">
     <meta name="description" content="We do not sell tickets. Search From/To/dates and open Google Flights, Skyscanner, Kayak, official airlines, Google Hotels and Booking.com with the same dates. Final price is on the provider.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -198,21 +198,28 @@
             <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <div>
                     <h2 class="text-sm sm:text-lg font-bold text-amber-200 flex items-center gap-2">
-                        <i class="fa-solid fa-calendar-week"></i> Date-wise cheapest path
+                        <i class="fa-solid fa-calendar-week"></i> Cheap fares by date
                     </h2>
-                    <p class="text-[10px] text-slate-500 mt-1">Flexible dates first. We do not invent fares — each day opens Google Flights, Skyscanner or Kayak with that date already filled. Compare cheap-looking days there, then buy on the provider.</p>
+                    <p class="text-[10px] text-slate-500 mt-1">Prices show after you click, on Google Flights / Skyscanner / Kayak. We do not print ৳ on these cells (no public fare API without secrets). Each day opens a filled search: Google Flights tfs, Skyscanner, Kayak. The month buttons open Skyscanner’s month price calendar and Kayak explore.</p>
                 </div>
-                <span class="text-[10px] sm:text-xs bg-amber-500/10 text-amber-200 px-2.5 py-0.5 rounded-full font-semibold border border-amber-500/20">No fake ৳ on this page</span>
+                <span class="text-[10px] sm:text-xs bg-amber-500/10 text-amber-200 px-2.5 py-0.5 rounded-full font-semibold border border-amber-500/20">Prices show after click</span>
             </div>
             <div id="monthOverview" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4"></div>
             <div class="mb-3">
-                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Nearby dates (±7 days)</div>
+                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Nearby dates (±7) — tap to see live prices</div>
                 <div id="nearbyDateStrip" class="flex gap-2 overflow-x-auto custom-scroll pb-1"></div>
             </div>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 sm:p-4">
                 <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
-                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">This month — tap a date, then a provider</div>
-                    <span id="flexibleMonthLabel" class="text-xs font-bold text-white"></span>
+                    <div>
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Month price calendar</div>
+                        <p class="text-[10px] text-slate-500 mt-0.5">Tap the date number → Google Flights (live fares). S = Skyscanner that day. K = Kayak that day.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" id="priceCalPrev" class="h-8 w-8 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700" aria-label="Previous month"><i class="fa-solid fa-chevron-left text-[11px]"></i></button>
+                        <span id="flexibleMonthLabel" class="text-xs font-bold text-white min-w-[7rem] text-center"></span>
+                        <button type="button" id="priceCalNext" class="h-8 w-8 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700" aria-label="Next month"><i class="fa-solid fa-chevron-right text-[11px]"></i></button>
+                    </div>
                 </div>
                 <div class="grid grid-cols-7 text-center text-[11px] font-bold text-slate-500 mb-1">
                     <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
@@ -372,7 +379,7 @@
         </div>
     </div>
 
-    <script src="js/booking-links.js?v=airline-promo-20260901"></script>
+    <script src="js/booking-links.js?v=price-calendar-20260901"></script>
     <script>
         const COUNTRY_AIRPORTS = [
 
@@ -987,6 +994,9 @@
         let deptCalMonth = new Date(selectedDeptDate.getFullYear(), selectedDeptDate.getMonth(), 1);
         let retCalMonth = new Date(selectedRetDate.getFullYear(), selectedRetDate.getMonth(), 1);
 
+        let priceCalYM = null;
+        let lastSearchMonthKey = "";
+
         const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const dayNamesShort = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -1434,10 +1444,11 @@
             const label = day.returnDate ? `${day.depart.slice(8)}→${day.returnDate.slice(8)}` : day.depart.slice(8);
             const title = day.returnDate ? `${day.depart} → ${day.returnDate}` : day.depart;
             return `
-                <div class="shrink-0 min-w-[7.5rem] bg-slate-950 border border-slate-800 rounded-xl p-2.5">
-                    <div class="text-[11px] font-black text-white mb-2">${escapeHtml(title)}</div>
+                <div class="shrink-0 min-w-[8rem] bg-slate-950 border border-slate-800 rounded-xl p-2.5">
+                    <div class="text-[11px] font-black text-white mb-1">${escapeHtml(title)}</div>
+                    <p class="text-[9px] text-slate-500 mb-1.5">Live prices after click</p>
                     <div class="flex flex-col gap-1">
-                        <a href="${day.google}" target="_blank" rel="noopener noreferrer" class="text-center text-[10px] font-bold py-1 rounded-lg bg-sky-500/15 text-sky-300 hover:bg-sky-500/25">Google</a>
+                        <a href="${day.google}" target="_blank" rel="noopener noreferrer" class="text-center text-[10px] font-bold py-1 rounded-lg bg-sky-500/15 text-sky-300 hover:bg-sky-500/25">Google Flights</a>
                         <a href="${day.skyscanner}" target="_blank" rel="noopener noreferrer" class="text-center text-[10px] font-bold py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700">Skyscanner</a>
                         <a href="${day.kayak}" target="_blank" rel="noopener noreferrer" class="text-center text-[10px] font-bold py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700">Kayak</a>
                     </div>
@@ -1453,17 +1464,45 @@
             const monthLabel = document.getElementById('flexibleMonthLabel');
             if (!overview || !strip || !grid) return;
 
-            overview.innerHTML = BookingLinks.monthOverviewLinks(opts).map(item => providerCard(item, "sky")).join("");
-            strip.innerHTML = BookingLinks.flexibleNearbyDays(opts, 7).map(dateChip).join("");
+            const searchIso = BookingLinks.toISODate(opts.depart);
+            const [sy, sm] = searchIso.split("-").map(Number);
+            const searchKey = `${sy}-${sm}`;
+            if (searchKey !== lastSearchMonthKey) {
+                lastSearchMonthKey = searchKey;
+                priceCalYM = { y: sy, m: sm };
+            }
+            if (!priceCalYM) priceCalYM = { y: sy, m: sm };
+            const y = priceCalYM.y;
+            const m = priceCalYM.m;
+            const calDepart = `${y}-${String(m).padStart(2, "0")}-01`;
+            const stay = BookingLinks.stayLengthDays(opts);
+            const calOpts = Object.assign({}, opts, {
+                depart: calDepart,
+                returnDate: opts.tripType === "oneway" ? undefined : BookingLinks.addDaysISO(calDepart, stay || 7)
+            });
 
-            const { y, m } = (function () {
-                const iso = BookingLinks.toISODate(opts.depart);
-                const [yy, mm] = iso.split("-");
-                return { y: Number(yy), m: Number(mm) };
-            })();
+            overview.innerHTML = BookingLinks.monthOverviewLinks(calOpts).map(item => providerCard(item, "sky")).join("");
+            strip.innerHTML = BookingLinks.flexibleNearbyDays(opts, 7).map(dateChip).join("");
             monthLabel.textContent = `${monthNames[m - 1]} ${y}`;
 
-            const monthDays = BookingLinks.flexibleMonthDays(opts);
+            const prevBtn = document.getElementById('priceCalPrev');
+            const nextBtn = document.getElementById('priceCalNext');
+            if (prevBtn) {
+                prevBtn.onclick = () => {
+                    const dt = new Date(y, m - 2, 1);
+                    priceCalYM = { y: dt.getFullYear(), m: dt.getMonth() + 1 };
+                    renderFlexibleDates(opts);
+                };
+            }
+            if (nextBtn) {
+                nextBtn.onclick = () => {
+                    const dt = new Date(y, m, 1);
+                    priceCalYM = { y: dt.getFullYear(), m: dt.getMonth() + 1 };
+                    renderFlexibleDates(opts);
+                };
+            }
+
+            const monthDays = BookingLinks.flexibleMonthDays(opts, y, m);
             const byDate = {};
             monthDays.forEach((day) => { byDate[day.depart] = day; });
             const firstWeekday = new Date(y, m - 1, 1).getDay();
@@ -1478,15 +1517,18 @@
                 const iso = `${y}-${String(m).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
                 const bundle = byDate[iso];
                 if (!bundle) {
-                    html += `<div class="sk-day empty opacity-30 text-slate-600 text-xs">${day}</div>`;
+                    html += `<div class="min-h-[4.25rem] rounded-lg border border-slate-800/60 bg-slate-950/40 p-1 text-center text-slate-600 text-xs flex items-center justify-center">${day}</div>`;
                     continue;
                 }
                 const selectedClass = iso === selected ? " ring-1 ring-sky-400" : "";
                 html += `
-                    <div class="rounded-lg border border-slate-800 bg-slate-950 p-1 text-center${selectedClass}">
-                        <div class="text-[11px] font-bold text-white">${day}</div>
-                        <a href="${bundle.google}" target="_blank" rel="noopener noreferrer" class="block text-[8px] font-bold text-sky-300 hover:underline">G</a>
-                        <a href="${bundle.skyscanner}" target="_blank" rel="noopener noreferrer" class="block text-[8px] font-bold text-slate-300 hover:underline">S</a>
+                    <div class="min-h-[4.25rem] rounded-lg border border-slate-800 bg-slate-950 p-1 text-center flex flex-col${selectedClass}">
+                        <a href="${bundle.google}" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center text-sm font-black text-white hover:text-sky-300" title="Open Google Flights prices for ${iso}">${day}</a>
+                        <div class="grid grid-cols-3 gap-0.5 mt-0.5">
+                            <a href="${bundle.google}" target="_blank" rel="noopener noreferrer" class="text-[8px] font-bold text-sky-300 hover:underline" title="Google Flights">G</a>
+                            <a href="${bundle.skyscanner}" target="_blank" rel="noopener noreferrer" class="text-[8px] font-bold text-slate-300 hover:underline" title="Skyscanner">S</a>
+                            <a href="${bundle.kayak}" target="_blank" rel="noopener noreferrer" class="text-[8px] font-bold text-slate-300 hover:underline" title="Kayak">K</a>
+                        </div>
                     </div>
                 `;
             }

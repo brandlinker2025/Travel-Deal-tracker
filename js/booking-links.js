@@ -4,7 +4,7 @@
  *
  * Never use Google Flights `?q=` natural-language URLs (empty landing page).
  * ShareTrip `/flight/search` 404s — do not add it back without a working dated URL.
- * Stamp: airline-promo-20260901
+ * Stamp: price-calendar-20260901
  */
 (function (root, factory) {
     const api = factory();
@@ -271,7 +271,9 @@
             google: googleFlightsUrl(o),
             skyscanner: skyscannerUrl(o),
             kayak: kayakUrl(o),
-            gozayaan: gozayaanUrl(o)
+            gozayaan: gozayaanUrl(o),
+            skyscannerMonth: skyscannerMonthUrl(o),
+            kayakExplore: kayakExploreUrl(o)
         };
     }
 
@@ -287,8 +289,10 @@
         return days;
     }
 
-    function flexibleMonthDays(opts) {
-        const { y, m } = fromISO(opts.depart);
+    function flexibleMonthDays(opts, year, month) {
+        const parsed = fromISO(opts.depart);
+        const y = year || parsed.y;
+        const m = month || parsed.m;
         const today = todayISO();
         const last = new Date(y, m, 0).getDate();
         const days = [];
@@ -322,20 +326,20 @@
         return [
             {
                 id: "google-date-grid",
-                name: "Google Flights date grid",
-                blurb: "Opens a filled Google Flights search for this route. Use Date grid / Cheapest on their page.",
+                name: "Google Flights prices",
+                blurb: "Opens Google Flights with From/To/dates already filled (tfs). Live cheap fares and their date grid show after you click — not on our cells.",
                 url: sample.google
             },
             {
                 id: "skyscanner-month",
-                name: "Skyscanner whole month",
-                blurb: "Skyscanner month view for this From/To. Real fares are on their calendar.",
+                name: "Skyscanner month prices",
+                blurb: "Skyscanner whole-month search for this From/To, sorted cheapest. Their calendar is where you see cheap days.",
                 url: skyscannerMonthUrl(opts)
             },
             {
                 id: "kayak-explore",
-                name: "Kayak explore",
-                blurb: "Kayak flexible-date explorer for this route.",
+                name: "Kayak prices",
+                blurb: "Kayak explore / cheapest sort for this route. Prices appear on Kayak after you click.",
                 url: kayakExploreUrl(opts)
             }
         ];
