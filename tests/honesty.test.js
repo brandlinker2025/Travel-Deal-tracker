@@ -59,7 +59,7 @@ assert.ok(html.includes("Official discounts to verify"), "index.html should list
 assert.ok(html.includes("discountResults"), "index.html should render official discount cards");
 assert.ok(html.includes("promoCodeResults"), "index.html should render published promo-code cards");
 assert.ok(html.includes("Published promo codes"), "index.html should label promo codes as checkout intel");
-assert.ok(html.includes("offer-intel-2026-09-01"), "index.html should carry the production deploy stamp");
+assert.ok(html.includes("offer-intel-live-20260901"), "index.html should carry the production deploy stamp");
 assert.ok(!html.includes("travel/flights?q="), "index.html must not link Google Flights via q=");
 assert.ok(links.includes("sortby=cheapest"), "Skyscanner must sort cheapest-first");
 assert.ok(links.includes("gozayaan.com/campaign/id/644"), "GoZayaan official campaign URL must be listed");
