@@ -4,11 +4,12 @@ A static, Bangladesh-friendly search page. It does **not** sell tickets and it d
 
 Search From / To / dates (Dhaka `DAC` is the default origin). Results are dated deep-links to:
 
-- Google Flights, Skyscanner, Kayak
+- Google Flights `/travel/flights/search?tfs=...` (not the empty `q=` landing page), Skyscanner, Kayak
+- A date-wise cheapest path: ±7 days and a month calendar of provider deep-links (no invented ৳ amounts)
 - Official airline booking pages for the route
 - Google Hotels and Booking.com
 - Official holiday packages
-- A short list of real free tools
+- GoZayaan dated `flight/list` search and a short list of real free tools
 
 Click a provider to open that site with the same dates and buy there. The live price is always on the provider.
 
