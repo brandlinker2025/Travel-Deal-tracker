@@ -16,27 +16,19 @@ def search_links(origin, destination, depart, return_date=None, trip_type="round
     d = destination.lower()
 
     if trip_type == "oneway":
-        google = (
-            "https://www.google.com/travel/flights?q="
-            f"Flights%20to%20{destination}%20from%20{origin}%20on%20{depart}%20oneway"
-        )
         skyscanner = (
             f"https://www.skyscanner.net/transport/flights/{o}/{d}/{sky_date(depart)}/"
             "?adultsv2=1&cabinclass=economy"
         )
-        kayak = f"https://www.kayak.com/flights/{origin}-{destination}/{depart}?sort=bestflight_a"
+        kayak = f"https://www.kayak.com/flights/{origin}-{destination}/{depart}?sort=price_a"
     else:
-        google = (
-            "https://www.google.com/travel/flights?q="
-            f"Flights%20to%20{destination}%20from%20{origin}%20on%20{depart}%20through%20{return_date}"
-        )
         skyscanner = (
             f"https://www.skyscanner.net/transport/flights/{o}/{d}/"
             f"{sky_date(depart)}/{sky_date(return_date)}/?adultsv2=1&cabinclass=economy"
         )
         kayak = (
             f"https://www.kayak.com/flights/{origin}-{destination}/{depart}/{return_date}"
-            "?sort=bestflight_a"
+            "?sort=price_a"
         )
 
     print("=" * 60)
@@ -44,10 +36,14 @@ def search_links(origin, destination, depart, return_date=None, trip_type="round
     print("This tool does not sell tickets or invent fares.")
     print("Open a provider with these dates and compare the live price there.")
     print("-" * 60)
-    print(f"Google Flights: {google}")
+    print("Google Flights uses a structured tfs search URL in the web app.")
     print(f"Skyscanner:     {skyscanner}")
     print(f"Kayak:          {kayak}")
-    print(f"Biman official: https://www.biman-airlines.com/?origin={origin}&destination={destination}&departDate={depart}")
+    print(
+        "Biman official: "
+        f"https://www.biman-airlines.com/?origin={origin}&destination={destination}"
+        f"&departDate={depart}&tripType={'oneway' if trip_type == 'oneway' else 'round'}"
+    )
     print("=" * 60)
 
 

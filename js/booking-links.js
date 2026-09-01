@@ -58,21 +58,105 @@
         return String(code || "").trim().toLowerCase();
     }
 
-    function googleFlightsUrl(opts) {
-        const o = upper(opts.origin);
-        const d = upper(opts.dest);
-        const dep = toISODate(opts.depart);
+    function pbVarint(value) {
+        let n = typeof value === "bigint" ? value : BigInt(value);
+        if (n < 0n) n += 1n << 64n;
+        const out = [];
+        while (n >= 0x80n) {
+            out.push(Number(n & 0x7fn) | 0x80);
+            n >>= 7n;
+        }
+        out.push(Number(n));
+        return out;
+    }
+
+    function pbTag(field, wire) {
+        return pbVarint((field << 3) | wire);
+    }
+
+    function pbVarintField(field, value) {
+        return pbTag(field, 0).concat(pbVarint(value));
+    }
+
+    function pbBytesField(field, bytes) {
+        return pbTag(field, 2).concat(pbVarint(bytes.length), bytes);
+    }
+
+    function pbStringField(field, str) {
+        const encoded = [];
+        const text = String(str);
+        for (let i = 0; i < text.length; i++) {
+            encoded.push(text.charCodeAt(i) & 0xff);
+        }
+        return pbBytesField(field, encoded);
+    }
+
+    function toBase64Url(bytes) {
+        let bin = "";
+        for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+        const b64 = (typeof btoa === "function")
+            ? btoa(bin)
+            : Buffer.from(bytes).toString("base64");
+        return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+    }
+
+    function encodeAirportPlace(iata) {
+        return pbVarintField(1, 1).concat(pbStringField(2, upper(iata)));
+    }
+
+    function encodeFlightLeg(date, origin, dest) {
+        return pbStringField(2, toISODate(date))
+            .concat(pbBytesField(13, encodeAirportPlace(origin)))
+            .concat(pbBytesField(14, encodeAirportPlace(dest)));
+    }
+
+    function encodeGoogleFlightsTfs(opts) {
+        const origin = upper(opts.origin);
+        const dest = upper(opts.dest);
+        const depart = toISODate(opts.depart);
         const ret = opts.returnDate ? toISODate(opts.returnDate) : "";
         const stop = opts.stop ? upper(opts.stop) : "";
-        let q;
+
+        const legs = [];
+        let tripType = 1;
         if (opts.tripType === "oneway") {
-            q = `Flights to ${d} from ${o} on ${dep} oneway`;
+            tripType = 2;
+            legs.push(encodeFlightLeg(depart, origin, dest));
         } else if (opts.tripType === "multicity" && stop && ret) {
-            q = `Multi-city flights ${o} to ${d} on ${dep}, ${d} to ${stop} on ${ret}`;
+            tripType = 3;
+            legs.push(encodeFlightLeg(depart, origin, dest));
+            legs.push(encodeFlightLeg(ret, dest, stop));
         } else {
-            q = `Flights to ${d} from ${o} on ${dep} through ${ret}`;
+            tripType = 1;
+            legs.push(encodeFlightLeg(depart, origin, dest));
+            legs.push(encodeFlightLeg(ret, dest, origin));
         }
-        return `https://www.google.com/travel/flights?q=${encodeURIComponent(q)}`;
+
+        const allResultsSentinel = pbVarintField(1, -1n);
+        const bytes = []
+            .concat(pbVarintField(1, 28))
+            .concat(pbVarintField(2, 2))
+            .concat(legs.flatMap((leg) => pbBytesField(3, leg)))
+            .concat(pbVarintField(8, 1))
+            .concat(pbVarintField(9, 1))
+            .concat(pbVarintField(14, 1))
+            .concat(pbBytesField(16, allResultsSentinel))
+            .concat(pbVarintField(19, tripType));
+        return toBase64Url(bytes);
+    }
+
+    function encodeGoogleFlightsTfuCheapest() {
+        const state = []
+            .concat(pbVarintField(1, 2))
+            .concat(pbVarintField(4, 2))
+            .concat(pbVarintField(5, 8));
+        return toBase64Url(pbBytesField(2, state));
+    }
+
+    function googleFlightsUrl(opts) {
+        const tfs = encodeGoogleFlightsTfs(opts);
+        const tfu = encodeGoogleFlightsTfuCheapest();
+        return `https://www.google.com/travel/flights/search?tfs=${tfs}&tfu=${tfu}&hl=en&curr=BDT`;
     }
 
     function skyscannerUrl(opts) {
@@ -96,15 +180,15 @@
         const d = upper(opts.dest);
         const dep = toISODate(opts.depart);
         if (opts.tripType === "oneway") {
-            return `https://www.kayak.com/flights/${o}-${d}/${dep}?sort=bestflight_a`;
+            return `https://www.kayak.com/flights/${o}-${d}/${dep}?sort=price_a`;
         }
         if (opts.tripType === "multicity" && opts.stop && opts.returnDate) {
             const s = upper(opts.stop);
             const ret = toISODate(opts.returnDate);
-            return `https://www.kayak.com/flights/${o}-${d}/${dep}/${d}-${s}/${ret}?sort=bestflight_a`;
+            return `https://www.kayak.com/flights/${o}-${d}/${dep}/${d}-${s}/${ret}?sort=price_a`;
         }
         const ret = toISODate(opts.returnDate);
-        return `https://www.kayak.com/flights/${o}-${d}/${dep}/${ret}?sort=bestflight_a`;
+        return `https://www.kayak.com/flights/${o}-${d}/${dep}/${ret}?sort=price_a`;
     }
 
     function googleHotelsUrl(opts) {
@@ -237,14 +321,14 @@
             match: /emirates/i,
             hubs: ["dxb"],
             url(opts) {
-                const departing = toDayMonYear(opts.depart);
                 const params = {
                     origin: upper(opts.origin),
                     destination: upper(opts.dest),
-                    departing,
+                    departing: toDayMonYear(opts.depart),
                     adults: "1",
                     children: "0",
-                    class: "Economy"
+                    class: "Economy",
+                    tripType: opts.tripType === "oneway" ? "oneway" : "return"
                 };
                 if (opts.tripType !== "oneway" && opts.returnDate) {
                     params.returning = toDayMonYear(opts.returnDate);
@@ -271,6 +355,8 @@
                 };
                 if (opts.tripType !== "oneway" && opts.returnDate) {
                     params.returning = toDayMonYear(opts.returnDate);
+                } else if (opts.tripType === "oneway") {
+                    params.returning = "";
                 }
                 return withQuery("https://booking.qatarairways.com/nsp/views/showBooking.action", params);
             }
@@ -483,19 +569,19 @@
             {
                 id: "google-flights",
                 name: "Google Flights",
-                blurb: "Compare airlines on Google with these dates pre-filled.",
+                blurb: "Filled search (From/To/dates) sorted toward cheapest. Live fare is on Google.",
                 url: googleFlightsUrl(opts)
             },
             {
                 id: "skyscanner",
                 name: "Skyscanner",
-                blurb: "Meta-search the same route and dates.",
+                blurb: "Structured path with airports and YYMMDD dates already in the URL.",
                 url: skyscannerUrl(opts)
             },
             {
                 id: "kayak",
                 name: "Kayak",
-                blurb: "Another independent comparison of the same search.",
+                blurb: "Same airports and dates, sorted by price. Buy on the provider Kayak opens.",
                 url: kayakUrl(opts)
             }
         ];
@@ -548,6 +634,7 @@
         toISODate,
         toSkyDate,
         googleFlightsUrl,
+        encodeGoogleFlightsTfs,
         skyscannerUrl,
         kayakUrl,
         googleHotelsUrl,

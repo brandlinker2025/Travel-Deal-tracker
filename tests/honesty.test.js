@@ -43,6 +43,9 @@ required.forEach((needle) => {
 
 assert.ok(!links.includes("discount_percent"), "booking-links.js must not invent discount math");
 assert.ok(!links.includes("base_price"), "booking-links.js must not invent fares");
+assert.ok(!links.includes("travel/flights?q="), "Google Flights must not use the natural-language q= URL");
+assert.ok(links.includes("/travel/flights/search?tfs="), "Google Flights must use structured tfs search URLs");
+assert.ok(links.includes("sort=price_a"), "Kayak must sort by price");
 assert.ok(html.includes("Official packages"), "index.html should keep official packages");
 
 console.log("honesty.test.js passed");
