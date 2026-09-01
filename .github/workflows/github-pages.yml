@@ -19,6 +19,7 @@ concurrency:
 jobs:
   deploy:
     name: Publish static site
+    continue-on-error: true
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -31,6 +32,9 @@ jobs:
           cp index.html .nojekyll PRODUCTION_SHIP.txt _site/
           cp js/booking-links.js _site/js/
       - uses: actions/configure-pages@v5
+        with:
+          enablement: false
+        continue-on-error: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
