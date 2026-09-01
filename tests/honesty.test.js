@@ -50,6 +50,14 @@ assert.ok(!links.includes("discount_percent"), "booking-links.js must not invent
 assert.ok(!links.includes("base_price"), "booking-links.js must not invent fares");
 assert.ok(!links.includes("travel/flights?q="), "Google Flights must not use the natural-language q= URL");
 assert.ok(links.includes("/travel/flights/search?tfs="), "Google Flights must use structured tfs search URLs");
+assert.ok(links.includes("fo-usba.ttinteractive.com/Zenith/FrontOffice/usbangla"), "US-Bangla must use the stable TTI FrontOffice booking engine");
+assert.ok(!links.includes("FrontOffice/(S("), "US-Bangla must not hard-code a session GUID FrontOffice path");
+assert.ok(!links.includes("usbair.com/search"), "stale usbair.com/search schema.org URL 404s");
+assert.ok(links.includes("OriginAirportCode"), "TTI booking links must include OriginAirportCode");
+assert.ok(links.includes("secure.flynovoair.com/bookings/flight_selection.aspx"), "Novoair must use the official booking page");
+assert.ok(links.includes("fo-airastra.ttinteractive.com/Zenith/FrontOffice/Airastra"), "AIR ASTRA must use the stable TTI FrontOffice booking engine");
+assert.ok(links.includes("booking.flyscoot.com/Book/Flight"), "Scoot must use the official dated Book/Flight URL");
+assert.ok(links.includes("Book these Google Flights results"), "Google Flights CTA must open bookable tfs results");
 assert.ok(links.includes("sort=price_a"), "Kayak must sort by price");
 assert.ok(!links.includes("sharetrip.net/flight/search"), "ShareTrip dead search URLs must be removed");
 assert.ok(links.includes("gozayaan.com/flight/list"), "GoZayaan must use dated flight/list search");
@@ -59,7 +67,9 @@ assert.ok(html.includes("Official discounts to verify"), "index.html should list
 assert.ok(html.includes("discountResults"), "index.html should render official discount cards");
 assert.ok(html.includes("promoCodeResults"), "index.html should render published promo-code cards");
 assert.ok(html.includes("Published promo codes"), "index.html should label promo codes as checkout intel");
-assert.ok(html.includes("price-calendar-20260901"), "index.html should carry the production deploy stamp");
+assert.ok(html.includes("authentic-book-urls-20260901"), "index.html should carry the production deploy stamp");
+assert.ok(html.includes("Book these Google Flights results"), "Google Flights must have a book button using the same tfs results URL");
+assert.ok(html.includes("googleBookBar"), "index.html should render a Google Flights book bar");
 assert.ok(html.includes("Prices show after you click"), "calendar must say prices appear on the provider after click");
 assert.ok(html.includes("priceCalPrev"), "month calendar should allow paging months");
 assert.ok(html.includes("title=\"Kayak\""), "each calendar day should include a Kayak price link");

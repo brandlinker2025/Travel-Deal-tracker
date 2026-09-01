@@ -226,12 +226,54 @@ assert.ok(!emUrl.includes("returning="));
 const qatarRound = BookingLinks.AIRLINE_DIRECTORY.find((a) => a.id === "qatar").url(round);
 assert.ok(qatarRound.includes("fromStation=DAC"));
 assert.ok(qatarRound.includes("toStation=BKK"));
-assert.ok(qatarRound.includes("departing=08-Sep-2026"));
-assert.ok(qatarRound.includes("returning=17-Sep-2026"));
+assert.ok(qatarRound.includes("departing=2026-09-08"));
+assert.ok(qatarRound.includes("returning=2026-09-17"));
 assert.ok(qatarRound.includes("tripType=R"));
+assert.ok(qatarRound.includes("showBooking.action"));
 
 const comparators = BookingLinks.comparatorLinks(round);
 assert.deepStrictEqual(comparators.map((c) => c.id), ["google-flights", "skyscanner", "kayak"]);
+assert.strictEqual(comparators[0].cta, "Book these Google Flights results");
+assert.ok(comparators[0].url.includes("/travel/flights/search?tfs="));
+assert.ok(!comparators[0].url.includes("flights?q="));
+
+const usbOne = BookingLinks.AIRLINE_DIRECTORY.find((a) => a.id === "usbangla").url(oneway);
+assert.ok(usbOne.startsWith("https://fo-usba.ttinteractive.com/Zenith/FrontOffice/usbangla/en-GB/"));
+assert.ok(usbOne.includes("OriginAirportCode=DAC"));
+assert.ok(usbOne.includes("DestinationAirportCode=CAN"));
+assert.ok(usbOne.includes("OutboundDate=2026-09-07"));
+assert.ok(!usbOne.includes("InboundDate"));
+assert.ok(!usbOne.includes("(S("));
+assert.ok(!usbOne.includes("usbair.com/search"));
+assert.ok(!usbOne.includes("FrontOffice/(S"));
+const usbRound = BookingLinks.AIRLINE_DIRECTORY.find((a) => a.id === "usbangla").url(round);
+assert.ok(usbRound.includes("InboundDate=2026-09-17"));
+assert.ok(!usbRound.includes("(S("));
+
+const astraOne = BookingLinks.AIRLINE_DIRECTORY.find((a) => a.id === "airastra").url(oneway);
+assert.ok(astraOne.includes("fo-airastra.ttinteractive.com/Zenith/FrontOffice/Airastra/en-GB/"));
+assert.ok(astraOne.includes("OriginAirportCode=DAC"));
+assert.ok(astraOne.includes("OutboundDate=2026-09-07"));
+assert.ok(!astraOne.includes("(S("));
+
+const novoOne = BookingLinks.AIRLINE_DIRECTORY.find((a) => a.id === "novoair").url(oneway);
+assert.ok(novoOne.startsWith("https://secure.flynovoair.com/bookings/flight_selection.aspx"));
+assert.ok(novoOne.includes("origin=DAC"));
+assert.ok(novoOne.includes("destination=CAN"));
+assert.ok(novoOne.includes("departureDate=2026-09-07"));
+assert.ok(novoOne.includes("TT=OW"));
+
+const scootOne = BookingLinks.AIRLINE_DIRECTORY.find((a) => a.id === "scoot").url({
+    origin: "DAC",
+    dest: "SIN",
+    depart: "2026-09-07",
+    tripType: "oneway"
+});
+assert.ok(scootOne.includes("booking.flyscoot.com/Book/Flight"));
+assert.ok(scootOne.includes("dst1=DAC"));
+assert.ok(scootOne.includes("ast1=SIN"));
+assert.ok(scootOne.includes("dd=2026-09-07"));
+assert.ok(scootOne.includes("type=oneway"));
 
 const plusOne = BookingLinks.addDaysISO("2026-09-08", 1);
 assert.strictEqual(plusOne, "2026-09-09");
@@ -292,9 +334,10 @@ assert.ok(promoCodes.includes("STLRPDQ326"));
 assert.ok(!promoCodes.includes("USBA15"), "do not invent USBA15 without the airline official page");
 assert.ok(!promoCodes.includes("FLYGLOBAL15"));
 const astra15 = promos.find((item) => item.code === "AIRASTRA15");
-assert.ok(astra15.checkoutUrl.includes("airastra.com"));
-assert.ok(astra15.checkoutUrl.includes("origin=DAC"));
-assert.ok(astra15.checkoutUrl.includes("departDate=2026-09-03"));
+assert.ok(astra15.checkoutUrl.includes("fo-airastra.ttinteractive.com/Zenith/FrontOffice/Airastra"));
+assert.ok(astra15.checkoutUrl.includes("OriginAirportCode=DAC"));
+assert.ok(astra15.checkoutUrl.includes("OutboundDate=2026-09-03"));
+assert.ok(!astra15.checkoutUrl.includes("(S("));
 const dacAirlines = BookingLinks.airlinesForRoute(dacCan);
 const astraCard = dacAirlines.find((a) => a.id === "airastra");
 assert.ok(astraCard);
@@ -345,5 +388,19 @@ const overview = BookingLinks.monthOverviewLinks(dacCan);
 assert.ok(overview.some((item) => item.url.includes("/travel/flights/search?tfs=")));
 assert.ok(overview.some((item) => item.id === "skyscanner-month" && item.url.includes("/2609/")));
 assert.ok(overview.some((item) => item.id === "kayak-explore" && item.url.includes("kayak.com/explore/DAC-CAN")));
+
+const dacCanSep4 = { origin: "DAC", dest: "CAN", depart: "2026-09-04", tripType: "oneway" };
+const gfSep4 = BookingLinks.googleFlightsUrl(dacCanSep4);
+assert.ok(gfSep4.startsWith("https://www.google.com/travel/flights/search?tfs="));
+assert.ok(!gfSep4.includes("flights?q="));
+const decodedSep4 = decodeTfs(new URL(gfSep4).searchParams.get("tfs"));
+assert.deepStrictEqual(decodedSep4.legs[0], { date: "2026-09-04", origin: "DAC", dest: "CAN" });
+const usbSep4 = BookingLinks.AIRLINE_DIRECTORY.find((a) => a.id === "usbangla").url(dacCanSep4);
+assert.ok(usbSep4.includes("OriginAirportCode=DAC"));
+assert.ok(usbSep4.includes("DestinationAirportCode=CAN"));
+assert.ok(usbSep4.includes("OutboundDate=2026-09-04"));
+assert.ok(!usbSep4.includes("(S("));
+assert.ok(!JSON.stringify(BookingLinks.airlinesForRoute(dacCanSep4)).includes("37053"));
+assert.ok(!JSON.stringify(BookingLinks.airlinesForRoute(dacCanSep4)).includes("81614"));
 
 console.log("booking-links.test.js passed");

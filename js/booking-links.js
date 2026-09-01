@@ -4,7 +4,8 @@
  *
  * Never use Google Flights `?q=` natural-language URLs (empty landing page).
  * ShareTrip `/flight/search` 404s — do not add it back without a working dated URL.
- * Stamp: price-calendar-20260901
+ * US-Bangla: stable TTI FrontOffice only — never a session-GUID path that 404s later.
+ * Stamp: authentic-book-urls-20260901
  */
 (function (root, factory) {
     const api = factory();
@@ -327,7 +328,8 @@
             {
                 id: "google-date-grid",
                 name: "Google Flights prices",
-                blurb: "Opens Google Flights with From/To/dates already filled (tfs). Live cheap fares and their date grid show after you click — not on our cells.",
+                blurb: "Opens Google Flights with From/To/dates already filled (tfs). Book the live fare there — not on our cells, and not via empty q=.",
+                cta: "Book these Google Flights results",
                 url: sample.google
             },
             {
@@ -355,6 +357,36 @@
         return url.toString();
     }
 
+    const USBA_FRONTOFFICE = "https://fo-usba.ttinteractive.com/Zenith/FrontOffice/usbangla/en-GB/";
+    const ASTRA_FRONTOFFICE = "https://fo-airastra.ttinteractive.com/Zenith/FrontOffice/Airastra/en-GB/";
+
+    // TTI Zenith FrontOffice (US-Bangla, AIR ASTRA). Always the public tenant path.
+    // The server issues a fresh session cookie/path; never hard-code that GUID (it 404s later).
+    // OriginAirportCode / DestinationAirportCode / OutboundDate are the engine's own search keys.
+    function ttiZenithFrontOfficeUrl(frontOfficeBase, opts) {
+        const params = {
+            OriginAirportCode: upper(opts.origin),
+            DestinationAirportCode: upper(opts.dest),
+            OutboundDate: toISODate(opts.depart),
+            Currency: "BDT"
+        };
+        if (opts.tripType === "multicity" && opts.stop && opts.returnDate) {
+            return withQuery(frontOfficeBase, {
+                "OriginDestinations[0].OriginAirportCode": upper(opts.origin),
+                "OriginDestinations[0].DestinationAirportCode": upper(opts.dest),
+                "OriginDestinations[0].OutboundDate": toISODate(opts.depart),
+                "OriginDestinations[1].OriginAirportCode": upper(opts.dest),
+                "OriginDestinations[1].DestinationAirportCode": upper(opts.stop),
+                "OriginDestinations[1].OutboundDate": toISODate(opts.returnDate),
+                Currency: "BDT"
+            });
+        }
+        if (opts.tripType !== "oneway" && opts.returnDate) {
+            params.InboundDate = toISODate(opts.returnDate);
+        }
+        return withQuery(frontOfficeBase, params);
+    }
+
     const AIRLINE_DIRECTORY = [
         {
             id: "biman",
@@ -378,13 +410,10 @@
             home: "https://usbair.com",
             match: /us-?bangla|usbair/i,
             relevant: (o, d) => BD_AIRPORTS.has(o) || BD_AIRPORTS.has(d),
+            blurb: "Official US-Bangla booking engine (usbair.com Book a Flight uses this TTI FrontOffice). Stable public URL — not a session GUID that 404s later. Origin, destination and date are in the query. Live ৳ is on their site; we do not invent fares.",
+            cta: "Open US-Bangla official booking",
             url(opts) {
-                return withQuery("https://usbair.com", {
-                    origin: upper(opts.origin),
-                    destination: upper(opts.dest),
-                    departureDate: toISODate(opts.depart),
-                    returnDate: opts.tripType === "oneway" ? "" : toISODate(opts.returnDate)
-                });
+                return ttiZenithFrontOfficeUrl(USBA_FRONTOFFICE, opts);
             }
         },
         {
@@ -393,13 +422,10 @@
             home: "https://airastra.com",
             match: /astra/i,
             relevant: (o, d) => BD_AIRPORTS.has(o) || BD_AIRPORTS.has(d),
+            blurb: "Official AIR ASTRA booking engine (TTI FrontOffice). Stable public URL with origin, destination and date in the query — not a session GUID.",
+            cta: "Open AIR ASTRA official booking",
             url(opts) {
-                return withQuery("https://airastra.com", {
-                    origin: upper(opts.origin),
-                    destination: upper(opts.dest),
-                    departDate: toISODate(opts.depart),
-                    returnDate: opts.tripType === "oneway" ? "" : toISODate(opts.returnDate)
-                });
+                return ttiZenithFrontOfficeUrl(ASTRA_FRONTOFFICE, opts);
             }
         },
         {
@@ -408,12 +434,15 @@
             home: "https://www.flynovoair.com",
             match: /novoair/i,
             relevant: (o, d) => BD_AIRPORTS.has(o) || BD_AIRPORTS.has(d),
+            blurb: "Official Novoair booking page (secure.flynovoair.com). Origin, destination and date are in the link. Fill From/To on their form if empty — they do not publish a stable dated-results GET.",
+            cta: "Open Novoair official booking",
             url(opts) {
-                return withQuery("https://www.flynovoair.com", {
+                return withQuery("https://secure.flynovoair.com/bookings/flight_selection.aspx", {
                     origin: upper(opts.origin),
                     destination: upper(opts.dest),
-                    departDate: toISODate(opts.depart),
-                    returnDate: opts.tripType === "oneway" ? "" : toISODate(opts.returnDate)
+                    departureDate: toISODate(opts.depart),
+                    returnDate: opts.tripType === "oneway" ? "" : toISODate(opts.returnDate),
+                    TT: opts.tripType === "oneway" ? "OW" : "RT"
                 });
             }
         },
@@ -447,19 +476,18 @@
             hubs: ["doh"],
             url(opts) {
                 const params = {
+                    selLang: "en",
                     fromStation: upper(opts.origin),
                     toStation: upper(opts.dest),
-                    departing: toDayMonYear(opts.depart),
+                    departing: toISODate(opts.depart),
                     adults: "1",
                     children: "0",
                     infants: "0",
-                    bookingClass: "Y",
+                    bookingClass: "E",
                     tripType: opts.tripType === "oneway" ? "O" : "R"
                 };
                 if (opts.tripType !== "oneway" && opts.returnDate) {
-                    params.returning = toDayMonYear(opts.returnDate);
-                } else if (opts.tripType === "oneway") {
-                    params.returning = "";
+                    params.returning = toISODate(opts.returnDate);
                 }
                 return withQuery("https://booking.qatarairways.com/nsp/views/showBooking.action", params);
             }
@@ -471,7 +499,7 @@
             match: /flydubai/i,
             hubs: ["dxb"],
             url(opts) {
-                return withQuery("https://www.flydubai.com/en/book/", {
+                return withQuery("https://www.flydubai.com/en/book-a-flight", {
                     origin: upper(opts.origin),
                     destination: upper(opts.dest),
                     departureDate: toISODate(opts.depart),
@@ -486,7 +514,7 @@
             match: /singapore/i,
             hubs: ["sin"],
             url(opts) {
-                return withQuery("https://www.singaporeair.com/en_UK/bd/home", {
+                return withQuery("https://www.singaporeair.com/en_UK/plan-and-book/", {
                     origin: upper(opts.origin),
                     destination: upper(opts.dest),
                     departureDate: toISODate(opts.depart),
@@ -501,12 +529,24 @@
             match: /scoot/i,
             hubs: ["sin"],
             url(opts) {
-                return withQuery("https://www.flyscoot.com/", {
-                    origin: upper(opts.origin),
-                    destination: upper(opts.dest),
-                    departDate: toISODate(opts.depart),
-                    returnDate: opts.tripType === "oneway" ? "" : toISODate(opts.returnDate)
-                });
+                const params = {
+                    culture: "en-US",
+                    type: opts.tripType === "oneway" ? "oneway" : "return",
+                    dst1: upper(opts.origin),
+                    ast1: upper(opts.dest),
+                    dd: toISODate(opts.depart),
+                    adt: "1",
+                    chd: "0",
+                    inf: "0"
+                };
+                if (opts.tripType !== "oneway" && opts.returnDate) {
+                    params.rd = toISODate(opts.returnDate);
+                    params.dst2 = upper(opts.dest);
+                    params.ast2 = upper(opts.origin);
+                } else {
+                    params.rd = "null";
+                }
+                return withQuery("https://booking.flyscoot.com/Book/Flight", params);
             }
         },
         {
@@ -649,6 +689,8 @@
                 name: airline.name,
                 home: airline.home,
                 url: airline.url(opts),
+                blurb: airline.blurb || "Official airline booking page for this route. Origin, destination and dates are in the link. Live fare is on the airline site — we do not invent ৳.",
+                cta: airline.cta || `Open ${airline.name} booking`,
                 promo: airlineCheckoutPromo(airline.id)
             });
         }
@@ -691,19 +733,22 @@
             {
                 id: "google-flights",
                 name: "Google Flights",
-                blurb: "Filled From/To/dates via tfs, cheap-first. Live fare is on Google — we do not invent a ৳ amount.",
+                blurb: "Opens Google Flights search results with From/To/dates already filled (tfs). Book the live fare there — we do not invent a ৳ amount. Same URL as the Book button below.",
+                cta: "Book these Google Flights results",
                 url: googleFlightsUrl(opts)
             },
             {
                 id: "skyscanner",
                 name: "Skyscanner",
                 blurb: "Airports and YYMMDD in the path, sorted cheapest. Compare live prices there.",
+                cta: "Open Skyscanner cheapest",
                 url: skyscannerUrl(opts)
             },
             {
                 id: "kayak",
                 name: "Kayak",
                 blurb: "Same airports and dates, sorted cheapest (price_a). Buy on the provider Kayak opens.",
+                cta: "Open Kayak cheapest",
                 url: kayakUrl(opts)
             }
         ];
@@ -943,6 +988,7 @@
         toSkyDate,
         googleFlightsUrl,
         encodeGoogleFlightsTfs,
+        ttiZenithFrontOfficeUrl,
         skyscannerUrl,
         kayakUrl,
         googleHotelsUrl,

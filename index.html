@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cheapest Ticket Finder — dated search links from DAC</title>
-    <meta name="deploy" content="price-calendar-20260901">
+    <meta name="deploy" content="authentic-book-urls-20260901">
     <meta name="description" content="We do not sell tickets. Search From/To/dates and open Google Flights, Skyscanner, Kayak, official airlines, Google Hotels and Booking.com with the same dates. Final price is on the provider.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -76,7 +76,7 @@
                 <i class="fa-solid fa-plane-departure text-sky-400"></i> Cheapest Ticket Finder
             </h1>
             <p class="text-slate-400 text-xs sm:text-sm mt-2 max-w-2xl mx-auto leading-5">
-                Search From / To / dates (Dhaka DAC by default). We open Google Flights, Skyscanner and Kayak with those dates already filled and sorted cheap-first. Official airline, GoZayaan and bank/bKash campaign pages are listed separately so you can verify real discounts there. We do not invent ৳ fares.
+                Search From / To / dates (Dhaka DAC by default). Google Flights opens filled bookable results (tfs), not an empty q= page. Official airline booking engines (US-Bangla TTI FrontOffice, AIR ASTRA, Novoair, Qatar, …) use stable public URLs with origin, destination and date — never a session GUID that 404s later. We do not invent ৳ fares.
             </p>
         </header>
 
@@ -235,6 +235,8 @@
                 </h2>
                 <span class="text-[10px] sm:text-xs bg-sky-500/20 text-sky-300 px-2.5 py-0.5 rounded-full font-semibold">Dated deep-links</span>
             </div>
+            <p class="text-[11px] text-slate-500 mb-3">Google Flights uses a filled <code class="text-sky-300">tfs</code> results URL you can book from — not empty <code class="text-sky-300">q=</code>. Skyscanner and Kayak use dated cheapest-sort paths. Live fares appear after you click; we do not invent amounts.</p>
+            <div id="googleBookBar" class="mb-3"></div>
             <div id="flightResults" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
         </div>
 
@@ -245,7 +247,7 @@
                 </h2>
                 <span class="text-[10px] sm:text-xs bg-amber-500/10 text-amber-300 px-2.5 py-0.5 rounded-full font-semibold border border-amber-500/20">Route-relevant • no scraping</span>
             </div>
-            <p class="text-[11px] text-slate-500 mb-3">Opens the airline’s official site with origin, destination and dates in the link. Next to each button: any currently published official promo code for that airline — copy it and paste at their checkout. No invented codes. If none is published, we say so and still open the dated booking page.</p>
+            <p class="text-[11px] text-slate-500 mb-3">Opens the airline’s official booking engine with origin, destination and dates in a stable public URL (US-Bangla and AIR ASTRA use TTI FrontOffice — never a session GUID that 404s later). Next to each button: any currently published official promo code — copy it and paste at their checkout. No invented codes. Google Flights and the airline site can show different live fares for the same DAC–CAN date; we do not invent ৳ on this page.</p>
             <div id="airlineResults" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
         </div>
 
@@ -379,7 +381,7 @@
         </div>
     </div>
 
-    <script src="js/booking-links.js?v=price-calendar-20260901"></script>
+    <script src="js/booking-links.js?v=authentic-book-urls-20260901"></script>
     <script>
         const COUNTRY_AIRPORTS = [
 
@@ -1331,11 +1333,11 @@
                 <div class="bg-slate-900 border border-slate-800 hover:border-amber-500/50 p-4 rounded-2xl shadow-xl flex flex-col justify-between transition">
                     <div>
                         <span class="text-[11px] font-bold text-amber-300 bg-amber-500/10 px-2.5 py-1 rounded-md">${escapeHtml(item.name)}</span>
-                        <p class="text-xs text-slate-400 mt-3 leading-5">Official airline site for this route. Dates are included in the link. Paste any code below at their checkout — we do not apply it here.</p>
+                        <p class="text-xs text-slate-400 mt-3 leading-5">${escapeHtml(item.blurb || "Official airline booking page for this route. Origin, destination and dates are in the link. Live fare is on the airline site.")}</p>
                         ${promoHtml}
                     </div>
                     <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="mt-4 w-full block text-center bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded-xl text-xs transition">
-                        <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Open ${escapeHtml(item.name)}
+                        <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> ${escapeHtml(item.cta || "Open " + item.name)}
                     </a>
                 </div>
             `;
@@ -1356,7 +1358,7 @@
                         <p class="text-xs text-slate-400 mt-3 leading-5">${escapeHtml(item.blurb || "Opens this provider with the same dates.")}</p>
                     </div>
                     <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="mt-4 w-full block text-center ${colors.btn} font-bold py-2 rounded-xl text-xs transition">
-                        <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Open ${escapeHtml(item.name)}
+                        <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> ${escapeHtml(item.cta || "Open " + item.name)}
                     </a>
                 </div>
             `;
@@ -1386,6 +1388,17 @@
                 document.getElementById('routeBanner').innerText = `${origCode} 🔁 ${destCode}`;
                 document.getElementById('stayNights').innerText = `${diffDays} nights`;
                 document.getElementById('dateBanner').innerText = `${dStr} ➔ ${rStr}`;
+            }
+
+            const googleUrl = BookingLinks.googleFlightsUrl(opts);
+            const googleBar = document.getElementById('googleBookBar');
+            if (googleBar) {
+                googleBar.innerHTML = `
+                    <a href="${googleUrl}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full bg-sky-500 hover:bg-sky-600 text-white font-black py-3 rounded-2xl text-sm transition">
+                        <i class="fa-solid fa-ticket"></i> Book these Google Flights results
+                    </a>
+                    <p class="text-[11px] text-slate-500 mt-1.5 text-center">Same filled <code class="text-sky-300">tfs</code> search as the Google card — live bookable results, not empty <code class="text-sky-300">q=</code>. We do not invent a fare.</p>
+                `;
             }
 
             const flightContainer = document.getElementById('flightResults');
@@ -1523,9 +1536,9 @@
                 const selectedClass = iso === selected ? " ring-1 ring-sky-400" : "";
                 html += `
                     <div class="min-h-[4.25rem] rounded-lg border border-slate-800 bg-slate-950 p-1 text-center flex flex-col${selectedClass}">
-                        <a href="${bundle.google}" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center text-sm font-black text-white hover:text-sky-300" title="Open Google Flights prices for ${iso}">${day}</a>
+                        <a href="${bundle.google}" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center text-sm font-black text-white hover:text-sky-300" title="Book Google Flights results for ${iso}">${day}</a>
                         <div class="grid grid-cols-3 gap-0.5 mt-0.5">
-                            <a href="${bundle.google}" target="_blank" rel="noopener noreferrer" class="text-[8px] font-bold text-sky-300 hover:underline" title="Google Flights">G</a>
+                            <a href="${bundle.google}" target="_blank" rel="noopener noreferrer" class="text-[8px] font-bold text-sky-300 hover:underline" title="Book Google Flights results">G</a>
                             <a href="${bundle.skyscanner}" target="_blank" rel="noopener noreferrer" class="text-[8px] font-bold text-slate-300 hover:underline" title="Skyscanner">S</a>
                             <a href="${bundle.kayak}" target="_blank" rel="noopener noreferrer" class="text-[8px] font-bold text-slate-300 hover:underline" title="Kayak">K</a>
                         </div>
