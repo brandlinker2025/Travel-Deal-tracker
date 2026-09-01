@@ -4,7 +4,7 @@
  *
  * Never use Google Flights `?q=` natural-language URLs (empty landing page).
  * ShareTrip `/flight/search` 404s — do not add it back without a working dated URL.
- * Stamp: offer-intel-live-20260901
+ * Stamp: airline-promo-20260901
  */
 (function (root, factory) {
     const api = factory();
@@ -644,7 +644,8 @@
                 id: airline.id,
                 name: airline.name,
                 home: airline.home,
-                url: airline.url(opts)
+                url: airline.url(opts),
+                promo: airlineCheckoutPromo(airline.id)
             });
         }
 
@@ -661,6 +662,24 @@
         });
 
         return picked.slice(0, 8);
+    }
+
+    // Official airline-site checkout codes only. Never invent unpublished airline codes.
+    const AIRLINE_CHECKOUT_PROMOS = {
+        airastra: {
+            code: "AIRASTRA15",
+            summary: "15% off base fare on the website or app, except blackout dates.",
+            sourceUrl: "https://www.airastra.com/node?field_offers_type_target_id=All"
+        },
+        qatar: {
+            code: "F1FANS",
+            summary: "Up to 12% off base fare to listed F1 race cities only — not a general fare code.",
+            sourceUrl: "https://www.qatarairways.com/en-bd/offers/f1-fans-flight-deals.html"
+        }
+    };
+
+    function airlineCheckoutPromo(airlineId) {
+        return AIRLINE_CHECKOUT_PROMOS[airlineId] || null;
     }
 
     function comparatorLinks(opts) {
@@ -926,6 +945,7 @@
         bookingUrl,
         gozayaanUrl,
         airlinesForRoute,
+        airlineCheckoutPromo,
         comparatorLinks,
         bangladeshSearchLinks,
         officialDiscountLinks,
