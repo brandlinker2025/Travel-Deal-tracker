@@ -1,6 +1,10 @@
 /**
  * Dated search URLs only. No fare math, no scraping, no invented discounts.
  * Providers confirm the live price on their own pages.
+ *
+ * Never use Google Flights `?q=` natural-language URLs (empty landing page).
+ * ShareTrip `/flight/search` 404s — do not add it back without a working dated URL.
+ * Stamp: structured-links-2026-09-01
  */
 (function (root, factory) {
     const api = factory();

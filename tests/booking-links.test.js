@@ -229,6 +229,21 @@ const plusOne = BookingLinks.addDaysISO("2026-09-08", 1);
 assert.strictEqual(plusOne, "2026-09-09");
 
 const dacCan = { origin: "DAC", dest: "CAN", depart: "2026-09-03", tripType: "oneway" };
+const gfDacCan = BookingLinks.googleFlightsUrl(dacCan);
+assert.ok(gfDacCan.startsWith("https://www.google.com/travel/flights/search?tfs="));
+assert.ok(!gfDacCan.includes("flights?q="));
+assert.ok(gfDacCan.includes("tfs=CBwQAhoeEgoyMDI2LTA5LTAzagcIARIDREFDcgcIARIDQ0FO"));
+const decodedDacCan = decodeTfs(new URL(gfDacCan).searchParams.get("tfs"));
+assert.strictEqual(decodedDacCan.tripType, 2);
+assert.deepStrictEqual(decodedDacCan.legs[0], { date: "2026-09-03", origin: "DAC", dest: "CAN" });
+assert.strictEqual(
+    BookingLinks.skyscannerUrl(dacCan),
+    "https://www.skyscanner.net/transport/flights/dac/can/260903/?adultsv2=1&cabinclass=economy"
+);
+assert.strictEqual(
+    BookingLinks.kayakUrl(dacCan),
+    "https://www.kayak.com/flights/DAC-CAN/2026-09-03?sort=price_a"
+);
 const gz = BookingLinks.gozayaanUrl(dacCan);
 assert.ok(gz.includes("gozayaan.com/flight/list"));
 assert.ok(gz.includes("trips=DAC%2CCAN%2C2026-09-03") || gz.includes("trips=DAC,CAN,2026-09-03"));

@@ -1,0 +1,26 @@
+name: Deploy production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  netlify:
+    name: Netlify production deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Deploy to Netlify if a token is configured
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: 114a2783-3747-4f2e-bcd4-399ddf0c15dc
+        run: |
+          if [ -z "$NETLIFY_AUTH_TOKEN" ]; then
+            echo "NETLIFY_AUTH_TOKEN is not set. Relying on Netlify Git integration (ignore=exit 1)."
+            exit 0
+          fi
+          npx --yes netlify-cli deploy --dir=. --prod --site "$NETLIFY_SITE_ID" --message "GitHub Actions: structured dated flight links"
