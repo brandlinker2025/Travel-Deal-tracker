@@ -228,4 +228,38 @@ assert.deepStrictEqual(comparators.map((c) => c.id), ["google-flights", "skyscan
 const plusOne = BookingLinks.addDaysISO("2026-09-08", 1);
 assert.strictEqual(plusOne, "2026-09-09");
 
+const dacCan = { origin: "DAC", dest: "CAN", depart: "2026-09-03", tripType: "oneway" };
+const gz = BookingLinks.gozayaanUrl(dacCan);
+assert.ok(gz.includes("gozayaan.com/flight/list"));
+assert.ok(gz.includes("trips=DAC%2CCAN%2C2026-09-03") || gz.includes("trips=DAC,CAN,2026-09-03"));
+assert.ok(!gz.includes("sharetrip"));
+
+const bd = BookingLinks.bangladeshSearchLinks(dacCan);
+assert.strictEqual(bd.length, 1);
+assert.strictEqual(bd[0].id, "gozayaan");
+assert.ok(!JSON.stringify(bd).toLowerCase().includes("sharetrip"));
+
+const skyMonth = BookingLinks.skyscannerMonthUrl(dacCan);
+assert.ok(skyMonth.includes("/transport/flights/dac/can/2609/"));
+assert.ok(!skyMonth.includes("2609/260"));
+
+const nearby = BookingLinks.flexibleNearbyDays(dacCan, 3);
+assert.ok(nearby.length >= 1);
+nearby.forEach((day) => {
+    assert.ok(day.google.includes("/travel/flights/search?tfs="));
+    assert.ok(!day.google.includes("flights?q="));
+    assert.ok(day.skyscanner.includes(`/transport/flights/dac/can/${day.depart.slice(2).replace(/-/g, "")}/`));
+    assert.ok(day.kayak.includes(`/flights/DAC-CAN/${day.depart}`));
+    assert.ok(!day.kayak.split(day.depart)[1].includes("2026-"));
+});
+const exact = nearby.find((day) => day.depart === "2026-09-03");
+assert.ok(exact);
+assert.ok(exact.google.includes("tfs="));
+const decodedFlexible = decodeTfs(new URL(exact.google).searchParams.get("tfs"));
+assert.deepStrictEqual(decodedFlexible.legs[0], { date: "2026-09-03", origin: "DAC", dest: "CAN" });
+
+const monthDays = BookingLinks.flexibleMonthDays(dacCan);
+assert.ok(monthDays.some((day) => day.depart === "2026-09-03"));
+assert.ok(monthDays.every((day) => day.depart.startsWith("2026-09-")));
+
 console.log("booking-links.test.js passed");
