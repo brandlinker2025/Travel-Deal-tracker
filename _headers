@@ -1,11 +1,11 @@
 /*
   Cache-Control: public, max-age=0, must-revalidate
-  X-Deploy-Stamp: structured-links-2026-09-01
+  X-Deploy-Stamp: structured-links-2026-09-01-main
 
 /js/*
   Cache-Control: public, max-age=0, must-revalidate
-  X-Deploy-Stamp: structured-links-2026-09-01
+  X-Deploy-Stamp: structured-links-2026-09-01-main
 
 /index.html
   Cache-Control: public, max-age=0, must-revalidate
-  X-Deploy-Stamp: structured-links-2026-09-01
+  X-Deploy-Stamp: structured-links-2026-09-01-main
