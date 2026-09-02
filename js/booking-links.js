@@ -6,8 +6,9 @@
  * Never use Google Flights `?q=` natural-language URLs (empty landing page).
  * ShareTrip `/flight/search` 404s — do not add it back without a working dated URL.
  * US-Bangla: stable TTI FrontOffice only — never a session-GUID path that 404s later.
- * Stamp: cheap-ticket-finder-20260902
- * No public fare API without secrets — do not invent ৳ on calendar cells.
+ * Stamp: attach-savings-20260902
+ * Official card % and checkout codes attach to the provider you book on.
+ * No public fare API without secrets — show official up to X%, never a made-up ৳.
  */
 (function (root, factory) {
     const api = factory();
@@ -693,7 +694,8 @@
                 url: airline.url(opts),
                 blurb: airline.blurb || "Official airline booking page for this route. Origin, destination and dates are in the link. Live fare is on the airline site — we do not invent ৳.",
                 cta: airline.cta || `Open ${airline.name} booking`,
-                promo: airlineCheckoutPromo(airline.id)
+                promo: airlineCheckoutPromo(airline.id),
+                savings: savingsForProvider(airline.id, opts)
             });
         }
 
@@ -728,6 +730,203 @@
 
     function airlineCheckoutPromo(airlineId) {
         return AIRLINE_CHECKOUT_PROMOS[airlineId] || null;
+    }
+
+    function isDomesticRoute(opts) {
+        const o = opts || {};
+        return BD_AIRPORTS.has(lower(o.origin)) && BD_AIRPORTS.has(lower(o.dest));
+    }
+
+    // Destinations named on Qatar’s official Bangladesh F1-fans page. Not a general fare code.
+    const QATAR_F1FANS_CITIES = new Set([
+        "mel", "pvg", "sha", "ngo", "bah", "jed", "mia", "nce", "bcn", "yul",
+        "bru", "lhr", "lgw", "bhx", "bud", "ams", "mxp", "lin", "gyd", "sin",
+        "aus", "mex", "gru", "cgh", "las", "auh", "doh", "blq", "vie"
+    ]);
+
+    function qatarF1FansApplies(opts) {
+        const o = opts || {};
+        return QATAR_F1FANS_CITIES.has(lower(o.origin)) || QATAR_F1FANS_CITIES.has(lower(o.dest));
+    }
+
+    // Official % / codes only, keyed to the checkout that actually accepts them.
+    function savingsForProvider(providerId, opts) {
+        const route = opts || {};
+        const domestic = isDomesticRoute(route);
+        const savings = [];
+
+        if (providerId === "gozayaan") {
+            if (domestic) {
+                savings.push({
+                    id: "scb-gozayaan",
+                    kind: "card",
+                    label: "SCB card",
+                    headline: "SCB card: official up to 7% on this OTA",
+                    percent: 7,
+                    how: "up to",
+                    capBdt: null,
+                    code: null,
+                    detail: "Official GoZayaan SCB page: up to 7% off domestic base fare. Not for EMI or internet banking.",
+                    validity: "Official page says valid till 31 October 2026",
+                    sourceUrl: "https://gozayaan.com/campaign/sc"
+                });
+            } else {
+                savings.push({
+                    id: "scb-gozayaan",
+                    kind: "card",
+                    label: "SCB card",
+                    headline: "SCB card: official up to 10% on this OTA",
+                    percent: 10,
+                    how: "up to",
+                    capBdt: null,
+                    code: null,
+                    detail: "Official GoZayaan SCB page: up to 10% off international base fare. Not for EMI or internet banking.",
+                    validity: "Official page says valid till 31 October 2026",
+                    sourceUrl: "https://gozayaan.com/campaign/sc"
+                });
+                savings.push({
+                    id: "city-amex-gozayaan",
+                    kind: "card",
+                    label: "City Amex",
+                    headline: "City Amex: official up to 18% on this OTA",
+                    percent: 18,
+                    how: "up to",
+                    capBdt: 30000,
+                    code: null,
+                    detail: "Official GoZayaan City Amex page: up to 18% international base fare (Platinum / Platinum Reserve, max BDT 30,000); Gold up to 15% (max BDT 25,000). Card BIN is checked at GoZayaan payment.",
+                    validity: "Official page says valid till 31 December 2026",
+                    sourceUrl: "https://gozayaan.com/campaign/id/644"
+                });
+            }
+        }
+
+        if (providerId === "airastra") {
+            savings.push({
+                id: "airastra15",
+                kind: "code",
+                label: "AIRASTRA15",
+                headline: "AIRASTRA15: 15% at airline checkout",
+                percent: 15,
+                how: "flat",
+                capBdt: null,
+                code: "AIRASTRA15",
+                detail: "Official AIR ASTRA offers page: 15% on base fare on website or app, except blackout dates. Enter the code at AIR ASTRA checkout — not on Google Flights.",
+                validity: "No expiry date printed on the official offers page",
+                sourceUrl: "https://www.airastra.com/node?field_offers_type_target_id=All"
+            });
+        }
+
+        if (providerId === "qatar" && qatarF1FansApplies(route)) {
+            savings.push({
+                id: "qatar-f1fans",
+                kind: "code",
+                label: "F1FANS",
+                headline: "F1FANS: official up to 12% at airline checkout",
+                percent: 12,
+                how: "up to",
+                capBdt: null,
+                code: "F1FANS",
+                detail: "Official Qatar Airways Bangladesh F1 page: up to 12% off base fare to listed Formula 1® race cities only. Not a general fare code.",
+                validity: "See the official F1 offer page for race-by-race travel windows",
+                sourceUrl: "https://www.qatarairways.com/en-bd/offers/f1-fans-flight-deals.html"
+            });
+        }
+
+        if (providerId === "sharetrip") {
+            if (domestic) {
+                savings.push({
+                    id: "ebl-dom-code",
+                    kind: "code",
+                    label: "STLRPDQ326",
+                    headline: "EBL Stellar STLRPDQ326: official up to 15% at ShareTrip checkout",
+                    percent: 15,
+                    how: "up to",
+                    capBdt: 1000,
+                    code: "STLRPDQ326",
+                    detail: "Published on EBL’s official Stellar card page for domestic flights: up to 15% on base fare, max BDT 1,000. Enter at ShareTrip checkout. Dated ShareTrip flight-search URLs 404 — use ShareTrip home.",
+                    validity: "Quarterly code as printed on the EBL page — confirm there",
+                    sourceUrl: "https://www.ebl.com.bd/retail/eblcard/ebl-stellar-platinum-credit-card"
+                });
+            } else {
+                savings.push({
+                    id: "ebl-intl-code",
+                    kind: "code",
+                    label: "STLRPIQ326",
+                    headline: "EBL Stellar STLRPIQ326: official up to 15% at ShareTrip checkout",
+                    percent: 15,
+                    how: "up to",
+                    capBdt: 3000,
+                    code: "STLRPIQ326",
+                    detail: "Published on EBL’s official Stellar card page for international flights: up to 15% on base fare, max BDT 3,000. Enter at ShareTrip checkout. Dated ShareTrip flight-search URLs 404 — use ShareTrip home.",
+                    validity: "Quarterly code as printed on the EBL page — confirm there",
+                    sourceUrl: "https://www.ebl.com.bd/retail/eblcard/ebl-stellar-platinum-credit-card"
+                });
+            }
+        }
+
+        return savings;
+    }
+
+    // Only when a real fare exists. Never call this with an invented ৳ amount.
+    function estimateAfterOfficialPercent(fareBdt, saving) {
+        const fare = Number(fareBdt);
+        if (!Number.isFinite(fare) || fare <= 0 || !saving || !Number.isFinite(Number(saving.percent))) {
+            return null;
+        }
+        const percent = Number(saving.percent);
+        let cut = fare * (percent / 100);
+        if (Number.isFinite(Number(saving.capBdt)) && saving.capBdt > 0) {
+            cut = Math.min(cut, Number(saving.capBdt));
+        }
+        const after = Math.round(fare - cut);
+        const how = saving.how === "up to" ? "up to " : "";
+        return {
+            afterBdt: after,
+            label: `Estimate from official ${how}${percent}% — not a live quote`
+        };
+    }
+
+    function cheapBookPath(opts) {
+        const rows = [
+            {
+                id: "google-flights",
+                name: "Google Flights",
+                url: googleFlightsUrl(opts),
+                cta: "Open cheapest Google Flights results",
+                blurb: "Filled tfs search, cheapest sort, BDT. Card/code savings apply on the airline or OTA you actually pay — not on this meta-search.",
+                savings: savingsForProvider("google-flights", opts)
+            },
+            {
+                id: "gozayaan",
+                name: "GoZayaan",
+                url: gozayaanUrl(opts),
+                cta: "Open GoZayaan with your dates",
+                blurb: "Official Bangladesh OTA search with these airports and dates. Live fare is on GoZayaan. Enter a listed card at their payment step.",
+                savings: savingsForProvider("gozayaan", opts)
+            }
+        ];
+        airlinesForRoute(opts).forEach((airline) => {
+            rows.push({
+                id: airline.id,
+                name: airline.name,
+                url: airline.url,
+                cta: airline.cta,
+                blurb: airline.blurb,
+                savings: airline.savings || savingsForProvider(airline.id, opts)
+            });
+        });
+        const shareSavings = savingsForProvider("sharetrip", opts);
+        if (shareSavings.length) {
+            rows.push({
+                id: "sharetrip",
+                name: "ShareTrip",
+                url: "https://sharetrip.net/",
+                cta: "Open ShareTrip home, then enter the EBL code",
+                blurb: "EBL Stellar codes are for ShareTrip checkout only. Dated /flight/search 404s — search from their home page.",
+                savings: shareSavings
+            });
+        }
+        return rows;
     }
 
     function comparatorLinks(opts) {
@@ -998,6 +1197,10 @@
         gozayaanUrl,
         airlinesForRoute,
         airlineCheckoutPromo,
+        savingsForProvider,
+        estimateAfterOfficialPercent,
+        cheapBookPath,
+        isDomesticRoute,
         comparatorLinks,
         bangladeshSearchLinks,
         officialDiscountLinks,
