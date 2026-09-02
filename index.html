@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cheap Ticket Finder — official % on the book button</title>
     <meta name="application-name" content="Cheap Ticket Finder">
-    <meta name="deploy" content="beside-row-20260902">
+    <meta name="deploy" content="no-campaign-grid-20260902">
     <meta name="description" content="Cheap Ticket Finder does not sell tickets. One cheap ticket path after you pick dates: each airline/OTA search-and-book row shows the official card or promo for that checkout beside it. We do not invent ৳ fares.">
     <meta property="og:site_name" content="Cheap Ticket Finder">
     <meta property="og:title" content="Cheap Ticket Finder">
@@ -80,7 +80,7 @@
                 <i class="fa-solid fa-plane-departure text-sky-400"></i> Cheap Ticket Finder
             </h1>
             <p class="text-slate-400 text-xs sm:text-sm mt-2 max-w-2xl mx-auto leading-5">
-                Pick From / To, then one day on the calendar. Cheap Ticket Finder shows one cheap ticket path: Google Flights, GoZayaan, and one official book button per airline. The published card or promo sits beside that search/book row (SCB on GoZayaan, AIRASTRA15 on AIR ASTRA, none on US-Bangla). BRAC and other banks appear only if they apply at that checkout. No live fare API — we show official up to X%, not a made-up ৳.
+                Pick From / To, then one day on the calendar. Cheap Ticket Finder shows one cheap ticket path: Google Flights, GoZayaan, and one official book button per airline. A published card or promo sits only beside that search/book row (SCB on GoZayaan, AIRASTRA15 on AIR ASTRA). If an airline has no published code, that row is just the book button. No live fare API — we show official up to X%, not a made-up ৳.
             </p>
         </header>
 
@@ -190,7 +190,7 @@
                 </h2>
                 <span class="text-[10px] sm:text-xs bg-sky-500/20 text-sky-300 px-2.5 py-0.5 rounded-full font-semibold">Official % beside the book row</span>
             </div>
-            <p class="text-[11px] text-slate-500 mb-3">One place only: beside each airline/OTA search/book row. US-Bangla shows its published promo or None. GoZayaan shows SCB/City Amex that apply at that OTA checkout — BRAC only if that checkout actually has a BRAC offer. AIR ASTRA shows “AIRASTRA15: 15% at airline checkout”. Example: “SCB card: official up to 10% on this OTA”. No separate bank grid. No live fare API, so we do not print a made-up ৳. If a real fare is ever known, we also show fare after that percent, labeled estimate from official %.</p>
+            <p class="text-[11px] text-slate-500 mb-3">One place only: beside each airline/OTA search/book row. GoZayaan shows SCB/City Amex that apply at that OTA checkout. AIR ASTRA shows “AIRASTRA15: 15% at airline checkout”. Example: “SCB card: official up to 10% on this OTA”. If an airline has no published code, show nothing extra. No separate bank grid. No live fare API, so we do not print a made-up ৳. If a real fare is ever known, we also show fare after that percent, labeled estimate from official %.</p>
             <div id="needDatesHint" class="rounded-xl border border-slate-800 bg-slate-950/60 px-3.5 py-3 text-xs text-slate-400">Pick From / To and a date on the calendar. Each search/book row then shows the official card or promo for that checkout beside it.</div>
             <div id="cheapPathResults" class="space-y-2"></div>
             <div id="googleBookBar" class="hidden"></div>
@@ -298,7 +298,7 @@
         </div>
     </div>
 
-    <script src="js/booking-links.js?v=beside-row-20260902"></script>
+    <script src="js/booking-links.js?v=no-campaign-grid-20260902"></script>
     <script>
         const COUNTRY_AIRPORTS = [
 
@@ -1215,7 +1215,7 @@
         function savingsChips(savings, liveFareBdt) {
             const list = Array.isArray(savings) ? savings : [];
             if (!list.length) {
-                return `<span class="text-[11px] text-slate-500">None — No official card or checkout code mapped to this provider</span>`;
+                return "";
             }
             return `<div class="flex flex-wrap items-center gap-1.5">${list.map((item) => {
                 const estimate = liveFareBdt != null
