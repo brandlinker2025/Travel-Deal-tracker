@@ -6,9 +6,10 @@
  * Never use Google Flights `?q=` natural-language URLs (empty landing page).
  * ShareTrip `/flight/search` 404s — do not add it back without a working dated URL.
  * US-Bangla: stable TTI FrontOffice only — never a session-GUID path that 404s later.
- * Stamp: google-primary-20260902
+ * Stamp: route-packages-20260902
  * Cheap authentic path is Google Flights tfs search — book the airline there.
  * Official airline engines are secondary; they often open a higher fare family (Flex).
+ * Official packages appear only for the searched destination country, and only with a real official URL.
  * No public fare API without secrets — show official up to X%, never a made-up ৳.
  */
 (function (root, factory) {
@@ -425,7 +426,7 @@
             name: "AIR ASTRA",
             home: "https://airastra.com",
             match: /astra/i,
-            relevant: (o, d) => BD_AIRPORTS.has(o) || BD_AIRPORTS.has(d),
+            relevant: (o, d) => BD_AIRPORTS.has(o) && BD_AIRPORTS.has(d),
             blurb: "Official AIR ASTRA booking engine (TTI FrontOffice). Stable public URL with origin, destination and date in the query — not a session GUID.",
             cta: "Open AIR ASTRA official booking",
             url(opts) {
@@ -437,7 +438,7 @@
             name: "Novoair",
             home: "https://www.flynovoair.com",
             match: /novoair/i,
-            relevant: (o, d) => BD_AIRPORTS.has(o) || BD_AIRPORTS.has(d),
+            relevant: (o, d) => BD_AIRPORTS.has(o) && BD_AIRPORTS.has(d),
             blurb: "Official Novoair booking page (secure.flynovoair.com). Origin, destination and date are in the link. Fill From/To on their form if empty — they do not publish a stable dated-results GET.",
             cta: "Open Novoair official booking",
             url(opts) {
@@ -702,7 +703,10 @@
 
         listed.forEach((item) => {
             const matched = findAirlineByName(item.name, item.website);
-            if (matched) add(matched);
+            if (!matched) return;
+            const onRoute = (matched.relevant && matched.relevant(o, d))
+                || (Array.isArray(matched.hubs) && (matched.hubs.includes(o) || matched.hubs.includes(d)));
+            if (onRoute) add(matched);
         });
 
         AIRLINE_DIRECTORY.forEach((airline) => {
@@ -1166,6 +1170,66 @@
         ];
     }
 
+    const OFFICIAL_PACKAGE_PAGES = [
+        {
+            id: "airastra-holidays",
+            name: "AIR ASTRA Holidays",
+            url: "https://airastra.com/holiday-packages",
+            blurb: "Official Cox’s Bazar and domestic packages. Seat and room availability is on their site.",
+            countries: ["bangladesh"],
+            airports: ["dac", "cxb", "cgp", "zyl", "jsr", "spd", "rjh", "bzl", "ird"]
+        },
+        {
+            id: "qatar-holidays",
+            name: "Qatar Airways Holidays",
+            url: "https://www.qatarairwaysholidays.com/",
+            blurb: "Flight + hotel, multi-city and Qatar stopover packages on the official holidays site.",
+            countries: ["qatar"],
+            airports: ["doh"]
+        },
+        {
+            id: "turkish-holidays",
+            name: "Turkish Airlines Holidays",
+            url: "https://holidays.turkishairlines.com/",
+            blurb: "Official flight + hotel packages, including seasonal offers when listed.",
+            countries: ["turkey", "turkiye"],
+            airports: ["ist", "saw"]
+        },
+        {
+            id: "flydubai-holidays",
+            name: "flydubai Holidays",
+            url: "https://holidays.flydubai.com/en-bd/cheap-holiday-packages/",
+            blurb: "Official packages marketed to Bangladesh for UAE stays, including flights and hotels when available.",
+            countries: ["united arab emirates", "uae"],
+            airports: ["dxb", "dwc", "auh", "shj"]
+        }
+    ];
+
+    function countryKey(value) {
+        return String(value || "")
+            .toLowerCase()
+            .normalize("NFKD")
+            .replace(/[^a-z\s]/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+    }
+
+    function officialPackagesForRoute(opts) {
+        const o = opts || {};
+        const dest = lower(o.dest);
+        const country = countryKey(o.destCountry);
+        return OFFICIAL_PACKAGE_PAGES.filter((pkg) => {
+            if (pkg.airports.includes(dest)) return true;
+            return pkg.countries.some((name) => country === name || country.includes(name));
+        }).map((pkg) => ({
+            id: pkg.id,
+            name: pkg.name,
+            url: pkg.url,
+            blurb: pkg.blurb,
+            cta: "Open official packages"
+        }));
+    }
+
     function hotelLinks(opts) {
         return [
             {
@@ -1214,6 +1278,7 @@
         officialDiscountLinks,
         bankCardOfferIntel,
         publishedPromoCodes,
+        officialPackagesForRoute,
         hotelLinks,
         addDaysISO,
         stayLengthDays,

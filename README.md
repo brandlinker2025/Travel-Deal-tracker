@@ -7,7 +7,12 @@ Static Bangladesh-friendly search page for **cheapticketfinder.site**. It does *
 Pick From / To, then dates on **one empty calendar** (nothing is pre-selected). Cheap Ticket Finder then shows **one cheap ticket path**:
 
 - **Primary:** Open Google Flights (`tfs` search). Book with the airline there — that is the real, authentic airline-issued ticket (e.g. a US-Bangla ৳ on Google Flights). We do not invent ৳.
-- **Secondary:** official airline engines (they often show a higher fare family such as Flex) and GoZayaan, with SCB / City Amex **beside that OTA row** when they apply at GoZayaan checkout. AIRASTRA15 sits beside AIR ASTRA. If an airline has no published code, the row is only the book button.
+- **Secondary:** official airline engines for **this From–To only** (they often show a higher fare family such as Flex). US-Bangla TTI appears when that airline is on the route. AIR ASTRA / Novoair only on Bangladesh domestic routes. A published checkout code sits beside that airline (AIRASTRA15 on AIR ASTRA).
+- **Official packages:** only if the searched destination country has a real official holiday URL. Thailand (and any country without a URL we publish) omits the packages block. No always-on four-package grid.
+
+There is no public fare API without secrets, so this page does not print a made-up ৳. We show the official **up to X%** on the matching checkout. If a real fare is ever known, fare after that percent is labeled an estimate from official %.
+
+There is **one place** for cards/codes: beside each airline/OTA search/book row. There is no separate BANK / CARD CAMPAIGNS grid. There is no always-on tools grid.
 
 There is no public fare API without secrets, so this page does not print a made-up ৳. We show the official **up to X%** on the matching checkout. If a real fare is ever known, fare after that percent is labeled an estimate from official %.
 
