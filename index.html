@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cheap Ticket Finder — cheap authentic ticket on Google Flights</title>
     <meta name="application-name" content="Cheap Ticket Finder">
-    <meta name="deploy" content="google-primary-20260902">
+    <meta name="deploy" content="route-packages-20260902">
     <meta name="description" content="Cheap Ticket Finder does not sell tickets. After you pick dates, the cheap authentic path is Open Google Flights (tfs search). Book with the airline there — that is the real, airline-issued ticket. Official airline sites are secondary because they often show Flex. We do not invent ৳.">
     <meta property="og:site_name" content="Cheap Ticket Finder">
     <meta property="og:title" content="Cheap Ticket Finder">
@@ -169,7 +169,7 @@
 
         <div class="mb-4 rounded-xl border border-sky-500/20 bg-sky-950/40 px-3.5 py-3 text-[11px] leading-5 text-slate-300">
             <i class="fa-solid fa-circle-info text-sky-400 mr-1"></i>
-            Cheap Ticket Finder does not sell tickets and does not invent ৳. After you pick dates, the primary button is Open Google Flights (tfs search). Book with the airline there — that is the authentic airline-issued ticket. Official airline sites are secondary; they often open Flex / a higher fare family.
+            Cheap Ticket Finder does not sell tickets and does not invent ৳. After you pick dates, the primary button is Open Google Flights (tfs search). Book with the airline there — that is the authentic airline-issued ticket. Official airline sites are secondary; they often open Flex / a higher fare family. Live fare is on Google Flights — we do not put Skyscanner or Kayak next to the cheap path. Official packages appear only for the destination country, and only when we have a real official URL.
         </div>
 
         <div id="tripSummary" class="hidden bg-slate-900 border border-slate-800 rounded-xl p-3.5 mb-6 flex flex-wrap justify-between items-center text-xs sm:text-sm gap-2">
@@ -206,76 +206,16 @@
             <div id="hotelResults" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
-        <div class="mb-8" id="verifiedAgencySection">
+        <div class="mb-8 hidden" id="verifiedAgencySection">
             <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <div>
                     <h2 class="text-sm sm:text-lg font-bold text-emerald-300 flex items-center gap-2">
                         <i class="fa-solid fa-suitcase-rolling"></i> Official packages
                     </h2>
-                    <p class="text-[10px] text-slate-500 mt-1">Airline holiday pages only. Availability and price are confirmed on those sites.</p>
+                    <p class="text-[10px] text-slate-500 mt-1">Only official holiday pages for this destination country. If we have no real URL, this block stays hidden.</p>
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-                <a href="https://www.qatarairwaysholidays.com/" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-4 hover:border-emerald-500/40 transition">
-                    <div class="text-[10px] uppercase font-black text-emerald-300">Official airline holidays</div>
-                    <h3 class="text-sm font-black text-white mt-1">Qatar Airways Holidays</h3>
-                    <p class="text-xs text-slate-400 mt-2 leading-5">Flight + hotel, multi-city and Qatar stopover packages on the official holidays site.</p>
-                    <div class="text-[10px] text-sky-300 font-bold mt-3">Open official packages ↗</div>
-                </a>
-                <a href="https://holidays.turkishairlines.com/" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-4 hover:border-emerald-500/40 transition">
-                    <div class="text-[10px] uppercase font-black text-emerald-300">Official airline holidays</div>
-                    <h3 class="text-sm font-black text-white mt-1">Turkish Airlines Holidays</h3>
-                    <p class="text-xs text-slate-400 mt-2 leading-5">Official flight + hotel packages, including seasonal offers when listed.</p>
-                    <div class="text-[10px] text-sky-300 font-bold mt-3">Open official packages ↗</div>
-                </a>
-                <a href="https://holidays.flydubai.com/en-bd/cheap-holiday-packages/" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-4 hover:border-emerald-500/40 transition">
-                    <div class="text-[10px] uppercase font-black text-emerald-300">Official Bangladesh market page</div>
-                    <h3 class="text-sm font-black text-white mt-1">flydubai Holidays</h3>
-                    <p class="text-xs text-slate-400 mt-2 leading-5">Official packages marketed to Bangladesh, including flights and hotels when available.</p>
-                    <div class="text-[10px] text-sky-300 font-bold mt-3">Open Bangladesh packages ↗</div>
-                </a>
-                <a href="https://airastra.com/holiday-packages" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-4 hover:border-emerald-500/40 transition">
-                    <div class="text-[10px] uppercase font-black text-emerald-300">Official Bangladesh airline</div>
-                    <h3 class="text-sm font-black text-white mt-1">AIR ASTRA Holidays</h3>
-                    <p class="text-xs text-slate-400 mt-2 leading-5">Official Cox’s Bazar and domestic packages. Seat and room availability is on their site.</p>
-                    <div class="text-[10px] text-sky-300 font-bold mt-3">Open official packages ↗</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="mb-8">
-            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-                <h2 class="text-sm sm:text-lg font-bold text-cyan-300 flex items-center gap-2">
-                    <i class="fa-solid fa-toolbox"></i> Real free tools
-                </h2>
-                <span class="text-[10px] text-slate-500">Independent sites — still not our fares</span>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-                <a href="https://www.google.com/travel/flights" target="_blank" rel="noopener noreferrer" class="bg-slate-900 border border-slate-800 hover:border-sky-500/40 rounded-xl p-3.5 transition">
-                    <div class="font-bold text-white">Google Flights</div>
-                    <div class="text-slate-400 mt-1">Free calendar and airline compare. The dated cheapest-path button above uses the same Google Flights tfs search.</div>
-                </a>
-                <a href="https://www.skyscanner.net/" target="_blank" rel="noopener noreferrer" class="bg-slate-900 border border-slate-800 hover:border-sky-500/40 rounded-xl p-3.5 transition">
-                    <div class="font-bold text-white">Skyscanner</div>
-                    <div class="text-slate-400 mt-1">Whole-month view on their site. Final price is at checkout there.</div>
-                </a>
-                <a href="https://www.kayak.com/flights" target="_blank" rel="noopener noreferrer" class="bg-slate-900 border border-slate-800 hover:border-sky-500/40 rounded-xl p-3.5 transition">
-                    <div class="font-bold text-white">Kayak</div>
-                    <div class="text-slate-400 mt-1">Independent meta-search. We do not duplicate Kayak next to Google Flights on this page.</div>
-                </a>
-                <a href="https://matrix.itasoftware.com/" target="_blank" rel="noopener noreferrer" class="bg-slate-900 border border-slate-800 hover:border-sky-500/40 rounded-xl p-3.5 transition">
-                    <div class="font-bold text-white">ITA Matrix</div>
-                    <div class="text-slate-400 mt-1">Google’s free advanced fare explorer. It does not sell tickets either.</div>
-                </a>
-                <a href="https://www.google.com/travel/hotels" target="_blank" rel="noopener noreferrer" class="bg-slate-900 border border-slate-800 hover:border-sky-500/40 rounded-xl p-3.5 transition">
-                    <div class="font-bold text-white">Google Hotels</div>
-                    <div class="text-slate-400 mt-1">Compare stays. Use the dated hotel button for this destination.</div>
-                </a>
-                <a href="https://www.biman-airlines.com/" target="_blank" rel="noopener noreferrer" class="bg-slate-900 border border-slate-800 hover:border-sky-500/40 rounded-xl p-3.5 transition">
-                    <div class="font-bold text-white">Biman Bangladesh</div>
-                    <div class="text-slate-400 mt-1">National carrier official site. Book only on biman-airlines.com.</div>
-                </a>
-            </div>
+            <div id="officialPackageResults" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3"></div>
         </div>
 
         <footer class="text-center text-[10px] text-slate-500 leading-5 pb-4">
@@ -298,7 +238,7 @@
         </div>
     </div>
 
-    <script src="js/booking-links.js?v=google-primary-20260902"></script>
+    <script src="js/booking-links.js?v=route-packages-20260902"></script>
     <script>
         const COUNTRY_AIRPORTS = [
 
@@ -1201,6 +1141,7 @@
         }
 
         function currentSearchOpts() {
+            const destAirport = getAllAirports().find(i => i.code === selectedDestCode) || {};
             return {
                 origin: selectedOriginCode,
                 dest: selectedDestCode,
@@ -1208,7 +1149,8 @@
                 depart: selectedDeptDate,
                 returnDate: selectedRetDate,
                 tripType: currentTripType,
-                knownAirlines: (getAllAirports().find(i => i.code === selectedDestCode) || {}).domesticAirlines || []
+                destCountry: destAirport.country || "",
+                knownAirlines: destAirport.domesticAirlines || []
             };
         }
 
@@ -1327,6 +1269,8 @@
             if (needDates) needDates.classList.remove('hidden');
             document.getElementById('hotelResults').innerHTML = "";
             document.getElementById('hotelSectionWrapper').classList.add('hidden');
+            document.getElementById('verifiedAgencySection').classList.add('hidden');
+            document.getElementById('officialPackageResults').innerHTML = "";
             document.getElementById('tripSummary').classList.add('hidden');
             const btnText = document.getElementById('btnText');
             if (btnText) {
@@ -1407,6 +1351,27 @@
                 url: item.url
             }, "emerald")).join("");
             document.getElementById('hotelSectionWrapper').classList.remove('hidden');
+
+            const packages = BookingLinks.officialPackagesForRoute({
+                dest: selectedDestCode,
+                destCountry: dest.country || ""
+            });
+            const pkgWrap = document.getElementById('verifiedAgencySection');
+            const pkgBox = document.getElementById('officialPackageResults');
+            if (!packages.length) {
+                pkgBox.innerHTML = "";
+                pkgWrap.classList.add('hidden');
+            } else {
+                pkgBox.innerHTML = packages.map((item) => `
+                    <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-4 hover:border-emerald-500/40 transition">
+                        <div class="text-[10px] uppercase font-black text-emerald-300">Official packages for this destination</div>
+                        <h3 class="text-sm font-black text-white mt-1">${escapeHtml(item.name)}</h3>
+                        <p class="text-xs text-slate-400 mt-2 leading-5">${escapeHtml(item.blurb || "")}</p>
+                        <div class="text-[10px] text-sky-300 font-bold mt-3">${escapeHtml(item.cta || "Open official packages")} ↗</div>
+                    </a>
+                `).join("");
+                pkgWrap.classList.remove('hidden');
+            }
 
             const btnText = document.getElementById('btnText');
             if (btnText) btnText.innerText = "Refresh cheap Google Flights path";

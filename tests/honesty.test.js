@@ -73,7 +73,8 @@ const required = [
     "tripCalendarGrid",
     "googleBookBar",
     "Official packages",
-    "google-primary-20260902",
+    "officialPackageResults",
+    "route-packages-20260902",
     "Cheap Ticket Finder",
     "cheapticketfinder.site",
 ];
@@ -97,11 +98,16 @@ assert.ok(!html.includes('id="promoCodeResults"'), "do not keep a standalone pro
 assert.ok(!html.includes("cheap-ticket-finder-20260902"), "deploy stamp must move with this ship");
 assert.ok(!html.includes("attach-savings-20260902"), "deploy stamp must move with the no-campaign-grid ship");
 assert.ok(!html.includes("beside-row-20260902"), "deploy stamp must move with the google-primary ship");
-assert.ok(!html.includes("no-campaign-grid-20260902"), "deploy stamp must move with the google-primary ship");
+assert.ok(!html.includes("no-campaign-grid-20260902"), "deploy stamp must move with the route-packages ship");
+assert.ok(!html.includes("google-primary-20260902"), "deploy stamp must move with the route-packages ship");
+assert.ok(!html.includes("Real free tools"), "do not keep an always-on extra tools grid");
+assert.ok(!html.includes("https://www.qatarairwaysholidays.com/"), "do not keep a static always-on Qatar packages card");
+assert.ok(!html.includes("https://holidays.turkishairlines.com/"), "do not keep a static always-on Turkish packages card");
+assert.ok(!html.includes("https://airastra.com/holiday-packages"), "AIR ASTRA packages must not be a static always-on card");
 
 const pathIdx = html.indexOf("Cheap ticket path");
 const hotelIdx = html.indexOf("Hotels for these dates");
-const pkgIdx = html.indexOf("Official packages");
+const pkgIdx = html.indexOf('id="verifiedAgencySection"');
 assert.ok(pathIdx > 0 && hotelIdx > pathIdx, "cheap ticket path must sit above hotels");
 assert.ok(pkgIdx > hotelIdx, "official packages sit below the cheap path and hotels");
 
@@ -135,7 +141,9 @@ assert.ok(html.includes("Airline site (often Flex / higher fare family)"), "airl
 assert.ok(links.includes("Open Google Flights"), "Google Flights CTA is Open Google Flights");
 assert.ok(links.includes("authentic airline-issued"), "Google Flights blurb must say the airline ticket there is authentic");
 assert.ok(links.includes("SCB card: official up to 10% on this OTA"), "GoZayaan SCB headline must stay mapped to that OTA");
-assert.ok(links.includes("AIRASTRA15: 15% at airline checkout"), "AIRASTRA15 must stay mapped to airline checkout");
+assert.ok(links.includes("officialPackagesForRoute"), "packages must be chosen from the searched destination");
+assert.ok(links.includes("airastra.com/holiday-packages"), "AIR ASTRA official holiday URL stays in the destination map");
+assert.ok(html.includes('id="verifiedAgencySection"') && html.includes("hidden"), "packages block starts hidden until a matching destination");
 
 assert.ok(!html.includes("Cheapest Ticket Finder"), "product name is Cheap Ticket Finder, not Cheapest Ticket Finder");
 assert.ok(!html.includes("Global Travel Tracker"), "do not use Global Travel Tracker as the product name");
