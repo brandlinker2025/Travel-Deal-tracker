@@ -6,14 +6,12 @@ Static Bangladesh-friendly search page for **cheapticketfinder.site**. It does *
 
 Pick From / To, then dates on **one empty calendar** (nothing is pre-selected). Cheap Ticket Finder then shows **one cheap ticket path**:
 
-- Google Flights cheapest `tfs` search
-- GoZayaan dated search, with SCB / City Amex **beside that OTA row** when they apply at GoZayaan checkout (SCB up to 10% international / 7% domestic; City Amex up to 18% international). BRAC is omitted unless that checkout publishes a BRAC offer.
-- One official search/book row per airline. A published checkout code sits **beside that airline** (AIRASTRA15: 15% at AIR ASTRA). If the airline has no published code, the row is only the book button — we do not invent USBA15.
-- EBL Stellar codes only beside ShareTrip home (not `/flight/search`, which 404s)
+- **Primary:** Open Google Flights (`tfs` search). Book with the airline there — that is the real, authentic airline-issued ticket (e.g. a US-Bangla ৳ on Google Flights). We do not invent ৳.
+- **Secondary:** official airline engines (they often show a higher fare family such as Flex) and GoZayaan, with SCB / City Amex **beside that OTA row** when they apply at GoZayaan checkout. AIRASTRA15 sits beside AIR ASTRA. If an airline has no published code, the row is only the book button.
 
-There is no public fare API without secrets, so this page does not print a made-up ৳. We show the official **up to X%**. If a real fare is ever known, fare after that percent is labeled an estimate from official %.
+There is no public fare API without secrets, so this page does not print a made-up ৳. We show the official **up to X%** on the matching checkout. If a real fare is ever known, fare after that percent is labeled an estimate from official %.
 
-There is **one place**: beside each airline/OTA search/book row. There is no separate BANK / CARD CAMPAIGNS grid.
+There is **one place** for cards/codes: beside each airline/OTA search/book row. There is no separate BANK / CARD CAMPAIGNS grid.
 
 ShareTrip dated `/flight/search` is not linked (404). EBL Stellar codes use ShareTrip home only.
 

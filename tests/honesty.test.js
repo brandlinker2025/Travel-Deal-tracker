@@ -61,6 +61,9 @@ const required = [
     "Cheap ticket path",
     "cheapPathResults",
     "Official % beside the book row",
+    "Open Google Flights",
+    "authentic airline-issued",
+    "often Flex",
     "SCB card: official up to 10% on this OTA",
     "AIRASTRA15: 15% at airline checkout",
     "estimate from official %",
@@ -70,7 +73,7 @@ const required = [
     "tripCalendarGrid",
     "googleBookBar",
     "Official packages",
-    "no-campaign-grid-20260902",
+    "google-primary-20260902",
     "Cheap Ticket Finder",
     "cheapticketfinder.site",
 ];
@@ -93,7 +96,8 @@ assert.ok(!html.includes('id="discountResults"'), "do not keep a standalone disc
 assert.ok(!html.includes('id="promoCodeResults"'), "do not keep a standalone promoCodeResults grid");
 assert.ok(!html.includes("cheap-ticket-finder-20260902"), "deploy stamp must move with this ship");
 assert.ok(!html.includes("attach-savings-20260902"), "deploy stamp must move with the no-campaign-grid ship");
-assert.ok(!html.includes("beside-row-20260902"), "deploy stamp must move with the no-campaign-grid ship");
+assert.ok(!html.includes("beside-row-20260902"), "deploy stamp must move with the google-primary ship");
+assert.ok(!html.includes("no-campaign-grid-20260902"), "deploy stamp must move with the google-primary ship");
 
 const pathIdx = html.indexOf("Cheap ticket path");
 const hotelIdx = html.indexOf("Hotels for these dates");
@@ -126,7 +130,10 @@ assert.ok(!links.includes("USBA15"), "Do not invent USBA15 without the airline o
 assert.ok(html.includes("cheapPathCard") && html.includes("savingsChips"), "cheap-path rows must attach official savings beside each book control");
 assert.ok(html.includes("sm:flex-row sm:items-center"), "promo/card chips sit beside the airline/OTA search/book row");
 assert.ok(!html.includes("None — No official card or checkout code mapped"), "airlines with no published promo must not show extra none copy");
-assert.ok(links.includes("Open cheapest Google Flights results"), "Google Flights CTA stays on the cheap path");
+assert.ok(html.includes("primaryGoogleCard"), "Google Flights must be the primary cheap-path card");
+assert.ok(html.includes("Airline site (often Flex / higher fare family)"), "airline engines must be labeled secondary Flex");
+assert.ok(links.includes("Open Google Flights"), "Google Flights CTA is Open Google Flights");
+assert.ok(links.includes("authentic airline-issued"), "Google Flights blurb must say the airline ticket there is authentic");
 assert.ok(links.includes("SCB card: official up to 10% on this OTA"), "GoZayaan SCB headline must stay mapped to that OTA");
 assert.ok(links.includes("AIRASTRA15: 15% at airline checkout"), "AIRASTRA15 must stay mapped to airline checkout");
 
