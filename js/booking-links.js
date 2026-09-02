@@ -195,15 +195,13 @@
     function isUsableNearbyAirport(item) {
         const type = String(item && item.type || "airport").toLowerCase();
         if (type && type !== "airport") return false;
-        const size = String(item && item.size || "").toLowerCase();
-        if (size === "small") return false;
         return true;
     }
 
-    // Other dest IATA ~50–150 km away. Metro siblings are already in the primary tfs search.
+    // Other destination IATA airports within 50 km. Metro siblings are already in the primary tfs search.
     function cheaperNearbyAirports(destCode, airports, range) {
-        const minKm = range && Number.isFinite(Number(range.minKm)) ? Number(range.minKm) : 50;
-        const maxKm = range && Number.isFinite(Number(range.maxKm)) ? Number(range.maxKm) : 150;
+        const minKm = range && Number.isFinite(Number(range.minKm)) ? Number(range.minKm) : 0;
+        const maxKm = range && Number.isFinite(Number(range.maxKm)) ? Number(range.maxKm) : 50;
         const list = Array.isArray(airports) ? airports : [];
         const destKey = lower(destCode);
         const dest = list.find((item) => lower(item.code) === destKey);
@@ -239,7 +237,8 @@
             code: alt.code,
             city: alt.city,
             km: alt.km,
-            url: googleFlightsUrl(Object.assign({}, search, { dest: alt.code }))
+            url: googleFlightsUrl(Object.assign({}, search, { dest: alt.code })),
+            fallbackUrl: googleFlightsFallbackUrl()
         }));
     }
 
@@ -306,6 +305,11 @@
         const tfs = encodeGoogleFlightsTfs(opts);
         const tfu = encodeGoogleFlightsTfuCheapest();
         return `https://www.google.com/travel/flights/search?tfs=${tfs}&tfu=${tfu}&hl=en&curr=BDT`;
+    }
+
+    // Stable fallback landing page if Google changes its internal tfs URL format.
+    function googleFlightsFallbackUrl() {
+        return "https://www.google.com/travel/flights?hl=en&curr=BDT";
     }
 
     function skyscannerUrl(opts) {
@@ -1040,6 +1044,7 @@
                 id: "google-flights",
                 name: "Google Flights",
                 url: googleFlightsUrl(gfOpts),
+                fallbackUrl: googleFlightsFallbackUrl(),
                 cta: "Open Google Flights",
                 tier: "primary",
                 nearbyLabel,
@@ -1402,6 +1407,7 @@
         toISODate,
         toSkyDate,
         googleFlightsUrl,
+        googleFlightsFallbackUrl,
         encodeGoogleFlightsTfs,
         metroAirports,
         nearbyAirportsLabel,
