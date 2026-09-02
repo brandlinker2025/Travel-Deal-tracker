@@ -8,7 +8,7 @@ Pick From / To, then dates on **one empty calendar** (nothing is pre-selected). 
 
 - Google Flights cheapest `tfs` search
 - GoZayaan dated search, with SCB / City Amex **beside that OTA row** when they apply at GoZayaan checkout (SCB up to 10% international / 7% domestic; City Amex up to 18% international). BRAC is omitted unless that checkout publishes a BRAC offer.
-- One official search/book row per airline. A published checkout code sits **beside that airline** (AIRASTRA15: 15% at AIR ASTRA). US-Bangla shows None — we do not invent USBA15.
+- One official search/book row per airline. A published checkout code sits **beside that airline** (AIRASTRA15: 15% at AIR ASTRA). If the airline has no published code, the row is only the book button — we do not invent USBA15.
 - EBL Stellar codes only beside ShareTrip home (not `/flight/search`, which 404s)
 
 There is no public fare API without secrets, so this page does not print a made-up ৳. We show the official **up to X%**. If a real fare is ever known, fare after that percent is labeled an estimate from official %.

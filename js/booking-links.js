@@ -6,7 +6,7 @@
  * Never use Google Flights `?q=` natural-language URLs (empty landing page).
  * ShareTrip `/flight/search` 404s — do not add it back without a working dated URL.
  * US-Bangla: stable TTI FrontOffice only — never a session-GUID path that 404s later.
- * Stamp: beside-row-20260902
+ * Stamp: no-campaign-grid-20260902
  * Official card % and checkout codes sit beside the airline/OTA search/book row they apply to.
  * BRAC and other banks appear only when that checkout actually publishes an offer.
  * No public fare API without secrets — show official up to X%, never a made-up ৳.
