@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cheapest Ticket Finder — dated search links from DAC</title>
-    <meta name="deploy" content="authentic-book-urls-20260901">
-    <meta name="description" content="We do not sell tickets. Search From/To/dates and open Google Flights, Skyscanner, Kayak, official airlines, Google Hotels and Booking.com with the same dates. Final price is on the provider.">
+    <title>Cheapest Ticket Finder — BD bank/card offers, airline codes, official book</title>
+    <meta name="deploy" content="single-calendar-ux-20260902">
+    <meta name="description" content="We do not sell tickets. Bangladesh bank/card campaigns, official airline promo codes, and one dated official book button per airline. One calendar, one cheapest live search (Google Flights). We do not invent ৳ fares.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -70,13 +70,13 @@
 
         <header class="text-center mb-6 sm:mb-8">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full deal-chip text-[10px] sm:text-xs font-bold text-sky-300 mb-3">
-                <i class="fa-solid fa-link"></i> Dated search links • We do not sell tickets
+                <i class="fa-solid fa-tags"></i> BD bank/card campaigns • official airline codes • we do not sell tickets
             </div>
             <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight flex items-center justify-center gap-2.5">
                 <i class="fa-solid fa-plane-departure text-sky-400"></i> Cheapest Ticket Finder
             </h1>
             <p class="text-slate-400 text-xs sm:text-sm mt-2 max-w-2xl mx-auto leading-5">
-                Search From / To / dates (Dhaka DAC by default). Google Flights opens filled bookable results (tfs), not an empty q= page. Official airline booking engines (US-Bangla TTI FrontOffice, AIR ASTRA, Novoair, Qatar, …) use stable public URLs with origin, destination and date — never a session GUID that 404s later. We do not invent ৳ fares.
+                The useful part is on this page: Bangladesh bank/card campaigns, published airline promo codes, and one official book button per airline with your dates. Pick From / To, then one day on the calendar (round trip: depart, then return). We do not invent ৳ on the calendar — there is no public fare API without secrets. One tap opens Google Flights cheapest results (<code class="text-sky-300">tfs</code>), plus the airline’s own engine (US-Bangla TTI FrontOffice, never a session GUID).
             </p>
         </header>
 
@@ -124,44 +124,29 @@
                 <div class="flex flex-wrap justify-between items-center mb-3 pb-3 border-b border-slate-800 gap-2">
                     <div>
                         <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
-                            <i class="fa-solid fa-calendar-days text-sky-400"></i> Travel dates
+                            <i class="fa-solid fa-calendar-days text-sky-400"></i> One calendar — dates start empty
                         </h3>
-                        <div class="text-[9px] sm:text-[10px] text-slate-500 mt-1">
-                            Pick dates here. Live fares appear only after you open a provider.
+                        <div class="text-[9px] sm:text-[10px] text-slate-500 mt-1" id="calendarHint">
+                            Nothing is pre-selected. Tap a day to set departure. For round trip, tap a later day for return.
                         </div>
                     </div>
-                    <span id="selectedTripLabel" class="text-[11px] sm:text-xs text-sky-400 bg-sky-500/10 border border-sky-500/30 px-2.5 py-1 rounded-lg font-bold"></span>
+                    <span id="selectedTripLabel" class="text-[11px] sm:text-xs text-sky-400 bg-sky-500/10 border border-sky-500/30 px-2.5 py-1 rounded-lg font-bold">No dates yet</span>
                 </div>
 
-                <div id="calendarGridWrapper" class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                <div id="calendarGridWrapper" class="max-w-xl mx-auto">
                     <div class="bg-slate-900/60 p-3 sm:p-4 rounded-xl border border-slate-800/80">
                         <div class="flex justify-between items-center mb-2.5">
-                            <span class="text-[10px] font-extrabold uppercase text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">Depart</span>
+                            <span id="calendarPickBadge" class="text-[10px] font-extrabold uppercase text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">Pick depart</span>
                             <span id="departMonthLabel" class="text-xs sm:text-sm font-bold text-white"></span>
                             <div class="flex gap-1">
-                                <button type="button" onclick="navigateMonth('dept', -1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded text-xs text-white flex items-center justify-center"><i class="fa-solid fa-chevron-left"></i></button>
-                                <button type="button" onclick="navigateMonth('dept', 1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded text-xs text-white flex items-center justify-center"><i class="fa-solid fa-chevron-right"></i></button>
+                                <button type="button" onclick="navigateMonth(-1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded text-xs text-white flex items-center justify-center" aria-label="Previous month"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button type="button" onclick="navigateMonth(1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded text-xs text-white flex items-center justify-center" aria-label="Next month"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
                         </div>
                         <div class="grid grid-cols-7 text-center text-[11px] font-bold text-slate-500 mb-1">
                             <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
                         </div>
-                        <div id="departGrid" class="grid grid-cols-7 gap-1 text-slate-200"></div>
-                    </div>
-
-                    <div id="returnCalendarBox" class="bg-slate-900/60 p-3 sm:p-4 rounded-xl border border-slate-800/80">
-                        <div class="flex justify-between items-center mb-2.5">
-                            <span class="text-[10px] font-extrabold uppercase text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">Return</span>
-                            <span id="returnMonthLabel" class="text-xs sm:text-sm font-bold text-white"></span>
-                            <div class="flex gap-1">
-                                <button type="button" onclick="navigateMonth('ret', -1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded text-xs text-white flex items-center justify-center"><i class="fa-solid fa-chevron-left"></i></button>
-                                <button type="button" onclick="navigateMonth('ret', 1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded text-xs text-white flex items-center justify-center"><i class="fa-solid fa-chevron-right"></i></button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-7 text-center text-[11px] font-bold text-slate-500 mb-1">
-                            <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
-                        </div>
-                        <div id="returnGrid" class="grid grid-cols-7 gap-1 text-slate-200"></div>
+                        <div id="tripCalendarGrid" class="grid grid-cols-7 gap-1 text-slate-200"></div>
                     </div>
                 </div>
             </div>
@@ -169,7 +154,7 @@
             <div id="routeWarning" class="hidden mb-3 rounded-xl border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-xs font-semibold text-rose-300"></div>
 
             <button type="button" onclick="triggerFullScan()" id="searchBtn" class="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 active:scale-[0.99] font-extrabold py-3.5 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 text-sm text-white">
-                <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i> <span id="btnText">Find dated tickets</span>
+                <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i> <span id="btnText">Pick dates on the calendar</span>
             </button>
         </div>
 
@@ -180,78 +165,70 @@
 
         <div class="mb-4 rounded-xl border border-sky-500/20 bg-sky-950/40 px-3.5 py-3 text-[11px] leading-5 text-slate-300">
             <i class="fa-solid fa-circle-info text-sky-400 mr-1"></i>
-            We do not sell tickets. This page only builds search links. Compare live cheap-first results on Google Flights, Skyscanner and Kayak. Official discounts are separate links to verify on that site — we never subtract a promo or card rate here.
+            We do not sell tickets and we do not invent ৳. Bank/card campaigns and promo codes below are quoted from official pages — verify them there. After you pick dates, one Google Flights cheapest search plus one official book button per airline. We never subtract a promo or card rate on this page.
         </div>
 
-        <div id="tripSummary" class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 mb-6 flex flex-wrap justify-between items-center text-xs sm:text-sm gap-2">
+        <div id="tripSummary" class="hidden bg-slate-900 border border-slate-800 rounded-xl p-3.5 mb-6 flex flex-wrap justify-between items-center text-xs sm:text-sm gap-2">
             <div class="flex items-center gap-2">
                 <span id="tripTypeBadge" class="bg-sky-500/20 text-sky-400 px-2.5 py-0.5 rounded-full font-extrabold text-[10px] tracking-wider">ROUND TRIP</span>
                 <span id="routeBanner" class="font-bold text-white text-xs sm:text-sm">DAC 🔁 BKK</span>
             </div>
             <div>
-                <span class="text-slate-400">Stay:</span> <span id="stayNights" class="text-emerald-400 font-bold">5 nights</span>
+                <span class="text-slate-400">Stay:</span> <span id="stayNights" class="text-emerald-400 font-bold"></span>
             </div>
             <div class="text-slate-300 text-xs font-semibold" id="dateBanner"></div>
         </div>
 
-        <div class="mb-8" id="flexibleSection">
+        <div class="mb-8" id="officialDiscountSection">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div>
+                    <h2 class="text-sm sm:text-lg font-bold text-rose-200 flex items-center gap-2">
+                        <i class="fa-solid fa-tags"></i> Bangladesh bank / card campaigns
+                    </h2>
+                    <p class="text-[10px] text-slate-500 mt-1">Quoted from official bank/card pages. We do not subtract these from a fake fare. “Bypass” here means entering a published promo at checkout — not hidden-city tricks.</p>
+                </div>
+                <span class="text-[10px] sm:text-xs bg-rose-500/10 text-rose-200 px-2.5 py-0.5 rounded-full font-semibold border border-rose-500/20">Offers to verify there</span>
+            </div>
+            <div id="discountResults" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+        </div>
+
+        <div class="mb-8" id="promoCodeSection">
             <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <div>
                     <h2 class="text-sm sm:text-lg font-bold text-amber-200 flex items-center gap-2">
-                        <i class="fa-solid fa-calendar-week"></i> Cheap fares by date
+                        <i class="fa-solid fa-ticket"></i> Official airline promo codes
                     </h2>
-                    <p class="text-[10px] text-slate-500 mt-1">Prices show after you click, on Google Flights / Skyscanner / Kayak. We do not print ৳ on these cells (no public fare API without secrets). Each day opens a filled search: Google Flights tfs, Skyscanner, Kayak. The month buttons open Skyscanner’s month price calendar and Kayak explore.</p>
+                    <p class="text-[10px] text-slate-500 mt-1">Published checkout codes only. Copy, open the airline’s dated booking page, paste at their checkout. No invented codes.</p>
                 </div>
-                <span class="text-[10px] sm:text-xs bg-amber-500/10 text-amber-200 px-2.5 py-0.5 rounded-full font-semibold border border-amber-500/20">Prices show after click</span>
+                <span class="text-[10px] sm:text-xs bg-amber-500/10 text-amber-200 px-2.5 py-0.5 rounded-full font-semibold border border-amber-500/20">Enter at checkout</span>
             </div>
-            <div id="monthOverview" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4"></div>
-            <div class="mb-3">
-                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Nearby dates (±7) — tap to see live prices</div>
-                <div id="nearbyDateStrip" class="flex gap-2 overflow-x-auto custom-scroll pb-1"></div>
-            </div>
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 sm:p-4">
-                <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
-                    <div>
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Month price calendar</div>
-                        <p class="text-[10px] text-slate-500 mt-0.5">Tap the date number → Google Flights (live fares). S = Skyscanner that day. K = Kayak that day.</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button type="button" id="priceCalPrev" class="h-8 w-8 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700" aria-label="Previous month"><i class="fa-solid fa-chevron-left text-[11px]"></i></button>
-                        <span id="flexibleMonthLabel" class="text-xs font-bold text-white min-w-[7rem] text-center"></span>
-                        <button type="button" id="priceCalNext" class="h-8 w-8 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700" aria-label="Next month"><i class="fa-solid fa-chevron-right text-[11px]"></i></button>
-                    </div>
-                </div>
-                <div class="grid grid-cols-7 text-center text-[11px] font-bold text-slate-500 mb-1">
-                    <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
-                </div>
-                <div id="flexibleMonthGrid" class="grid grid-cols-7 gap-1"></div>
-            </div>
+            <div id="promoCodeResults" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
         </div>
 
-        <div class="mb-8">
-            <div class="flex justify-between items-center mb-3 gap-2">
-                <h2 class="text-sm sm:text-lg font-bold text-sky-400 flex items-center gap-2">
-                    <i class="fa-solid fa-plane-arrival"></i> Compare tickets on these dates
-                </h2>
-                <span class="text-[10px] sm:text-xs bg-sky-500/20 text-sky-300 px-2.5 py-0.5 rounded-full font-semibold">Dated deep-links</span>
-            </div>
-            <p class="text-[11px] text-slate-500 mb-3">Google Flights uses a filled <code class="text-sky-300">tfs</code> results URL you can book from — not empty <code class="text-sky-300">q=</code>. Skyscanner and Kayak use dated cheapest-sort paths. Live fares appear after you click; we do not invent amounts.</p>
-            <div id="googleBookBar" class="mb-3"></div>
-            <div id="flightResults" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
-        </div>
-
-        <div class="mb-8">
+        <div class="mb-8" id="airlineSection">
             <div class="flex justify-between items-center mb-3 gap-2">
                 <h2 class="text-sm sm:text-lg font-bold text-amber-300 flex items-center gap-2">
-                    <i class="fa-solid fa-building"></i> Official airline booking pages
+                    <i class="fa-solid fa-building"></i> One official book button per airline
                 </h2>
-                <span class="text-[10px] sm:text-xs bg-amber-500/10 text-amber-300 px-2.5 py-0.5 rounded-full font-semibold border border-amber-500/20">Route-relevant • no scraping</span>
+                <span class="text-[10px] sm:text-xs bg-amber-500/10 text-amber-300 px-2.5 py-0.5 rounded-full font-semibold border border-amber-500/20">Dated • no scraping</span>
             </div>
-            <p class="text-[11px] text-slate-500 mb-3">Opens the airline’s official booking engine with origin, destination and dates in a stable public URL (US-Bangla and AIR ASTRA use TTI FrontOffice — never a session GUID that 404s later). Next to each button: any currently published official promo code — copy it and paste at their checkout. No invented codes. Google Flights and the airline site can show different live fares for the same DAC–CAN date; we do not invent ৳ on this page.</p>
+            <p class="text-[11px] text-slate-500 mb-3">Opens the airline’s official booking engine with origin, destination and dates (US-Bangla and AIR ASTRA use TTI FrontOffice — never a session GUID that 404s later). Google Flights and the airline site can show different live fares; we do not invent ৳ here.</p>
+            <div id="needDatesHint" class="rounded-xl border border-slate-800 bg-slate-950/60 px-3.5 py-3 text-xs text-slate-400">Pick From / To and a date on the calendar to enable dated airline booking buttons.</div>
             <div id="airlineResults" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
         </div>
 
-        <div class="mb-8" id="hotelSectionWrapper">
+        <div class="mb-8" id="cheapestPathSection">
+            <div class="flex justify-between items-center mb-3 gap-2">
+                <h2 class="text-sm sm:text-lg font-bold text-sky-400 flex items-center gap-2">
+                    <i class="fa-solid fa-bolt"></i> Cheapest live search
+                </h2>
+                <span class="text-[10px] sm:text-xs bg-sky-500/20 text-sky-300 px-2.5 py-0.5 rounded-full font-semibold">One tap • Google Flights tfs</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mb-3">No public fare API without secrets, so this page does not print ৳. One cheapest-sorted Google Flights results URL (<code class="text-sky-300">tfs</code>, not empty <code class="text-sky-300">q=</code>). We do not duplicate Skyscanner and Kayak next to it.</p>
+            <div id="googleBookBar"></div>
+        </div>
+
+        <div class="mb-8 hidden" id="hotelSectionWrapper">
             <div class="flex justify-between items-center mb-3 gap-2">
                 <h2 class="text-sm sm:text-lg font-bold text-emerald-400 flex items-center gap-2">
                     <i class="fa-solid fa-hotel"></i> Hotels for these dates
@@ -261,7 +238,7 @@
             <div id="hotelResults" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
-        <div class="mb-8">
+        <div class="mb-8 hidden" id="bdSectionWrapper">
             <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <div>
                     <h2 class="text-sm sm:text-lg font-bold text-fuchsia-300 flex items-center gap-2">
@@ -271,22 +248,6 @@
                 </div>
             </div>
             <div id="bdResults" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-        </div>
-
-        <div class="mb-8" id="officialDiscountSection">
-            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-                <div>
-                    <h2 class="text-sm sm:text-lg font-bold text-rose-200 flex items-center gap-2">
-                        <i class="fa-solid fa-tags"></i> Official discounts to verify
-                    </h2>
-                    <p class="text-[10px] text-slate-500 mt-1">Quoted from official bank/card and campaign pages. We do not subtract these from a fake fare. “Bypass” here means entering a published promo at checkout — not hidden-city tricks.</p>
-                </div>
-                <span class="text-[10px] sm:text-xs bg-rose-500/10 text-rose-200 px-2.5 py-0.5 rounded-full font-semibold border border-rose-500/20">Offers to verify there</span>
-            </div>
-            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Bank / card campaigns</div>
-            <div id="discountResults" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6"></div>
-            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Published promo codes (enter at checkout)</div>
-            <div id="promoCodeResults" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
         </div>
 
         <div class="mb-8" id="verifiedAgencySection">
@@ -336,7 +297,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
                 <a href="https://www.google.com/travel/flights" target="_blank" rel="noopener noreferrer" class="bg-slate-900 border border-slate-800 hover:border-sky-500/40 rounded-xl p-3.5 transition">
                     <div class="font-bold text-white">Google Flights</div>
-                    <div class="text-slate-400 mt-1">Free calendar and airline compare. Use the dated button above for this search.</div>
+                    <div class="text-slate-400 mt-1">Free calendar and airline compare. The dated cheapest-path button above uses the same Google Flights tfs search.</div>
                 </a>
                 <a href="https://www.skyscanner.net/" target="_blank" rel="noopener noreferrer" class="bg-slate-900 border border-slate-800 hover:border-sky-500/40 rounded-xl p-3.5 transition">
                     <div class="font-bold text-white">Skyscanner</div>
@@ -344,7 +305,7 @@
                 </a>
                 <a href="https://www.kayak.com/flights" target="_blank" rel="noopener noreferrer" class="bg-slate-900 border border-slate-800 hover:border-sky-500/40 rounded-xl p-3.5 transition">
                     <div class="font-bold text-white">Kayak</div>
-                    <div class="text-slate-400 mt-1">Independent meta-search. Open the dated Kayak link in results for this route.</div>
+                    <div class="text-slate-400 mt-1">Independent meta-search. We do not duplicate Kayak next to Google Flights on this page.</div>
                 </a>
                 <a href="https://matrix.itasoftware.com/" target="_blank" rel="noopener noreferrer" class="bg-slate-900 border border-slate-800 hover:border-sky-500/40 rounded-xl p-3.5 transition">
                     <div class="font-bold text-white">ITA Matrix</div>
@@ -381,7 +342,7 @@
         </div>
     </div>
 
-    <script src="js/booking-links.js?v=authentic-book-urls-20260901"></script>
+    <script src="js/booking-links.js?v=single-calendar-ux-20260902"></script>
     <script>
         const COUNTRY_AIRPORTS = [
 
@@ -991,52 +952,48 @@
         let selectedStopoverCode = "hkt";
 
         const today = new Date();
-        let selectedDeptDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
-        let selectedRetDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 16);
-        let deptCalMonth = new Date(selectedDeptDate.getFullYear(), selectedDeptDate.getMonth(), 1);
-        let retCalMonth = new Date(selectedRetDate.getFullYear(), selectedRetDate.getMonth(), 1);
-
-        let priceCalYM = null;
-        let lastSearchMonthKey = "";
+        let selectedDeptDate = null;
+        let selectedRetDate = null;
+        let calMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
         const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const dayNamesShort = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+        function datesReady() {
+            if (!selectedDeptDate) return false;
+            if (currentTripType === 'oneway') return true;
+            return Boolean(selectedRetDate);
+        }
 
         function setTripType(type) {
             currentTripType = type;
             const btnRound = document.getElementById('btnRoundTrip');
             const btnOne = document.getElementById('btnOneWay');
             const btnMulti = document.getElementById('btnMultiCity');
-            const returnCalBox = document.getElementById('returnCalendarBox');
             const multiRow = document.getElementById('multiCityRow');
-            const calGridWrapper = document.getElementById('calendarGridWrapper');
 
             [btnRound, btnOne, btnMulti].forEach(b => b.className = "flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition text-slate-400 hover:text-white");
 
             if (type === 'round') {
                 btnRound.className = "flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition bg-sky-500 text-white shadow";
-                returnCalBox.classList.remove('hidden');
                 multiRow.classList.add('hidden');
-                calGridWrapper.className = "grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6";
                 document.getElementById('tripTypeBadge').innerText = "ROUND TRIP";
                 document.getElementById('tripTypeBadge').className = "bg-sky-500/20 text-sky-400 px-2.5 py-0.5 rounded-full font-extrabold text-[10px] tracking-wider";
             } else if (type === 'oneway') {
                 btnOne.className = "flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition bg-emerald-500 text-white shadow";
-                returnCalBox.classList.add('hidden');
                 multiRow.classList.add('hidden');
-                calGridWrapper.className = "grid grid-cols-1 gap-4 sm:gap-6 max-w-xl mx-auto";
+                selectedRetDate = null;
                 document.getElementById('tripTypeBadge').innerText = "ONE WAY";
                 document.getElementById('tripTypeBadge').className = "bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full font-extrabold text-[10px] tracking-wider";
             } else {
                 btnMulti.className = "flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition bg-amber-500 text-white shadow";
-                returnCalBox.classList.remove('hidden');
                 multiRow.classList.remove('hidden');
-                calGridWrapper.className = "grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6";
                 document.getElementById('tripTypeBadge').innerText = "MULTI-CITY";
                 document.getElementById('tripTypeBadge').className = "bg-amber-500/20 text-amber-400 px-2.5 py-0.5 rounded-full font-extrabold text-[10px] tracking-wider";
             }
             renderCalendars();
-            triggerFullScan();
+            if (datesReady()) triggerFullScan();
+            else renderCampaignsOnly();
         }
 
         function openLocationModal(type) {
@@ -1149,23 +1106,22 @@
                 document.getElementById('stopoverDisplay').innerText = airport.name;
             }
             closeLocationModal();
-            triggerFullScan();
+            if (datesReady()) triggerFullScan();
+            else renderCampaignsOnly();
         }
 
         function renderCalendars() {
-            document.getElementById('departMonthLabel').innerText = `${monthNames[deptCalMonth.getMonth()]} ${deptCalMonth.getFullYear()}`;
-            document.getElementById('returnMonthLabel').innerText = `${monthNames[retCalMonth.getMonth()]} ${retCalMonth.getFullYear()}`;
-            renderMonthGrid('departGrid', deptCalMonth, 'dept');
-            if (currentTripType !== 'oneway') renderMonthGrid('returnGrid', retCalMonth, 'ret');
+            document.getElementById('departMonthLabel').innerText = `${monthNames[calMonth.getMonth()]} ${calMonth.getFullYear()}`;
+            renderMonthGrid();
             updateSelectionHeader();
         }
 
-        function renderMonthGrid(containerId, monthDate, type) {
-            const grid = document.getElementById(containerId);
+        function renderMonthGrid() {
+            const grid = document.getElementById('tripCalendarGrid');
             if (!grid) return;
             grid.innerHTML = '';
-            const year = monthDate.getFullYear();
-            const month = monthDate.getMonth();
+            const year = calMonth.getFullYear();
+            const month = calMonth.getMonth();
             let firstDay = new Date(year, month, 1).getDay();
             let startOffset = (firstDay === 0 ? 6 : firstDay - 1);
             const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -1181,19 +1137,15 @@
                 const isRet = selectedRetDate && isSameDay(cur, selectedRetDate);
                 const inRange = currentTripType !== 'oneway' && selectedDeptDate && selectedRetDate && cur > selectedDeptDate && cur < selectedRetDate;
                 let classes = "sk-day text-slate-300";
-                if (type === 'dept') {
-                    if (isDept) classes += " sk-day-selected-dept";
-                    else if (inRange) classes += " sk-day-in-range";
-                } else if (type === 'ret') {
-                    if (isRet) classes += " sk-day-selected-ret";
-                    else if (inRange) classes += " sk-day-in-range";
-                }
+                if (isDept) classes += " sk-day-selected-dept";
+                else if (isRet) classes += " sk-day-selected-ret";
+                else if (inRange) classes += " sk-day-in-range";
                 const todayStart = new Date();
                 todayStart.setHours(0, 0, 0, 0);
                 const isPast = cur < todayStart;
                 if (isPast) classes += " empty opacity-30 cursor-not-allowed";
                 grid.innerHTML += `
-                    <div class="${classes}" ${isPast ? '' : `onclick="selectDate('${type}', ${year}, ${month}, ${day})"`}>
+                    <div class="${classes}" ${isPast ? '' : `onclick="selectDate(${year}, ${month}, ${day})"`}>
                         <span class="text-xs font-semibold">${day}</span>
                     </div>
                 `;
@@ -1208,48 +1160,73 @@
             return new Date(dateObj.getFullYear(), dateObj.getMonth() + delta, 1);
         }
 
-        function navigateMonth(type, delta) {
-            if (type === 'dept') deptCalMonth = shiftCalendarMonth(deptCalMonth, delta);
-            else retCalMonth = shiftCalendarMonth(retCalMonth, delta);
+        function navigateMonth(delta) {
+            calMonth = shiftCalendarMonth(calMonth, delta);
             renderCalendars();
         }
 
-        function selectDate(type, y, m, d) {
+        function selectDate(y, m, d) {
             const clicked = new Date(y, m, d);
             clicked.setHours(0, 0, 0, 0);
             const todayStart = new Date();
             todayStart.setHours(0, 0, 0, 0);
             if (clicked < todayStart) return;
-            if (type === 'dept') {
+
+            if (currentTripType === 'oneway') {
                 selectedDeptDate = clicked;
-                if (currentTripType !== 'oneway' && selectedRetDate && selectedRetDate <= selectedDeptDate) {
-                    selectedRetDate = new Date(selectedDeptDate);
-                    selectedRetDate.setDate(selectedRetDate.getDate() + 7);
-                    retCalMonth = new Date(selectedRetDate.getFullYear(), selectedRetDate.getMonth(), 1);
-                }
+                selectedRetDate = null;
+            } else if (!selectedDeptDate || (selectedDeptDate && selectedRetDate)) {
+                selectedDeptDate = clicked;
+                selectedRetDate = null;
+            } else if (clicked < selectedDeptDate) {
+                selectedDeptDate = clicked;
+                selectedRetDate = null;
             } else {
-                if (!selectedDeptDate || clicked < selectedDeptDate) return;
                 selectedRetDate = clicked;
             }
-            deptCalMonth = new Date(selectedDeptDate.getFullYear(), selectedDeptDate.getMonth(), 1);
+
+            calMonth = new Date(clicked.getFullYear(), clicked.getMonth(), 1);
             renderCalendars();
-            triggerFullScan();
+            if (datesReady()) triggerFullScan();
+            else renderCampaignsOnly();
         }
 
         function formatDate(d) {
+            if (!d) return "";
             const dayName = dayNamesShort[d.getDay()];
             return `${dayName}, ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
         }
 
         function updateSelectionHeader() {
-            const dStr = selectedDeptDate ? formatDate(selectedDeptDate) : "Depart";
-            const rStr = selectedRetDate ? formatDate(selectedRetDate) : "Return";
+            const badge = document.getElementById('calendarPickBadge');
+            const hint = document.getElementById('calendarHint');
+            const dStr = selectedDeptDate ? formatDate(selectedDeptDate) : "";
+            const rStr = selectedRetDate ? formatDate(selectedRetDate) : "";
             if (currentTripType === 'oneway') {
-                document.getElementById('selectedTripLabel').innerHTML = `Depart: <span class="text-white font-bold">${dStr}</span> (One Way)`;
+                badge.textContent = selectedDeptDate ? "Depart" : "Pick depart";
+                badge.className = "text-[10px] font-extrabold uppercase text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded";
+                document.getElementById('selectedTripLabel').innerHTML = selectedDeptDate
+                    ? `Depart: <span class="text-white font-bold">${dStr}</span> (One Way)`
+                    : "No dates yet";
+                hint.textContent = "Nothing is pre-selected. Tap a day to set the one-way departure.";
+            } else if (!selectedDeptDate) {
+                badge.textContent = "Pick depart";
+                badge.className = "text-[10px] font-extrabold uppercase text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded";
+                document.getElementById('selectedTripLabel').innerHTML = "No dates yet";
+                hint.textContent = "Nothing is pre-selected. Tap a day to set departure. Then tap a later day for return.";
+            } else if (!selectedRetDate) {
+                badge.textContent = "Pick return";
+                badge.className = "text-[10px] font-extrabold uppercase text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded";
+                document.getElementById('selectedTripLabel').innerHTML = `Depart: <span class="text-white font-bold">${dStr}</span> — now pick return`;
+                hint.textContent = "Departure is set. Tap a later day for return. Tap the same or an earlier day to restart.";
             } else if (currentTripType === 'multicity') {
+                badge.textContent = "Dates set";
                 document.getElementById('selectedTripLabel').innerHTML = `Leg 1: <span class="text-white font-bold">${dStr}</span> ➔ Leg 2: <span class="text-white font-bold">${rStr}</span>`;
+                hint.textContent = "Tap a day to start over with a new departure.";
             } else {
+                badge.textContent = "Dates set";
                 document.getElementById('selectedTripLabel').innerHTML = `Depart: <span class="text-white font-bold">${dStr}</span> ➔ Return: <span class="text-white font-bold">${rStr}</span>`;
+                hint.textContent = "Tap a day to start over with a new departure.";
             }
         }
 
@@ -1280,7 +1257,7 @@
         }
 
         function bankOfferCard(item, opts) {
-            const gozayaanApply = item.id === "scb-gozayaan" || item.id === "city-amex-gozayaan"
+            const gozayaanApply = datesReady() && (item.id === "scb-gozayaan" || item.id === "city-amex-gozayaan")
                 ? BookingLinks.gozayaanUrl(opts)
                 : "";
             return `
@@ -1300,6 +1277,10 @@
         }
 
         function promoCodeCard(item) {
+            const checkout = datesReady() ? item.checkoutUrl : item.sourceUrl;
+            const checkoutLabel = datesReady()
+                ? (item.checkoutLabel || "Open dated booking to enter code")
+                : "Read official promo page (pick dates for dated booking)";
             return `
                 <div class="bg-slate-900 border border-slate-800 hover:border-amber-500/40 p-4 rounded-2xl shadow-xl flex flex-col justify-between transition">
                     <div>
@@ -1309,7 +1290,7 @@
                         <p class="text-[11px] text-amber-200/90 mt-2">Expiry: ${escapeHtml(item.expiry)}</p>
                     </div>
                     <div class="mt-3 flex flex-col gap-1.5">
-                        <a href="${item.checkoutUrl}" target="_blank" rel="noopener noreferrer" class="block text-center bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded-xl text-xs">${escapeHtml(item.checkoutLabel || "Open dated booking to enter code")}</a>
+                        <a href="${checkout}" target="_blank" rel="noopener noreferrer" class="block text-center bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded-xl text-xs">${escapeHtml(checkoutLabel)}</a>
                         <a href="${item.sourceUrl}" target="_blank" rel="noopener noreferrer" class="block text-center text-[11px] font-semibold text-sky-300 hover:underline">Source: official promo page</a>
                     </div>
                 </div>
@@ -1364,8 +1345,42 @@
             `;
         }
 
+        function renderCampaignsOnly() {
+            const opts = currentSearchOpts();
+            const discountBox = document.getElementById('discountResults');
+            if (discountBox) {
+                discountBox.innerHTML = BookingLinks.officialDiscountLinks(opts).map(item => bankOfferCard(item, opts)).join("");
+            }
+            const promoBox = document.getElementById('promoCodeResults');
+            if (promoBox) {
+                promoBox.innerHTML = BookingLinks.publishedPromoCodes(opts).map(item => promoCodeCard(item)).join("");
+            }
+            const airlineContainer = document.getElementById('airlineResults');
+            const needDates = document.getElementById('needDatesHint');
+            if (airlineContainer) airlineContainer.innerHTML = "";
+            if (needDates) needDates.classList.remove('hidden');
+            const googleBar = document.getElementById('googleBookBar');
+            if (googleBar) {
+                googleBar.innerHTML = `<div class="rounded-xl border border-slate-800 bg-slate-950/60 px-3.5 py-3 text-xs text-slate-400">Pick dates to open one cheapest Google Flights search. We do not print ৳ here.</div>`;
+            }
+            document.getElementById('hotelResults').innerHTML = "";
+            document.getElementById('bdResults').innerHTML = "";
+            document.getElementById('hotelSectionWrapper').classList.add('hidden');
+            document.getElementById('bdSectionWrapper').classList.add('hidden');
+            document.getElementById('tripSummary').classList.add('hidden');
+            const btnText = document.getElementById('btnText');
+            if (btnText) {
+                btnText.innerText = selectedDeptDate && currentTripType !== 'oneway' && !selectedRetDate
+                    ? "Now pick a return date"
+                    : "Pick dates on the calendar";
+            }
+        }
+
         function renderResults() {
             const opts = currentSearchOpts();
+            renderCampaignsOnly();
+            if (!datesReady()) return;
+
             const origCode = selectedOriginCode.toUpperCase();
             const destCode = selectedDestCode.toUpperCase();
             const stopCode = selectedStopoverCode.toUpperCase();
@@ -1376,6 +1391,8 @@
                 diffDays = Math.max(1, Math.round((selectedRetDate - selectedDeptDate) / 86400000));
             }
 
+            const summary = document.getElementById('tripSummary');
+            summary.classList.remove('hidden');
             if (currentTripType === 'oneway') {
                 document.getElementById('routeBanner').innerText = `${origCode} ➔ ${destCode}`;
                 document.getElementById('stayNights').innerText = "One-way flight";
@@ -1395,15 +1412,14 @@
             if (googleBar) {
                 googleBar.innerHTML = `
                     <a href="${googleUrl}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full bg-sky-500 hover:bg-sky-600 text-white font-black py-3 rounded-2xl text-sm transition">
-                        <i class="fa-solid fa-ticket"></i> Book these Google Flights results
+                        <i class="fa-solid fa-ticket"></i> Open cheapest Google Flights results
                     </a>
-                    <p class="text-[11px] text-slate-500 mt-1.5 text-center">Same filled <code class="text-sky-300">tfs</code> search as the Google card — live bookable results, not empty <code class="text-sky-300">q=</code>. We do not invent a fare.</p>
+                    <p class="text-[11px] text-slate-500 mt-1.5 text-center">Filled <code class="text-sky-300">tfs</code> search, cheapest sort, BDT. Live bookable results — not empty <code class="text-sky-300">q=</code>. We do not invent a fare.</p>
                 `;
             }
 
-            const flightContainer = document.getElementById('flightResults');
-            flightContainer.innerHTML = BookingLinks.comparatorLinks(opts).map(item => providerCard(item, "sky")).join("");
-
+            const needDates = document.getElementById('needDatesHint');
+            if (needDates) needDates.classList.add('hidden');
             const airlineContainer = document.getElementById('airlineResults');
             const airlines = BookingLinks.airlinesForRoute(opts);
             airlineContainer.innerHTML = airlines.map(item => airlineBookingCard(item)).join("");
@@ -1440,116 +1456,25 @@
             }, "emerald")).join("");
 
             document.getElementById('bdResults').innerHTML = BookingLinks.bangladeshSearchLinks(opts).map(item => providerCard(item, "fuchsia")).join("");
+            document.getElementById('hotelSectionWrapper').classList.remove('hidden');
+            document.getElementById('bdSectionWrapper').classList.remove('hidden');
 
-            const discountBox = document.getElementById('discountResults');
-            if (discountBox) {
-                discountBox.innerHTML = BookingLinks.officialDiscountLinks(opts).map(item => bankOfferCard(item, opts)).join("");
-            }
             const promoBox = document.getElementById('promoCodeResults');
             if (promoBox) {
                 promoBox.innerHTML = BookingLinks.publishedPromoCodes(opts).map(item => promoCodeCard(item)).join("");
             }
 
-            renderFlexibleDates(opts);
-        }
-
-        function dateChip(day) {
-            const label = day.returnDate ? `${day.depart.slice(8)}→${day.returnDate.slice(8)}` : day.depart.slice(8);
-            const title = day.returnDate ? `${day.depart} → ${day.returnDate}` : day.depart;
-            return `
-                <div class="shrink-0 min-w-[8rem] bg-slate-950 border border-slate-800 rounded-xl p-2.5">
-                    <div class="text-[11px] font-black text-white mb-1">${escapeHtml(title)}</div>
-                    <p class="text-[9px] text-slate-500 mb-1.5">Live prices after click</p>
-                    <div class="flex flex-col gap-1">
-                        <a href="${day.google}" target="_blank" rel="noopener noreferrer" class="text-center text-[10px] font-bold py-1 rounded-lg bg-sky-500/15 text-sky-300 hover:bg-sky-500/25">Google Flights</a>
-                        <a href="${day.skyscanner}" target="_blank" rel="noopener noreferrer" class="text-center text-[10px] font-bold py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700">Skyscanner</a>
-                        <a href="${day.kayak}" target="_blank" rel="noopener noreferrer" class="text-center text-[10px] font-bold py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700">Kayak</a>
-                    </div>
-                    <div class="hidden">${escapeHtml(label)}</div>
-                </div>
-            `;
-        }
-
-        function renderFlexibleDates(opts) {
-            const overview = document.getElementById('monthOverview');
-            const strip = document.getElementById('nearbyDateStrip');
-            const grid = document.getElementById('flexibleMonthGrid');
-            const monthLabel = document.getElementById('flexibleMonthLabel');
-            if (!overview || !strip || !grid) return;
-
-            const searchIso = BookingLinks.toISODate(opts.depart);
-            const [sy, sm] = searchIso.split("-").map(Number);
-            const searchKey = `${sy}-${sm}`;
-            if (searchKey !== lastSearchMonthKey) {
-                lastSearchMonthKey = searchKey;
-                priceCalYM = { y: sy, m: sm };
-            }
-            if (!priceCalYM) priceCalYM = { y: sy, m: sm };
-            const y = priceCalYM.y;
-            const m = priceCalYM.m;
-            const calDepart = `${y}-${String(m).padStart(2, "0")}-01`;
-            const stay = BookingLinks.stayLengthDays(opts);
-            const calOpts = Object.assign({}, opts, {
-                depart: calDepart,
-                returnDate: opts.tripType === "oneway" ? undefined : BookingLinks.addDaysISO(calDepart, stay || 7)
-            });
-
-            overview.innerHTML = BookingLinks.monthOverviewLinks(calOpts).map(item => providerCard(item, "sky")).join("");
-            strip.innerHTML = BookingLinks.flexibleNearbyDays(opts, 7).map(dateChip).join("");
-            monthLabel.textContent = `${monthNames[m - 1]} ${y}`;
-
-            const prevBtn = document.getElementById('priceCalPrev');
-            const nextBtn = document.getElementById('priceCalNext');
-            if (prevBtn) {
-                prevBtn.onclick = () => {
-                    const dt = new Date(y, m - 2, 1);
-                    priceCalYM = { y: dt.getFullYear(), m: dt.getMonth() + 1 };
-                    renderFlexibleDates(opts);
-                };
-            }
-            if (nextBtn) {
-                nextBtn.onclick = () => {
-                    const dt = new Date(y, m, 1);
-                    priceCalYM = { y: dt.getFullYear(), m: dt.getMonth() + 1 };
-                    renderFlexibleDates(opts);
-                };
-            }
-
-            const monthDays = BookingLinks.flexibleMonthDays(opts, y, m);
-            const byDate = {};
-            monthDays.forEach((day) => { byDate[day.depart] = day; });
-            const firstWeekday = new Date(y, m - 1, 1).getDay();
-            const startOffset = firstWeekday === 0 ? 6 : firstWeekday - 1;
-            const last = new Date(y, m, 0).getDate();
-            let html = "";
-            for (let i = 0; i < startOffset; i++) {
-                html += `<div class="sk-day empty opacity-20"></div>`;
-            }
-            const selected = BookingLinks.toISODate(opts.depart);
-            for (let day = 1; day <= last; day++) {
-                const iso = `${y}-${String(m).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-                const bundle = byDate[iso];
-                if (!bundle) {
-                    html += `<div class="min-h-[4.25rem] rounded-lg border border-slate-800/60 bg-slate-950/40 p-1 text-center text-slate-600 text-xs flex items-center justify-center">${day}</div>`;
-                    continue;
-                }
-                const selectedClass = iso === selected ? " ring-1 ring-sky-400" : "";
-                html += `
-                    <div class="min-h-[4.25rem] rounded-lg border border-slate-800 bg-slate-950 p-1 text-center flex flex-col${selectedClass}">
-                        <a href="${bundle.google}" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center text-sm font-black text-white hover:text-sky-300" title="Book Google Flights results for ${iso}">${day}</a>
-                        <div class="grid grid-cols-3 gap-0.5 mt-0.5">
-                            <a href="${bundle.google}" target="_blank" rel="noopener noreferrer" class="text-[8px] font-bold text-sky-300 hover:underline" title="Book Google Flights results">G</a>
-                            <a href="${bundle.skyscanner}" target="_blank" rel="noopener noreferrer" class="text-[8px] font-bold text-slate-300 hover:underline" title="Skyscanner">S</a>
-                            <a href="${bundle.kayak}" target="_blank" rel="noopener noreferrer" class="text-[8px] font-bold text-slate-300 hover:underline" title="Kayak">K</a>
-                        </div>
-                    </div>
-                `;
-            }
-            grid.innerHTML = html;
+            const btnText = document.getElementById('btnText');
+            if (btnText) btnText.innerText = "Refresh dated path";
         }
 
         function triggerFullScan() {
             if (!validateRoute()) return;
+            if (!datesReady()) {
+                renderCalendars();
+                renderCampaignsOnly();
+                return;
+            }
             const icon = document.getElementById('searchIcon');
             const toast = document.getElementById('scanningToast');
             const btnText = document.getElementById('btnText');
@@ -1560,14 +1485,14 @@
                 renderCalendars();
                 renderResults();
                 icon.className = "fa-solid fa-magnifying-glass";
-                btnText.innerText = "Find dated tickets";
+                btnText.innerText = "Refresh dated path";
                 setTimeout(() => toast.classList.add('hidden'), 250);
             }, 180);
         }
 
         renderCalendars();
         validateRoute();
-        renderResults();
+        renderCampaignsOnly();
     </script>
 </body>
 </html>

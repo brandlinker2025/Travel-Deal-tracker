@@ -22,12 +22,28 @@ const forbidden = [
     "Top 3 Estimated Flight Options",
     "planning estimates, not live quotes",
     "sharetrip.net/flight/search",
-    "Open Flight Search"
+    "Open Flight Search",
+    "Cheap fares by date",
+    "Compare tickets on these dates",
+    "flexibleMonthGrid",
+    "nearbyDateStrip",
+    "monthOverview",
+    "priceCalPrev",
+    "flightResults",
+    "getDate() + 7",
+    "getDate() + 16",
+    'title="Kayak"',
+    "title=\"Skyscanner\"",
 ];
 
 forbidden.forEach((needle) => {
     assert.ok(!html.includes(needle), `index.html still contains fake/noisy text: ${needle}`);
 });
+
+assert.ok(!html.includes("selectedDeptDate = new Date("), "do not pre-select a departure date");
+assert.ok(!html.includes("selectedRetDate = new Date("), "do not pre-select a return date");
+assert.ok(html.includes("let selectedDeptDate = null"), "calendars must start with no departure date");
+assert.ok(html.includes("let selectedRetDate = null"), "calendars must start with no return date");
 
 const required = [
     "We do not sell tickets",
@@ -39,12 +55,38 @@ const required = [
     "Hazrat Shahjalal Int. (DAC)",
     "js/booking-links.js",
     "final price is on the provider",
-    "Cheap fares by date",
+    "Bangladesh bank / card campaigns",
+    "Official airline promo codes",
+    "One official book button per airline",
+    "Cheapest live search",
+    "tripCalendarGrid",
+    "One calendar",
+    "dates start empty",
+    "No dates yet",
+    "googleBookBar",
+    "Open cheapest Google Flights results",
+    "Official packages",
+    "discountResults",
+    "promoCodeResults",
+    "single-calendar-ux-20260902",
+    "No published code",
 ];
 
 required.forEach((needle) => {
     assert.ok(html.includes(needle), `index.html is missing required copy: ${needle}`);
 });
+
+assert.ok(!html.includes('id="departGrid"'), "must not keep a second depart month grid");
+assert.ok(!html.includes('id="returnGrid"'), "must not keep a separate return month grid");
+assert.ok(!html.includes("returnCalendarBox"), "must not keep a second return calendar");
+
+const bankIdx = html.indexOf("Bangladesh bank / card campaigns");
+const promoIdx = html.indexOf("Official airline promo codes");
+const airlineIdx = html.indexOf("One official book button per airline");
+const cheapIdx = html.indexOf("Cheapest live search");
+assert.ok(bankIdx > 0 && promoIdx > bankIdx, "bank/card campaigns must sit above promo codes");
+assert.ok(airlineIdx > promoIdx, "official airline buttons must sit above the cheapest live search");
+assert.ok(cheapIdx > airlineIdx, "the single Google Flights tap must sit below bank/card, codes, and airline buttons");
 
 assert.ok(!links.includes("discount_percent"), "booking-links.js must not invent discount math");
 assert.ok(!links.includes("base_price"), "booking-links.js must not invent fares");
@@ -57,24 +99,9 @@ assert.ok(links.includes("OriginAirportCode"), "TTI booking links must include O
 assert.ok(links.includes("secure.flynovoair.com/bookings/flight_selection.aspx"), "Novoair must use the official booking page");
 assert.ok(links.includes("fo-airastra.ttinteractive.com/Zenith/FrontOffice/Airastra"), "AIR ASTRA must use the stable TTI FrontOffice booking engine");
 assert.ok(links.includes("booking.flyscoot.com/Book/Flight"), "Scoot must use the official dated Book/Flight URL");
-assert.ok(links.includes("Book these Google Flights results"), "Google Flights CTA must open bookable tfs results");
 assert.ok(links.includes("sort=price_a"), "Kayak must sort by price");
 assert.ok(!links.includes("sharetrip.net/flight/search"), "ShareTrip dead search URLs must be removed");
 assert.ok(links.includes("gozayaan.com/flight/list"), "GoZayaan must use dated flight/list search");
-assert.ok(html.includes("Official packages"), "index.html should keep official packages");
-assert.ok(html.includes("flexibleMonthGrid"), "index.html should render a date-wise cheapest calendar");
-assert.ok(html.includes("Official discounts to verify"), "index.html should list official discount paths separately");
-assert.ok(html.includes("discountResults"), "index.html should render official discount cards");
-assert.ok(html.includes("promoCodeResults"), "index.html should render published promo-code cards");
-assert.ok(html.includes("Published promo codes"), "index.html should label promo codes as checkout intel");
-assert.ok(html.includes("authentic-book-urls-20260901"), "index.html should carry the production deploy stamp");
-assert.ok(html.includes("Book these Google Flights results"), "Google Flights must have a book button using the same tfs results URL");
-assert.ok(html.includes("googleBookBar"), "index.html should render a Google Flights book bar");
-assert.ok(html.includes("Prices show after you click"), "calendar must say prices appear on the provider after click");
-assert.ok(html.includes("priceCalPrev"), "month calendar should allow paging months");
-assert.ok(html.includes("title=\"Kayak\""), "each calendar day should include a Kayak price link");
-assert.ok(html.includes("No published code"), "airline cards must label missing official codes");
-assert.ok(html.includes("airlineBookingCard") || html.includes("Official promo at airline checkout"), "airline cards must surface checkout promo codes");
 assert.ok(!html.includes("travel/flights?q="), "index.html must not link Google Flights via q=");
 assert.ok(links.includes("sortby=cheapest"), "Skyscanner must sort cheapest-first");
 assert.ok(links.includes("gozayaan.com/campaign/id/644"), "GoZayaan official campaign URL must be listed");
@@ -83,5 +110,6 @@ assert.ok(links.includes("AIRASTRA15"), "AIR ASTRA official promo code must be l
 assert.ok(links.includes("STLRPIQ326"), "EBL official Stellar international code must be listed");
 assert.ok(links.includes("bkash.com/en/campaign"), "bKash official campaign hub must be listed");
 assert.ok(!links.includes("USBA15"), "Do not invent USBA15 without the airline official promo page");
+assert.ok(html.includes("airlineBookingCard") || html.includes("Official promo at airline checkout"), "airline cards must surface checkout promo codes");
 
 console.log("honesty.test.js passed");
