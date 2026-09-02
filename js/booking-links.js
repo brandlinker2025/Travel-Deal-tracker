@@ -5,7 +5,8 @@
  * Never use Google Flights `?q=` natural-language URLs (empty landing page).
  * ShareTrip `/flight/search` 404s — do not add it back without a working dated URL.
  * US-Bangla: stable TTI FrontOffice only — never a session-GUID path that 404s later.
- * Stamp: authentic-book-urls-20260901
+ * Stamp: authentic-book-urls-20260901 / single-calendar-ux-20260902
+ * No public fare API without secrets — do not invent ৳ on calendar cells.
  */
 (function (root, factory) {
     const api = factory();
