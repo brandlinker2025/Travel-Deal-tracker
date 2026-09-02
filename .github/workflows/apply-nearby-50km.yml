@@ -1,0 +1,108 @@
+name: Apply nearby 50km update
+
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-nearby-50km.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch-nearby-airports:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Apply approved nearby-airport changes
+        shell: python
+        run: |
+          from pathlib import Path
+
+          def replace_once(text, old, new, label):
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{label}: expected 1 match, found {count}")
+              return text.replace(old, new, 1)
+
+          # index.html: wording + visible 50 km scope only.
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          s = replace_once(
+              s,
+              'A Cheaper Nearby Airport list (code + city + ~km, 50–150 km) opens a dated tfs search for that one dest.',
+              'A Potentially Cheaper Nearby Airports list (code + city + ~km, within 50 km) opens a dated tfs search for that one dest.',
+              'index cheap-path copy'
+          )
+          s = replace_once(
+              s,
+              '>Cheaper Nearby Airport</h3>',
+              '>Potentially Cheaper Nearby Airports — within 50 km</h3>',
+              'index nearby heading'
+          )
+          s = replace_once(
+              s,
+              'Other IATA about 50–150 km from the destination (haversine on this page’s airport coords).',
+              'Other IATA airports within 50 km of the destination (haversine on this page’s airport coords). Small/regional airports with a valid IATA code and usable coordinates are included.',
+              'index nearby description'
+          )
+          p.write_text(s, encoding='utf-8')
+
+          # booking-links.js: 0–50 km, include small/regional airports, retain tfs and add fallback metadata.
+          p = Path('js/booking-links.js')
+          s = p.read_text(encoding='utf-8')
+          s = replace_once(
+              s,
+              '        const size = String(item && item.size || "").toLowerCase();\n        if (size === "small") return false;\n',
+              '',
+              'remove small-airport exclusion'
+          )
+          s = replace_once(
+              s,
+              '    // Other dest IATA ~50–150 km away. Metro siblings are already in the primary tfs search.\n',
+              '    // Other destination IATA airports within 50 km. Metro siblings are already in the primary tfs search.\n',
+              'nearby comment'
+          )
+          s = replace_once(
+              s,
+              '        const minKm = range && Number.isFinite(Number(range.minKm)) ? Number(range.minKm) : 50;\n        const maxKm = range && Number.isFinite(Number(range.maxKm)) ? Number(range.maxKm) : 150;\n',
+              '        const minKm = range && Number.isFinite(Number(range.minKm)) ? Number(range.minKm) : 0;\n        const maxKm = range && Number.isFinite(Number(range.maxKm)) ? Number(range.maxKm) : 50;\n',
+              'nearby default range'
+          )
+          s = replace_once(
+              s,
+              '    function googleFlightsUrl(opts) {\n        const tfs = encodeGoogleFlightsTfs(opts);\n        const tfu = encodeGoogleFlightsTfuCheapest();\n        return `https://www.google.com/travel/flights/search?tfs=${tfs}&tfu=${tfu}&hl=en&curr=BDT`;\n    }\n',
+              '    function googleFlightsUrl(opts) {\n        const tfs = encodeGoogleFlightsTfs(opts);\n        const tfu = encodeGoogleFlightsTfuCheapest();\n        return `https://www.google.com/travel/flights/search?tfs=${tfs}&tfu=${tfu}&hl=en&curr=BDT`;\n    }\n\n    // Stable fallback landing page if Google changes its internal tfs URL format.\n    function googleFlightsFallbackUrl() {\n        return "https://www.google.com/travel/flights?hl=en&curr=BDT";\n    }\n',
+              'Google Flights fallback helper'
+          )
+          s = replace_once(
+              s,
+              '            km: alt.km,\n            url: googleFlightsUrl(Object.assign({}, search, { dest: alt.code }))\n',
+              '            km: alt.km,\n            url: googleFlightsUrl(Object.assign({}, search, { dest: alt.code })),\n            fallbackUrl: googleFlightsFallbackUrl()\n',
+              'nearby fallback metadata'
+          )
+          s = replace_once(
+              s,
+              '                url: googleFlightsUrl(gfOpts),\n                cta: "Open Google Flights",\n',
+              '                url: googleFlightsUrl(gfOpts),\n                fallbackUrl: googleFlightsFallbackUrl(),\n                cta: "Open Google Flights",\n',
+              'primary Google fallback metadata'
+          )
+          s = replace_once(
+              s,
+              '        googleFlightsUrl,\n        encodeGoogleFlightsTfs,\n',
+              '        googleFlightsUrl,\n        googleFlightsFallbackUrl,\n        encodeGoogleFlightsTfs,\n',
+              'export fallback helper'
+          )
+          p.write_text(s, encoding='utf-8')
+
+      - name: Commit approved update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html js/booking-links.js
+          git diff --cached --check
+          git commit -m "Update nearby airports to within 50 km"
+          git push origin main
