@@ -28,8 +28,8 @@ jobs:
       - name: Verify canonical production
         run: |
           set -e
-          JS="$(curl -fsS 'https://global-travel-tracker.netlify.app/js/booking-links.js')"
-          HTML="$(curl -fsS 'https://global-travel-tracker.netlify.app/')"
+          JS="$(curl -fsS 'https://cheap-ticket-finder.vercel.app/js/booking-links.js')"
+          HTML="$(curl -fsS 'https://cheap-ticket-finder.vercel.app/')"
           echo "$HTML$JS" | grep -q 'sharetrip.net/flight/search' && {
             echo "LIVE still contains sharetrip.net/flight/search"
             exit 1

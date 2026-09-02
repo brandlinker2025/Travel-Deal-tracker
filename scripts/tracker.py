@@ -1,3 +1,4 @@
+# Cheap Ticket Finder helper: print dated Skyscanner / Kayak / Biman links. No fare math.
 import sys
 
 if sys.platform == "win32":

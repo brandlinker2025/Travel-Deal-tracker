@@ -1,6 +1,6 @@
 name: GitHub Pages
 
-# Optional public fallback. Canonical URL is Netlify.
+# Optional public fallback. Canonical URL is Cheap Ticket Finder on Vercel.
 # GITHUB_TOKEN cannot enable Pages; skip cleanly until the owner turns it on.
 on:
   push:
@@ -35,7 +35,7 @@ jobs:
           if [ "${code}" = "200" ]; then
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
-            echo "GitHub Pages is not enabled; skipping deploy. Canonical host is https://global-travel-tracker.netlify.app"
+            echo "GitHub Pages is not enabled; skipping deploy. Canonical host is https://cheap-ticket-finder.vercel.app"
             echo "enabled=false" >> "$GITHUB_OUTPUT"
           fi
 

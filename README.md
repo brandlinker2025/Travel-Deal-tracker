@@ -1,29 +1,34 @@
-# Cheapest Ticket Finder
+# Cheap Ticket Finder
 
-A static, Bangladesh-friendly search page. It does **not** sell tickets and it does **not** invent fares.
+Static Bangladesh-friendly search page for **cheapticketfinder.site**. It does **not** sell tickets and it does **not** invent ৳ fares.
 
-Search From / To / dates (Dhaka `DAC` is the default origin). Results are dated deep-links to:
+## What it does
 
-- Google Flights `/travel/flights/search?tfs=...` (not the empty `q=` landing page), Skyscanner `sortby=cheapest`, Kayak `sort=price_a`
-- A date-wise cheapest path: ±7 days and a month calendar of provider deep-links (no invented ৳ amounts)
-- Official airline booking pages for the route
-- Official discount intel: BD bank/card campaign pages (SCB, City Amex, EBL, BRAC, bKash) quoted from the official URL, plus published airline/OTA promo codes to enter at checkout. We never subtract a guessed ৳ amount.
-- Google Hotels and Booking.com
-- Official holiday packages
-- GoZayaan dated `flight/list` search and a short list of real free tools
+Pick From / To, then dates on **one empty calendar** (nothing is pre-selected). Cheap Ticket Finder then shows:
 
-Click a provider to open that site with the same dates and buy there. The live price is always on the provider.
+- Bangladesh bank/card campaigns quoted from official pages
+- Published airline promo codes to enter at checkout
+- One official book button per airline with your dates (US-Bangla TTI FrontOffice, never a session GUID)
+- One Google Flights cheapest search (`/travel/flights/search?tfs=...`, not empty `q=`)
 
-Live site: https://global-travel-tracker.netlify.app
+There is no public fare API without secrets, so this page does not print ৳ on the calendar. Live price is on the provider after you tap through.
 
-ShareTrip is not linked: `sharetrip.net/flight/search` returns 404 and there is no working dated search URL.
+Also linked: Google Hotels, Booking.com, GoZayaan dated `flight/list`, official holiday packages.
+
+ShareTrip is not linked: `sharetrip.net/flight/search` returns 404.
 
 ## What this is not
 
 - No estimated fares
+- No extra month calendar, nearby ±7 strip, or Google/Skyscanner/Kayak triplet
 - No card-discount or promo-voucher math
 - No airline scraping
 
+## Live
+
+- Production: https://cheap-ticket-finder.vercel.app
+- Custom domain: https://cheapticketfinder.site (attach this Vercel project)
+
 ## Tech
 
-Static `index.html` on Netlify. Dated URLs are built in `js/booking-links.js`.
+Static `index.html` on Vercel. Dated URLs are built in `js/booking-links.js`.
