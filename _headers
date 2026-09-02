@@ -1,11 +1,11 @@
 /*
   Cache-Control: public, max-age=0, must-revalidate
-  X-Deploy-Stamp: price-calendar-20260901
+  X-Deploy-Stamp: cheap-ticket-finder-20260902
 
 /js/*
   Cache-Control: public, max-age=0, must-revalidate
-  X-Deploy-Stamp: price-calendar-20260901
+  X-Deploy-Stamp: cheap-ticket-finder-20260902
 
 /index.html
   Cache-Control: public, max-age=0, must-revalidate
-  X-Deploy-Stamp: price-calendar-20260901
+  X-Deploy-Stamp: cheap-ticket-finder-20260902

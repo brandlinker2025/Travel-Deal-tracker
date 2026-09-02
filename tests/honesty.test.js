@@ -68,7 +68,9 @@ const required = [
     "Official packages",
     "discountResults",
     "promoCodeResults",
-    "single-calendar-ux-20260902",
+    "cheap-ticket-finder-20260902",
+    "Cheap Ticket Finder",
+    "cheapticketfinder.site",
     "No published code",
 ];
 
@@ -111,5 +113,17 @@ assert.ok(links.includes("STLRPIQ326"), "EBL official Stellar international code
 assert.ok(links.includes("bkash.com/en/campaign"), "bKash official campaign hub must be listed");
 assert.ok(!links.includes("USBA15"), "Do not invent USBA15 without the airline official promo page");
 assert.ok(html.includes("airlineBookingCard") || html.includes("Official promo at airline checkout"), "airline cards must surface checkout promo codes");
+
+assert.ok(!html.includes("Cheapest Ticket Finder"), "product name is Cheap Ticket Finder, not Cheapest Ticket Finder");
+assert.ok(!html.includes("Global Travel Tracker"), "do not use Global Travel Tracker as the product name");
+assert.ok(!html.includes("Travel Deal Tracker"), "do not use Travel Deal Tracker as the product name");
+assert.ok(!html.includes("temporary-swift-ochre"), "do not advertise expired claim-deploys");
+
+const readme = fs.readFileSync(path.join(__dirname, "..", "README.md"), "utf8");
+assert.ok(readme.includes("# Cheap Ticket Finder"), "README title must be Cheap Ticket Finder");
+assert.ok(!readme.includes("Cheapest Ticket Finder"), "README must not use Cheapest Ticket Finder");
+assert.ok(!readme.includes("Global Travel Tracker"), "README must not use Global Travel Tracker");
+assert.ok(readme.includes("cheap-ticket-finder.vercel.app"), "README must point at the stable Vercel host");
+assert.ok(readme.includes("cheapticketfinder.site"), "README must name the custom domain");
 
 console.log("honesty.test.js passed");

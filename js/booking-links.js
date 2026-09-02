@@ -1,11 +1,12 @@
 /**
- * Dated search URLs only. No fare math, no scraping, no invented discounts.
+ * Cheap Ticket Finder — dated search URLs only.
+ * No fare math, no scraping, no invented discounts.
  * Providers confirm the live price on their own pages.
  *
  * Never use Google Flights `?q=` natural-language URLs (empty landing page).
  * ShareTrip `/flight/search` 404s — do not add it back without a working dated URL.
  * US-Bangla: stable TTI FrontOffice only — never a session-GUID path that 404s later.
- * Stamp: authentic-book-urls-20260901 / single-calendar-ux-20260902
+ * Stamp: cheap-ticket-finder-20260902
  * No public fare API without secrets — do not invent ৳ on calendar cells.
  */
 (function (root, factory) {
