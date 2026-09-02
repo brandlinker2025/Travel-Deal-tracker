@@ -67,11 +67,25 @@ function decodeTfs(tfs) {
                             while (inner[k++] & 0x80) { /* skip varint */ }
                         }
                     }
-                    if (field === 13) leg.origin = code;
-                    if (field === 14) leg.dest = code;
+                    if (field === 13) {
+                        if (!leg.origins) leg.origins = [];
+                        if (code) {
+                            leg.origins.push(code);
+                            if (!leg.origin) leg.origin = code;
+                        }
+                    }
+                    if (field === 14) {
+                        if (!leg.dests) leg.dests = [];
+                        if (code) {
+                            leg.dests.push(code);
+                            if (!leg.dest) leg.dest = code;
+                        }
+                    }
                 }
             }
         }
+        if (leg.origins && leg.origins.length <= 1) delete leg.origins;
+        if (leg.dests && leg.dests.length <= 1) delete leg.dests;
         return leg;
     }
     while (i < buf.length) {
@@ -477,6 +491,103 @@ assert.ok(!JSON.stringify(path[1].savings).toLowerCase().includes("brac"), "BRAC
 assert.ok(path.some((row) => row.id === "sharetrip" && row.url === "https://sharetrip.net/"));
 assert.ok(!JSON.stringify(path).includes("USBA15"));
 assert.ok(!path.some((row) => /bank \/ card campaign/i.test(JSON.stringify(row))));
+assert.strictEqual(path[0].nearbyLabel, "");
+const decodedPathCan = decodeTfs(new URL(path[0].url).searchParams.get("tfs"));
+assert.deepStrictEqual(decodedPathCan.legs[0], { date: "2026-09-03", origin: "DAC", dest: "CAN" });
+
+assert.deepStrictEqual(BookingLinks.metroAirports("LHR"), ["LHR", "LGW", "STN", "LTN"]);
+assert.deepStrictEqual(BookingLinks.metroAirports("LGW"), ["LGW", "LHR", "STN", "LTN"]);
+assert.deepStrictEqual(BookingLinks.metroAirports("CDG"), ["CDG", "ORY"]);
+assert.deepStrictEqual(BookingLinks.metroAirports("NRT"), ["NRT", "HND"]);
+assert.deepStrictEqual(BookingLinks.metroAirports("DAC"), ["DAC"]);
+assert.deepStrictEqual(BookingLinks.metroAirports("CCU"), ["CCU"]);
+
+const dacLhr = { origin: "DAC", dest: "LHR", depart: "2026-09-08", returnDate: "2026-09-17", tripType: "round" };
+const pathLhr = BookingLinks.cheapBookPath(dacLhr);
+assert.strictEqual(pathLhr[0].id, "google-flights");
+assert.ok(pathLhr[0].url.includes("/travel/flights/search?tfs="));
+assert.ok(!pathLhr[0].url.includes("flights?q="));
+assert.ok(!pathLhr[0].url.includes("?q="));
+assert.strictEqual(pathLhr[0].nearbyLabel, "Includes nearby: LHR, LGW, STN, LTN");
+const decodedLhr = decodeTfs(new URL(pathLhr[0].url).searchParams.get("tfs"));
+assert.deepStrictEqual(decodedLhr.legs[0].origin, "DAC");
+assert.ok(!decodedLhr.legs[0].origins);
+assert.deepStrictEqual(decodedLhr.legs[0].dests, ["LHR", "LGW", "STN", "LTN"]);
+assert.deepStrictEqual(decodedLhr.legs[1].origins, ["LHR", "LGW", "STN", "LTN"]);
+assert.deepStrictEqual(decodedLhr.legs[1].dest, "DAC");
+const usbLhr = BookingLinks.AIRLINE_DIRECTORY.find((a) => a.id === "usbangla").url(dacLhr);
+assert.ok(usbLhr.includes("DestinationAirportCode=LHR"));
+assert.ok(!usbLhr.includes("LGW"));
+assert.ok(!usbLhr.includes("STN"));
+const gzLhr = BookingLinks.gozayaanUrl(dacLhr);
+assert.ok(gzLhr.includes("DAC,LHR") || gzLhr.includes("DAC%2CLHR"));
+assert.ok(!gzLhr.includes("LGW"));
+
+const pathBkk = BookingLinks.cheapBookPath(round);
+assert.strictEqual(pathBkk[0].nearbyLabel, "Includes nearby: BKK, DMK");
+const decodedBkk = decodeTfs(new URL(pathBkk[0].url).searchParams.get("tfs"));
+assert.deepStrictEqual(decodedBkk.legs[0].dests, ["BKK", "DMK"]);
+assert.deepStrictEqual(decodedBkk.legs[0].origin, "DAC");
+
+const dacCcu = { origin: "DAC", dest: "CCU", depart: "2026-09-08", tripType: "oneway" };
+const pathCcu = BookingLinks.cheapBookPath(dacCcu);
+assert.strictEqual(pathCcu[0].nearbyLabel, "");
+const decodedCcu = decodeTfs(new URL(pathCcu[0].url).searchParams.get("tfs"));
+assert.deepStrictEqual(decodedCcu.legs[0], { date: "2026-09-08", origin: "DAC", dest: "CCU" });
+
+const pathNycLon = BookingLinks.cheapBookPath({
+    origin: "JFK",
+    dest: "LHR",
+    depart: "2026-02-18",
+    tripType: "oneway"
+});
+assert.ok(pathNycLon[0].nearbyLabel.includes("JFK, EWR, LGA"));
+assert.ok(pathNycLon[0].nearbyLabel.includes("LHR, LGW, STN, LTN"));
+const decodedNycLon = decodeTfs(new URL(pathNycLon[0].url).searchParams.get("tfs"));
+assert.deepStrictEqual(decodedNycLon.legs[0].origins, ["JFK", "EWR", "LGA"]);
+assert.deepStrictEqual(decodedNycLon.legs[0].dests, ["LHR", "LGW", "STN", "LTN"]);
+assert.strictEqual(
+    BookingLinks.encodeGoogleFlightsTfs({
+        origin: "JFK",
+        dest: "LHR",
+        depart: "2026-02-18",
+        tripType: "oneway"
+    }),
+    "CBwQAhoeEgoyMDI2LTAyLTE4agcIARIDSkZLcgcIARIDTEhSQAFIAXABggELCP___________wGYAQI"
+);
+
+const pathParis = BookingLinks.cheapBookPath({ origin: "DAC", dest: "CDG", depart: "2026-09-08", tripType: "oneway" });
+const decodedParis = decodeTfs(new URL(pathParis[0].url).searchParams.get("tfs"));
+assert.deepStrictEqual(decodedParis.legs[0].dests, ["CDG", "ORY"]);
+const pathTokyo = BookingLinks.cheapBookPath({ origin: "DAC", dest: "NRT", depart: "2026-09-08", tripType: "oneway" });
+const decodedTokyo = decodeTfs(new URL(pathTokyo[0].url).searchParams.get("tfs"));
+assert.deepStrictEqual(decodedTokyo.legs[0].dests, ["NRT", "HND"]);
+
+const nearbyFixture = [
+    { code: "lhr", city: "London", lat: 51.4706, lon: -0.4619, type: "airport", size: "large" },
+    { code: "lgw", city: "Gatwick", lat: 51.1481, lon: -0.1903, type: "airport", size: "large" },
+    { code: "stn", city: "Stansted", lat: 51.885, lon: 0.235, type: "airport", size: "large" },
+    { code: "ltn", city: "Luton", lat: 51.8747, lon: -0.3683, type: "airport", size: "large" },
+    { code: "sen", city: "Southend", lat: 51.5714, lon: 0.6956, type: "airport", size: "medium" },
+    { code: "sou", city: "Southampton", lat: 50.9503, lon: -1.3568, type: "airport", size: "medium" },
+    { code: "man", city: "Manchester", lat: 53.3537, lon: -2.275, type: "airport", size: "large" },
+    { code: "bqh", city: "Biggin Hill", lat: 51.3308, lon: 0.0325, type: "airport", size: "small" },
+    { code: "dac", city: "Dhaka", lat: 23.8433, lon: 90.3978, type: "airport", size: "large" }
+];
+const lhrAlts = BookingLinks.cheaperNearbyAirports("LHR", nearbyFixture);
+assert.ok(lhrAlts.some((a) => a.code === "SEN" && a.city === "Southend" && a.km >= 50 && a.km <= 150));
+assert.ok(lhrAlts.every((a) => a.km >= 50 && a.km <= 150));
+assert.ok(!lhrAlts.some((a) => ["LHR", "LGW", "STN", "LTN", "MAN", "DAC", "BQH"].includes(a.code)));
+assert.ok(!JSON.stringify(lhrAlts).includes("৳"));
+assert.ok(!JSON.stringify(lhrAlts).includes("₹"));
+const senLink = BookingLinks.cheaperNearbyAirportLinks(dacLhr, nearbyFixture).find((a) => a.code === "SEN");
+assert.ok(senLink);
+assert.ok(senLink.url.includes("/travel/flights/search?tfs="));
+assert.ok(!senLink.url.includes("flights?q="));
+const decodedSen = decodeTfs(new URL(senLink.url).searchParams.get("tfs"));
+assert.deepStrictEqual(decodedSen.legs[0], { date: "2026-09-08", origin: "DAC", dest: "SEN" });
+assert.deepStrictEqual(decodedSen.legs[1], { date: "2026-09-17", origin: "SEN", dest: "DAC" });
+assert.deepStrictEqual(BookingLinks.cheaperNearbyAirports("DAC", nearbyFixture), []);
 
 const astraRoute = BookingLinks.airlinesForRoute(dacCxb).find((a) => a.id === "airastra");
 assert.ok(astraRoute);

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cheap Ticket Finder — cheap authentic ticket on Google Flights</title>
     <meta name="application-name" content="Cheap Ticket Finder">
-    <meta name="deploy" content="route-packages-20260902">
+    <meta name="deploy" content="gf-nearby-20260902">
     <meta name="description" content="Cheap Ticket Finder does not sell tickets. After you pick dates, the cheap authentic path is Open Google Flights (tfs search). Book with the airline there — that is the real, airline-issued ticket. Official airline sites are secondary because they often show Flex. We do not invent ৳.">
     <meta property="og:site_name" content="Cheap Ticket Finder">
     <meta property="og:title" content="Cheap Ticket Finder">
@@ -190,9 +190,14 @@
                 </h2>
                 <span class="text-[10px] sm:text-xs bg-sky-500/20 text-sky-300 px-2.5 py-0.5 rounded-full font-semibold">Primary: Open Google Flights</span>
             </div>
-            <p class="text-[11px] text-slate-500 mb-3">Primary button: Open Google Flights (tfs search). Book with the airline there — that is the real ticket (e.g. a US-Bangla ৳ on Google Flights is an authentic airline-issued fare). We do not invent ৳. Official airline engines are secondary because they often show a higher fare family (Flex). Published cards/codes (SCB on GoZayaan, AIRASTRA15: 15% at airline checkout, “SCB card: official up to 10% on this OTA”) sit only beside the matching checkout. If an airline has no published code, show nothing extra. If a real fare is ever known, fare after that percent is labeled estimate from official %.</p>
+            <p class="text-[11px] text-slate-500 mb-3">Primary button: Open Google Flights (tfs search). Book with the airline there — that is the real ticket (e.g. a US-Bangla ৳ on Google Flights is an authentic airline-issued fare). We do not invent ৳. City metros are searched together — DAC → London is LHR + LGW + STN + LTN, not LHR only (example: Includes nearby: BKK, DMK). Official airline engines stay single-airport. A Cheaper Nearby Airport list (code + city + ~km, 50–150 km) opens a dated tfs search for that one dest. Official airline engines are secondary because they often show a higher fare family (Flex). Published cards/codes (SCB on GoZayaan, AIRASTRA15: 15% at airline checkout, “SCB card: official up to 10% on this OTA”) sit only beside the matching checkout. If an airline has no published code, show nothing extra. If a real fare is ever known, fare after that percent is labeled estimate from official %.</p>
             <div id="needDatesHint" class="rounded-xl border border-slate-800 bg-slate-950/60 px-3.5 py-3 text-xs text-slate-400">Pick From / To and a date. The cheap authentic path is the primary Open Google Flights button — book the airline there. Official engines stay secondary (often Flex).</div>
             <div id="googleBookBar" class="hidden mb-4"></div>
+            <div id="nearbyAirportSection" class="hidden mb-4 rounded-2xl border border-slate-800 bg-slate-950/50 p-3.5">
+                <h3 class="text-xs sm:text-sm font-black text-sky-200 uppercase tracking-wider">Cheaper Nearby Airport</h3>
+                <p class="text-[11px] text-slate-500 mt-1 mb-2 leading-5">Other IATA about 50–150 km from the destination (haversine on this page’s airport coords). Tap one for a dated Google Flights tfs search to that airport, same origin and dates. We do not invent ৳.</p>
+                <div id="nearbyAirportResults" class="space-y-1.5"></div>
+            </div>
             <div id="cheapPathResults" class="space-y-2"></div>
         </div>
 
@@ -238,7 +243,7 @@
         </div>
     </div>
 
-    <script src="js/booking-links.js?v=route-packages-20260902"></script>
+    <script src="js/booking-links.js?v=gf-nearby-20260902"></script>
     <script>
         const COUNTRY_AIRPORTS = [
 
@@ -773,7 +778,9 @@
                 .replace(/\bAirport\b/gi, '')
                 .replace(/\s+/g, ' ')
                 .trim();
-            return {
+            const lat = Number(item.lat);
+            const lon = Number(item.lon);
+            const out = {
                 country: `${countryName}`,
                 city: cityGuess || item.name,
                 name: `${item.name} (${iata.toUpperCase()})`,
@@ -782,6 +789,13 @@
                 domesticAirlines: [],
                 source: "global"
             };
+            if (Number.isFinite(lat) && Number.isFinite(lon)) {
+                out.lat = lat;
+                out.lon = lon;
+            }
+            if (item.type) out.type = String(item.type);
+            if (item.size) out.size = String(item.size);
+            return out;
         }
 
         function setAirportStatus(message, tone = 'muted') {
@@ -815,18 +829,26 @@
                 if (!Array.isArray(data) || !data.length) {
                     throw lastError || new Error("Worldwide airport data unavailable");
                 }
+                const builtinByCode = new Map(COUNTRY_AIRPORTS.map(a => [a.code.toLowerCase(), a]));
                 const seen = new Set(COUNTRY_AIRPORTS.map(a => a.code.toLowerCase()));
-                worldwideAirports = data
-                    .map(normalizeRemoteAirport)
-                    .filter(Boolean)
-                    .filter(a => {
-                        if (seen.has(a.code)) return false;
-                        seen.add(a.code);
-                        return true;
-                    });
+                worldwideAirports = [];
+                data.map(normalizeRemoteAirport).filter(Boolean).forEach((a) => {
+                    const builtin = builtinByCode.get(a.code);
+                    if (builtin) {
+                        if (a.lat != null) builtin.lat = a.lat;
+                        if (a.lon != null) builtin.lon = a.lon;
+                        if (a.type) builtin.type = a.type;
+                        if (a.size) builtin.size = a.size;
+                        return;
+                    }
+                    if (seen.has(a.code)) return;
+                    seen.add(a.code);
+                    worldwideAirports.push(a);
+                });
                 worldwideAirportsLoaded = true;
                 setAirportStatus(`Worldwide database ready: ${worldwideAirports.length.toLocaleString()} additional IATA airports.`, 'ok');
                 filterModalAirports(false);
+                if (datesReady()) renderResults();
             } catch (error) {
                 console.warn("Worldwide airport database unavailable:", error);
                 setAirportStatus("Worldwide database could not load. Built-in airports are still available.", 'error');
@@ -1181,12 +1203,39 @@
             }).join("")}</div>`;
         }
 
+        function nearbyAirportRow(item) {
+            return `
+                <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between gap-2 rounded-xl border border-slate-800 bg-slate-950/80 px-3 py-2.5 hover:border-sky-500/50 transition">
+                    <span class="min-w-0 truncate">
+                        <span class="font-mono font-black text-white tracking-wide">${escapeHtml(item.code)}</span>
+                        <span class="text-slate-400 text-xs ml-2">${escapeHtml(item.city || "")}</span>
+                    </span>
+                    <span class="text-[11px] font-bold text-sky-300 whitespace-nowrap">~${item.km} km</span>
+                </a>
+            `;
+        }
+
+        function renderNearbyAirports(opts) {
+            const section = document.getElementById('nearbyAirportSection');
+            const box = document.getElementById('nearbyAirportResults');
+            if (!section || !box) return;
+            const alts = BookingLinks.cheaperNearbyAirportLinks(opts, getAllAirports());
+            if (!alts.length) {
+                box.innerHTML = "";
+                section.classList.add('hidden');
+                return;
+            }
+            box.innerHTML = alts.map((item) => nearbyAirportRow(item)).join("");
+            section.classList.remove('hidden');
+        }
+
         function primaryGoogleCard(item) {
             return `
                 <div class="rounded-2xl border-2 border-sky-400/60 bg-sky-950/40 p-4 sm:p-5 shadow-xl shadow-sky-900/20">
                     <div class="text-[10px] font-extrabold uppercase tracking-wider text-sky-300 mb-2">Cheap authentic ticket</div>
                     <h3 class="text-lg sm:text-xl font-black text-white">Google Flights</h3>
                     <p class="text-xs sm:text-sm text-slate-300 mt-2 leading-5">${escapeHtml(item.blurb || "")}</p>
+                    ${item.nearbyLabel ? `<div class="mt-2 text-[11px] font-black text-sky-200">${escapeHtml(item.nearbyLabel)}</div>` : ""}
                     <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="mt-4 w-full block text-center bg-sky-500 hover:bg-sky-400 text-white font-black py-3.5 rounded-xl text-sm sm:text-base transition shadow-lg shadow-sky-500/30">
                         <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i> ${escapeHtml(item.cta || "Open Google Flights")}
                     </a>
@@ -1261,11 +1310,15 @@
             const pathBox = document.getElementById('cheapPathResults');
             const needDates = document.getElementById('needDatesHint');
             const googleBar = document.getElementById('googleBookBar');
+            const nearbySection = document.getElementById('nearbyAirportSection');
+            const nearbyBox = document.getElementById('nearbyAirportResults');
             if (pathBox) pathBox.innerHTML = "";
             if (googleBar) {
                 googleBar.innerHTML = "";
                 googleBar.classList.add('hidden');
             }
+            if (nearbyBox) nearbyBox.innerHTML = "";
+            if (nearbySection) nearbySection.classList.add('hidden');
             if (needDates) needDates.classList.remove('hidden');
             document.getElementById('hotelResults').innerHTML = "";
             document.getElementById('hotelSectionWrapper').classList.add('hidden');
@@ -1322,6 +1375,7 @@
                 googleBar.classList.remove('hidden');
                 googleBar.innerHTML = primary.map((item) => primaryGoogleCard(item)).join("");
             }
+            renderNearbyAirports(opts);
             const secondaryHeading = `
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-2 mt-1">
                     <h3 class="text-xs sm:text-sm font-bold text-slate-300">Airline site (often Flex / higher fare family)</h3>
@@ -1402,6 +1456,7 @@
         renderCalendars();
         validateRoute();
         resetResultsUntilDates();
+        ensureWorldwideAirportsLoaded();
     </script>
 </body>
 </html>

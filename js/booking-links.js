@@ -6,8 +6,10 @@
  * Never use Google Flights `?q=` natural-language URLs (empty landing page).
  * ShareTrip `/flight/search` 404s — do not add it back without a working dated URL.
  * US-Bangla: stable TTI FrontOffice only — never a session-GUID path that 404s later.
- * Stamp: route-packages-20260902
+ * Stamp: gf-nearby-20260902
  * Cheap authentic path is Google Flights tfs search — book the airline there.
+ * The primary tfs link includes known nearby metro IATA (repeat origin/dest fields). Never q=.
+ * Official airline engines stay single-airport.
  * Official airline engines are secondary; they often open a higher fare family (Flex).
  * Official packages appear only for the searched destination country, and only with a real official URL.
  * No public fare API without secrets — show official up to X%, never a made-up ৳.
@@ -114,32 +116,169 @@
         return pbVarintField(1, 1).concat(pbStringField(2, upper(iata)));
     }
 
+    // Real same-city metro IATA only. Selected airport stays first; extras follow.
+    // DAC, CCU, CAN and other single-airport cities are omitted on purpose.
+    const METRO_AIRPORT_GROUPS = [
+        ["BKK", "DMK"],
+        ["DXB", "DWC"],
+        ["JFK", "EWR", "LGA"],
+        ["LHR", "LGW", "STN", "LTN"],
+        ["IST", "SAW"],
+        ["CDG", "ORY"],
+        ["NRT", "HND"],
+        ["ICN", "GMP"],
+        ["PVG", "SHA"],
+        ["PEK", "PKX"],
+        ["KIX", "ITM"],
+        ["MXP", "LIN"],
+        ["FCO", "CIA"],
+        ["ORD", "MDW"],
+        ["IAD", "DCA", "BWI"],
+        ["MIA", "FLL"],
+        ["GRU", "CGH"],
+        ["EZE", "AEP"],
+        ["GIG", "SDU"],
+        ["TPE", "TSA"]
+    ];
+    const METRO_GROUPS = {};
+    METRO_AIRPORT_GROUPS.forEach((group) => {
+        group.forEach((code) => {
+            METRO_GROUPS[lower(code)] = group.slice();
+        });
+    });
+
+    function metroAirports(code) {
+        const primary = upper(code);
+        if (!primary) return [];
+        const group = METRO_GROUPS[lower(primary)];
+        if (!group) return [primary];
+        return [primary].concat(group.filter((item) => item !== primary));
+    }
+
+    function nearbyAirportsLabel(origin, dest) {
+        const o = metroAirports(origin);
+        const d = metroAirports(dest);
+        const parts = [];
+        if (o.length > 1) parts.push(o.join(", "));
+        if (d.length > 1) parts.push(d.join(", "));
+        return parts.length ? `Includes nearby: ${parts.join(" · ")}` : "";
+    }
+
+    function parseCoord(value) {
+        const n = typeof value === "number" ? value : Number(value);
+        return Number.isFinite(n) ? n : null;
+    }
+
+    function airportPoint(item) {
+        if (!item) return null;
+        const lat = parseCoord(item.lat);
+        const lon = parseCoord(item.lon);
+        if (lat == null || lon == null) return null;
+        if (Math.abs(lat) > 90 || Math.abs(lon) > 180) return null;
+        return { lat, lon };
+    }
+
+    function haversineKm(a, b) {
+        const p1 = airportPoint(a) || airportPoint({ lat: a && a.lat, lon: a && a.lon });
+        const p2 = airportPoint(b) || airportPoint({ lat: b && b.lat, lon: b && b.lon });
+        if (!p1 || !p2) return null;
+        const toRad = (deg) => deg * Math.PI / 180;
+        const dLat = toRad(p2.lat - p1.lat);
+        const dLon = toRad(p2.lon - p1.lon);
+        const lat1 = toRad(p1.lat);
+        const lat2 = toRad(p2.lat);
+        const h = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+            + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        return 2 * 6371 * Math.asin(Math.min(1, Math.sqrt(h)));
+    }
+
+    function isUsableNearbyAirport(item) {
+        const type = String(item && item.type || "airport").toLowerCase();
+        if (type && type !== "airport") return false;
+        const size = String(item && item.size || "").toLowerCase();
+        if (size === "small") return false;
+        return true;
+    }
+
+    // Other dest IATA ~50–150 km away. Metro siblings are already in the primary tfs search.
+    function cheaperNearbyAirports(destCode, airports, range) {
+        const minKm = range && Number.isFinite(Number(range.minKm)) ? Number(range.minKm) : 50;
+        const maxKm = range && Number.isFinite(Number(range.maxKm)) ? Number(range.maxKm) : 150;
+        const list = Array.isArray(airports) ? airports : [];
+        const destKey = lower(destCode);
+        const dest = list.find((item) => lower(item.code) === destKey);
+        if (!airportPoint(dest)) return [];
+        const skip = new Set(metroAirports(destCode).map(lower));
+        skip.add(destKey);
+        const seen = new Set();
+        const out = [];
+        list.forEach((item) => {
+            const code = upper(item && item.code);
+            const key = lower(code);
+            if (!code || skip.has(key) || seen.has(key) || !isUsableNearbyAirport(item)) return;
+            const km = haversineKm(dest, item);
+            if (km == null || km < minKm || km > maxKm) return;
+            seen.add(key);
+            const city = String(item.city || "")
+                .replace(/\([^)]*\)/g, "")
+                .replace(/\s+/g, " ")
+                .trim();
+            out.push({
+                code,
+                city: city || code,
+                km: Math.round(km)
+            });
+        });
+        out.sort((a, b) => a.km - b.km || a.code.localeCompare(b.code));
+        return out.slice(0, 12);
+    }
+
+    function cheaperNearbyAirportLinks(opts, airports) {
+        const search = opts || {};
+        return cheaperNearbyAirports(search.dest, airports).map((alt) => ({
+            code: alt.code,
+            city: alt.city,
+            km: alt.km,
+            url: googleFlightsUrl(Object.assign({}, search, { dest: alt.code }))
+        }));
+    }
+
     function encodeFlightLeg(date, origin, dest) {
-        return pbStringField(2, toISODate(date))
-            .concat(pbBytesField(13, encodeAirportPlace(origin)))
-            .concat(pbBytesField(14, encodeAirportPlace(dest)));
+        const origins = Array.isArray(origin) ? origin : [origin];
+        const dests = Array.isArray(dest) ? dest : [dest];
+        let out = pbStringField(2, toISODate(date));
+        origins.forEach((code) => {
+            out = out.concat(pbBytesField(13, encodeAirportPlace(code)));
+        });
+        dests.forEach((code) => {
+            out = out.concat(pbBytesField(14, encodeAirportPlace(code)));
+        });
+        return out;
     }
 
     function encodeGoogleFlightsTfs(opts) {
         const origin = upper(opts.origin);
         const dest = upper(opts.dest);
+        const originList = opts.nearbyAirports ? metroAirports(origin) : [origin];
+        const destList = opts.nearbyAirports ? metroAirports(dest) : [dest];
         const depart = toISODate(opts.depart);
         const ret = opts.returnDate ? toISODate(opts.returnDate) : "";
         const stop = opts.stop ? upper(opts.stop) : "";
+        const stopList = stop ? (opts.nearbyAirports ? metroAirports(stop) : [stop]) : [];
 
         const legs = [];
         let tripType = 1;
         if (opts.tripType === "oneway") {
             tripType = 2;
-            legs.push(encodeFlightLeg(depart, origin, dest));
+            legs.push(encodeFlightLeg(depart, originList, destList));
         } else if (opts.tripType === "multicity" && stop && ret) {
             tripType = 3;
-            legs.push(encodeFlightLeg(depart, origin, dest));
-            legs.push(encodeFlightLeg(ret, dest, stop));
+            legs.push(encodeFlightLeg(depart, originList, destList));
+            legs.push(encodeFlightLeg(ret, destList, stopList));
         } else {
             tripType = 1;
-            legs.push(encodeFlightLeg(depart, origin, dest));
-            legs.push(encodeFlightLeg(ret, dest, origin));
+            legs.push(encodeFlightLeg(depart, originList, destList));
+            legs.push(encodeFlightLeg(ret, destList, originList));
         }
 
         const allResultsSentinel = pbVarintField(1, -1n);
@@ -894,14 +1033,17 @@
     }
 
     function cheapBookPath(opts) {
+        const gfOpts = Object.assign({}, opts, { nearbyAirports: true });
+        const nearbyLabel = nearbyAirportsLabel(opts.origin, opts.dest);
         const rows = [
             {
                 id: "google-flights",
                 name: "Google Flights",
-                url: googleFlightsUrl(opts),
+                url: googleFlightsUrl(gfOpts),
                 cta: "Open Google Flights",
                 tier: "primary",
-                blurb: "Dated tfs search, cheapest sort, BDT. Book with the airline there — that is the real ticket. A US-Bangla ৳ on Google Flights is an authentic airline-issued fare, not a Flex-only price from the airline site and not a number we invent.",
+                nearbyLabel,
+                blurb: "Dated tfs search, cheapest sort, BDT. Book with the airline there — that is the real ticket. A US-Bangla ৳ on Google Flights is an authentic airline-issued fare, not a Flex-only price from the airline site and not a number we invent." + (nearbyLabel ? " " + nearbyLabel + "." : ""),
                 savings: savingsForProvider("google-flights", opts)
             },
             {
@@ -1261,6 +1403,11 @@
         toSkyDate,
         googleFlightsUrl,
         encodeGoogleFlightsTfs,
+        metroAirports,
+        nearbyAirportsLabel,
+        haversineKm,
+        cheaperNearbyAirports,
+        cheaperNearbyAirportLinks,
         ttiZenithFrontOfficeUrl,
         skyscannerUrl,
         kayakUrl,

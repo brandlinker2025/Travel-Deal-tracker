@@ -74,7 +74,10 @@ const required = [
     "googleBookBar",
     "Official packages",
     "officialPackageResults",
-    "route-packages-20260902",
+    "gf-nearby-20260902",
+    "Includes nearby: BKK, DMK",
+    "Cheaper Nearby Airport",
+    "LHR + LGW + STN + LTN",
     "Cheap Ticket Finder",
     "cheapticketfinder.site",
 ];
@@ -99,7 +102,8 @@ assert.ok(!html.includes("cheap-ticket-finder-20260902"), "deploy stamp must mov
 assert.ok(!html.includes("attach-savings-20260902"), "deploy stamp must move with the no-campaign-grid ship");
 assert.ok(!html.includes("beside-row-20260902"), "deploy stamp must move with the google-primary ship");
 assert.ok(!html.includes("no-campaign-grid-20260902"), "deploy stamp must move with the route-packages ship");
-assert.ok(!html.includes("google-primary-20260902"), "deploy stamp must move with the route-packages ship");
+assert.ok(!html.includes("google-primary-20260902"), "deploy stamp must move with the gf-nearby ship");
+assert.ok(!html.includes("route-packages-20260902"), "deploy stamp must move with the gf-nearby ship");
 assert.ok(!html.includes("Real free tools"), "do not keep an always-on extra tools grid");
 assert.ok(!html.includes("https://www.qatarairwaysholidays.com/"), "do not keep a static always-on Qatar packages card");
 assert.ok(!html.includes("https://holidays.turkishairlines.com/"), "do not keep a static always-on Turkish packages card");
@@ -114,7 +118,10 @@ assert.ok(pkgIdx > hotelIdx, "official packages sit below the cheap path and hot
 assert.ok(!links.includes("discount_percent"), "booking-links.js must not invent discount math");
 assert.ok(!links.includes("base_price"), "booking-links.js must not invent fares");
 assert.ok(!links.includes("travel/flights?q="), "Google Flights must not use the natural-language q= URL");
-assert.ok(links.includes("/travel/flights/search?tfs="), "Google Flights must use structured tfs search URLs");
+assert.ok(links.includes("cheaperNearbyAirports"), "haversine nearby dests must live in booking-links");
+assert.ok(links.includes("LHR") && links.includes("LGW") && links.includes("STN") && links.includes("LTN"), "London metro must include LHR+LGW+STN+LTN");
+assert.ok(links.includes("CDG") && links.includes("ORY"), "Paris metro must include CDG+ORY");
+assert.ok(links.includes("NRT") && links.includes("HND"), "Tokyo metro must include NRT+HND");
 assert.ok(links.includes("fo-usba.ttinteractive.com/Zenith/FrontOffice/usbangla"), "US-Bangla must use the stable TTI FrontOffice booking engine");
 assert.ok(!links.includes("FrontOffice/(S("), "US-Bangla must not hard-code a session GUID FrontOffice path");
 assert.ok(!links.includes("usbair.com/search"), "stale usbair.com/search schema.org URL 404s");

@@ -6,7 +6,7 @@ Static Bangladesh-friendly search page for **cheapticketfinder.site**. It does *
 
 Pick From / To, then dates on **one empty calendar** (nothing is pre-selected). Cheap Ticket Finder then shows **one cheap ticket path**:
 
-- **Primary:** Open Google Flights (`tfs` search). Book with the airline there — that is the real, authentic airline-issued ticket (e.g. a US-Bangla ৳ on Google Flights). We do not invent ৳.
+- **Primary:** Open Google Flights (`tfs` search). Book with the airline there — that is the real, authentic airline-issued ticket (e.g. a US-Bangla ৳ on Google Flights). City metros are encoded together in that tfs link (DAC → London is LHR + LGW + STN + LTN, not LHR only; same for NYC, BKK+DMK, IST+SAW, DXB+DWC, Paris CDG+ORY, Tokyo NRT+HND). A **Cheaper Nearby Airport** list (code + city + ~km, about 50–150 km) opens a dated tfs search for that one dest. We do not invent ৳.
 - **Secondary:** official airline engines for **this From–To only** (they often show a higher fare family such as Flex). US-Bangla TTI appears when that airline is on the route. AIR ASTRA / Novoair only on Bangladesh domestic routes. A published checkout code sits beside that airline (AIRASTRA15 on AIR ASTRA).
 - **Official packages:** only if the searched destination country has a real official holiday URL. Thailand (and any country without a URL we publish) omits the packages block. No always-on four-package grid.
 
