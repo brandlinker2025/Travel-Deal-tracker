@@ -55,40 +55,48 @@ const required = [
     "Hazrat Shahjalal Int. (DAC)",
     "js/booking-links.js",
     "final price is on the provider",
-    "Bangladesh bank / card campaigns",
-    "Official airline promo codes",
-    "One official book button per airline",
-    "Cheapest live search",
-    "tripCalendarGrid",
+    "Cheap ticket path",
+    "cheapPathResults",
+    "Official % beside the book row",
+    "SCB card: official up to 10% on this OTA",
+    "AIRASTRA15: 15% at airline checkout",
+    "estimate from official %",
     "One calendar",
     "dates start empty",
     "No dates yet",
+    "tripCalendarGrid",
     "googleBookBar",
-    "Open cheapest Google Flights results",
     "Official packages",
-    "discountResults",
-    "promoCodeResults",
-    "cheap-ticket-finder-20260902",
+    "beside-row-20260902",
     "Cheap Ticket Finder",
     "cheapticketfinder.site",
-    "No published code",
+    "No official card or checkout code mapped",
 ];
 
 required.forEach((needle) => {
     assert.ok(html.includes(needle), `index.html is missing required copy: ${needle}`);
 });
 
+assert.ok(/one official book button per airline/i.test(html), "cheap path still includes one official book button per airline");
+
 assert.ok(!html.includes('id="departGrid"'), "must not keep a second depart month grid");
 assert.ok(!html.includes('id="returnGrid"'), "must not keep a separate return month grid");
 assert.ok(!html.includes("returnCalendarBox"), "must not keep a second return calendar");
 
-const bankIdx = html.indexOf("Bangladesh bank / card campaigns");
-const promoIdx = html.indexOf("Official airline promo codes");
-const airlineIdx = html.indexOf("One official book button per airline");
-const cheapIdx = html.indexOf("Cheapest live search");
-assert.ok(bankIdx > 0 && promoIdx > bankIdx, "bank/card campaigns must sit above promo codes");
-assert.ok(airlineIdx > promoIdx, "official airline buttons must sit above the cheapest live search");
-assert.ok(cheapIdx > airlineIdx, "the single Google Flights tap must sit below bank/card, codes, and airline buttons");
+assert.ok(!html.includes("Bangladesh bank / card campaigns"), "do not keep a separate bank/card campaign grid");
+assert.ok(!html.includes("BANK / CARD CAMPAIGNS"), "do not scatter a BANK / CARD CAMPAIGNS heading");
+assert.ok(!html.includes("Official airline promo codes"), "promo codes attach to the book button, not a separate grid");
+assert.ok(!html.includes("Cheapest live search"), "cheap path replaced the separate cheapest-live-search block");
+assert.ok(!html.includes('id="discountResults"'), "do not keep a standalone discountResults grid");
+assert.ok(!html.includes('id="promoCodeResults"'), "do not keep a standalone promoCodeResults grid");
+assert.ok(!html.includes("cheap-ticket-finder-20260902"), "deploy stamp must move with this ship");
+assert.ok(!html.includes("attach-savings-20260902"), "deploy stamp must move with the beside-row ship");
+
+const pathIdx = html.indexOf("Cheap ticket path");
+const hotelIdx = html.indexOf("Hotels for these dates");
+const pkgIdx = html.indexOf("Official packages");
+assert.ok(pathIdx > 0 && hotelIdx > pathIdx, "cheap ticket path must sit above hotels");
+assert.ok(pkgIdx > hotelIdx, "official packages sit below the cheap path and hotels");
 
 assert.ok(!links.includes("discount_percent"), "booking-links.js must not invent discount math");
 assert.ok(!links.includes("base_price"), "booking-links.js must not invent fares");
@@ -112,7 +120,12 @@ assert.ok(links.includes("AIRASTRA15"), "AIR ASTRA official promo code must be l
 assert.ok(links.includes("STLRPIQ326"), "EBL official Stellar international code must be listed");
 assert.ok(links.includes("bkash.com/en/campaign"), "bKash official campaign hub must be listed");
 assert.ok(!links.includes("USBA15"), "Do not invent USBA15 without the airline official promo page");
-assert.ok(html.includes("airlineBookingCard") || html.includes("Official promo at airline checkout"), "airline cards must surface checkout promo codes");
+assert.ok(html.includes("cheapPathCard") && html.includes("savingsChips"), "cheap-path rows must attach official savings beside each book control");
+assert.ok(html.includes("sm:flex-row sm:items-center"), "promo/card chips sit beside the airline/OTA search/book row");
+assert.ok(html.includes("None — No official card or checkout code mapped"), "airlines with no published promo show None beside the row");
+assert.ok(links.includes("Open cheapest Google Flights results"), "Google Flights CTA stays on the cheap path");
+assert.ok(links.includes("SCB card: official up to 10% on this OTA"), "GoZayaan SCB headline must stay mapped to that OTA");
+assert.ok(links.includes("AIRASTRA15: 15% at airline checkout"), "AIRASTRA15 must stay mapped to airline checkout");
 
 assert.ok(!html.includes("Cheapest Ticket Finder"), "product name is Cheap Ticket Finder, not Cheapest Ticket Finder");
 assert.ok(!html.includes("Global Travel Tracker"), "do not use Global Travel Tracker as the product name");

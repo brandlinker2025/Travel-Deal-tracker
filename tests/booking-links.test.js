@@ -403,4 +403,80 @@ assert.ok(!usbSep4.includes("(S("));
 assert.ok(!JSON.stringify(BookingLinks.airlinesForRoute(dacCanSep4)).includes("37053"));
 assert.ok(!JSON.stringify(BookingLinks.airlinesForRoute(dacCanSep4)).includes("81614"));
 
+const gzIntlSav = BookingLinks.savingsForProvider("gozayaan", dacCan);
+assert.ok(gzIntlSav.some((s) => s.headline === "SCB card: official up to 10% on this OTA" && s.percent === 10 && s.how === "up to"));
+assert.ok(gzIntlSav.some((s) => s.headline === "City Amex: official up to 18% on this OTA" && s.percent === 18 && s.capBdt === 30000));
+assert.ok(!gzIntlSav.some((s) => s.percent === 7));
+
+const dacCxb = { origin: "DAC", dest: "CXB", depart: "2026-09-03", tripType: "oneway" };
+const gzDomSav = BookingLinks.savingsForProvider("gozayaan", dacCxb);
+assert.ok(gzDomSav.some((s) => s.headline === "SCB card: official up to 7% on this OTA" && s.percent === 7));
+assert.ok(!gzDomSav.some((s) => s.id === "city-amex-gozayaan"));
+assert.ok(!gzDomSav.some((s) => s.percent === 18));
+
+const astraSav = BookingLinks.savingsForProvider("airastra", dacCan);
+assert.strictEqual(astraSav.length, 1);
+assert.strictEqual(astraSav[0].code, "AIRASTRA15");
+assert.strictEqual(astraSav[0].percent, 15);
+assert.strictEqual(astraSav[0].headline, "AIRASTRA15: 15% at airline checkout");
+assert.ok(astraSav[0].sourceUrl.includes("airastra.com"));
+
+assert.deepStrictEqual(BookingLinks.savingsForProvider("google-flights", dacCan), []);
+assert.deepStrictEqual(BookingLinks.savingsForProvider("biman", dacCan), []);
+
+const shareIntl = BookingLinks.savingsForProvider("sharetrip", dacCan);
+assert.strictEqual(shareIntl.length, 1);
+assert.strictEqual(shareIntl[0].code, "STLRPIQ326");
+assert.strictEqual(shareIntl[0].percent, 15);
+assert.strictEqual(shareIntl[0].capBdt, 3000);
+const shareDom = BookingLinks.savingsForProvider("sharetrip", dacCxb);
+assert.strictEqual(shareDom[0].code, "STLRPDQ326");
+assert.strictEqual(shareDom[0].capBdt, 1000);
+
+const qatarDohSav = BookingLinks.savingsForProvider("qatar", { ...dacCan, dest: "DOH" });
+assert.ok(qatarDohSav.some((s) => s.code === "F1FANS" && s.percent === 12));
+const qatarCanSav = BookingLinks.savingsForProvider("qatar", dacCan);
+assert.deepStrictEqual(qatarCanSav, []);
+
+const estTen = BookingLinks.estimateAfterOfficialPercent(10000, { percent: 10 });
+assert.ok(estTen);
+assert.strictEqual(estTen.afterBdt, 9000);
+assert.ok(/estimate from official/i.test(estTen.label));
+assert.strictEqual(BookingLinks.estimateAfterOfficialPercent(null, { percent: 10 }), null);
+assert.strictEqual(BookingLinks.estimateAfterOfficialPercent(undefined, { percent: 10 }), null);
+assert.strictEqual(BookingLinks.estimateAfterOfficialPercent("not-a-fare", { percent: 10 }), null);
+const estCap = BookingLinks.estimateAfterOfficialPercent(200000, { percent: 18, capBdt: 30000, how: "up to" });
+assert.strictEqual(estCap.afterBdt, 170000);
+assert.ok(/estimate from official/i.test(estCap.label));
+const estUncapped = BookingLinks.estimateAfterOfficialPercent(100000, { percent: 18, capBdt: 30000, how: "up to" });
+assert.strictEqual(estUncapped.afterBdt, 82000);
+
+const path = BookingLinks.cheapBookPath(dacCan);
+assert.strictEqual(path[0].id, "google-flights");
+assert.strictEqual(path[1].id, "gozayaan");
+assert.ok(path[0].url.includes("/travel/flights/search?tfs="));
+assert.ok(path[1].url.includes("gozayaan.com/flight/list"));
+assert.deepStrictEqual(path[0].savings, []);
+assert.ok(path[1].savings.some((s) => s.percent === 10));
+assert.ok(path[1].savings.some((s) => s.percent === 18));
+const astraPath = path.find((row) => row.id === "airastra");
+assert.ok(astraPath);
+assert.ok(astraPath.savings.some((s) => s.code === "AIRASTRA15" && s.percent === 15));
+const bimanPath = path.find((row) => row.id === "biman");
+assert.ok(bimanPath);
+assert.deepStrictEqual(bimanPath.savings, []);
+const usbPath = path.find((row) => row.id === "usbangla");
+assert.ok(usbPath);
+assert.deepStrictEqual(usbPath.savings, [], "US-Bangla has no published website promo — show none beside that row");
+assert.deepStrictEqual(BookingLinks.savingsForProvider("usbangla", dacCan), []);
+assert.ok(!JSON.stringify(path[1].savings).toLowerCase().includes("brac"), "BRAC is not mapped to GoZayaan checkout");
+assert.ok(path.some((row) => row.id === "sharetrip" && row.url === "https://sharetrip.net/"));
+assert.ok(!JSON.stringify(path).includes("USBA15"));
+assert.ok(!path.some((row) => /bank \/ card campaign/i.test(JSON.stringify(row))));
+
+const astraRoute = BookingLinks.airlinesForRoute(dacCan).find((a) => a.id === "airastra");
+assert.ok(astraRoute.savings.some((s) => s.code === "AIRASTRA15"));
+const bimanRoute = BookingLinks.airlinesForRoute(dacCan).find((a) => a.id === "biman");
+assert.deepStrictEqual(bimanRoute.savings, []);
+
 console.log("booking-links.test.js passed");
