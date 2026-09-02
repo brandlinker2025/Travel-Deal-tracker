@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cheap Ticket Finder — official % on the book button</title>
+    <title>Cheap Ticket Finder — cheap authentic ticket on Google Flights</title>
     <meta name="application-name" content="Cheap Ticket Finder">
-    <meta name="deploy" content="no-campaign-grid-20260902">
-    <meta name="description" content="Cheap Ticket Finder does not sell tickets. One cheap ticket path after you pick dates: each airline/OTA search-and-book row shows the official card or promo for that checkout beside it. We do not invent ৳ fares.">
+    <meta name="deploy" content="google-primary-20260902">
+    <meta name="description" content="Cheap Ticket Finder does not sell tickets. After you pick dates, the cheap authentic path is Open Google Flights (tfs search). Book with the airline there — that is the real, airline-issued ticket. Official airline sites are secondary because they often show Flex. We do not invent ৳.">
     <meta property="og:site_name" content="Cheap Ticket Finder">
     <meta property="og:title" content="Cheap Ticket Finder">
     <link rel="canonical" href="https://cheapticketfinder.site/">
@@ -74,13 +74,13 @@
 
         <header class="text-center mb-6 sm:mb-8">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full deal-chip text-[10px] sm:text-xs font-bold text-sky-300 mb-3">
-                <i class="fa-solid fa-tags"></i> Official % beside the book row • We do not sell tickets
+                <i class="fa-solid fa-tags"></i> Cheap authentic ticket on Google Flights • We do not sell tickets
             </div>
             <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight flex items-center justify-center gap-2.5">
                 <i class="fa-solid fa-plane-departure text-sky-400"></i> Cheap Ticket Finder
             </h1>
             <p class="text-slate-400 text-xs sm:text-sm mt-2 max-w-2xl mx-auto leading-5">
-                Pick From / To, then one day on the calendar. Cheap Ticket Finder shows one cheap ticket path: Google Flights, GoZayaan, and one official book button per airline. A published card or promo sits only beside that search/book row (SCB on GoZayaan, AIRASTRA15 on AIR ASTRA). If an airline has no published code, that row is just the book button. No live fare API — we show official up to X%, not a made-up ৳.
+                Pick From / To, then one day on the calendar. The cheap authentic path is Google Flights (tfs search). Book with the airline there — that is the real ticket. A US-Bangla ৳ on Google Flights is an authentic airline-issued fare, not a number we invent. Official airline engines are secondary because they often show a higher fare family (Flex). One official book button per airline stays below, with a published card or promo only beside that checkout.
             </p>
         </header>
 
@@ -169,7 +169,7 @@
 
         <div class="mb-4 rounded-xl border border-sky-500/20 bg-sky-950/40 px-3.5 py-3 text-[11px] leading-5 text-slate-300">
             <i class="fa-solid fa-circle-info text-sky-400 mr-1"></i>
-            Cheap Ticket Finder does not sell tickets and does not invent ৳. After you pick dates, one cheap ticket path. Each airline or OTA search/book row has one place beside it for the official card or promo that applies at that checkout (up to X% — not a made-up ৳). We never subtract a promo from a fake fare.
+            Cheap Ticket Finder does not sell tickets and does not invent ৳. After you pick dates, the primary button is Open Google Flights (tfs search). Book with the airline there — that is the authentic airline-issued ticket. Official airline sites are secondary; they often open Flex / a higher fare family.
         </div>
 
         <div id="tripSummary" class="hidden bg-slate-900 border border-slate-800 rounded-xl p-3.5 mb-6 flex flex-wrap justify-between items-center text-xs sm:text-sm gap-2">
@@ -188,12 +188,12 @@
                 <h2 class="text-sm sm:text-lg font-bold text-sky-400 flex items-center gap-2">
                     <i class="fa-solid fa-bolt"></i> Cheap ticket path
                 </h2>
-                <span class="text-[10px] sm:text-xs bg-sky-500/20 text-sky-300 px-2.5 py-0.5 rounded-full font-semibold">Official % beside the book row</span>
+                <span class="text-[10px] sm:text-xs bg-sky-500/20 text-sky-300 px-2.5 py-0.5 rounded-full font-semibold">Primary: Open Google Flights</span>
             </div>
-            <p class="text-[11px] text-slate-500 mb-3">One place only: beside each airline/OTA search/book row. GoZayaan shows SCB/City Amex that apply at that OTA checkout. AIR ASTRA shows “AIRASTRA15: 15% at airline checkout”. Example: “SCB card: official up to 10% on this OTA”. If an airline has no published code, show nothing extra. No separate bank grid. No live fare API, so we do not print a made-up ৳. If a real fare is ever known, we also show fare after that percent, labeled estimate from official %.</p>
-            <div id="needDatesHint" class="rounded-xl border border-slate-800 bg-slate-950/60 px-3.5 py-3 text-xs text-slate-400">Pick From / To and a date on the calendar. Each search/book row then shows the official card or promo for that checkout beside it.</div>
+            <p class="text-[11px] text-slate-500 mb-3">Primary button: Open Google Flights (tfs search). Book with the airline there — that is the real ticket (e.g. a US-Bangla ৳ on Google Flights is an authentic airline-issued fare). We do not invent ৳. Official airline engines are secondary because they often show a higher fare family (Flex). Published cards/codes (SCB on GoZayaan, AIRASTRA15: 15% at airline checkout, “SCB card: official up to 10% on this OTA”) sit only beside the matching checkout. If an airline has no published code, show nothing extra. If a real fare is ever known, fare after that percent is labeled estimate from official %.</p>
+            <div id="needDatesHint" class="rounded-xl border border-slate-800 bg-slate-950/60 px-3.5 py-3 text-xs text-slate-400">Pick From / To and a date. The cheap authentic path is the primary Open Google Flights button — book the airline there. Official engines stay secondary (often Flex).</div>
+            <div id="googleBookBar" class="hidden mb-4"></div>
             <div id="cheapPathResults" class="space-y-2"></div>
-            <div id="googleBookBar" class="hidden"></div>
         </div>
 
         <div class="mb-8 hidden" id="hotelSectionWrapper">
@@ -298,7 +298,7 @@
         </div>
     </div>
 
-    <script src="js/booking-links.js?v=no-campaign-grid-20260902"></script>
+    <script src="js/booking-links.js?v=google-primary-20260902"></script>
     <script>
         const COUNTRY_AIRPORTS = [
 
@@ -1239,17 +1239,33 @@
             }).join("")}</div>`;
         }
 
-        function cheapPathCard(item) {
-            const tone = item.id === "google-flights"
-                ? { border: "hover:border-sky-500/50", badge: "text-sky-400 bg-sky-500/10", btn: "bg-sky-500 hover:bg-sky-600 text-white" }
-                : item.id === "gozayaan"
-                    ? { border: "hover:border-fuchsia-500/50", badge: "text-fuchsia-300 bg-fuchsia-500/10", btn: "bg-fuchsia-500 hover:bg-fuchsia-600 text-white" }
-                    : { border: "hover:border-amber-500/50", badge: "text-amber-300 bg-amber-500/10", btn: "bg-amber-500 hover:bg-amber-600 text-slate-950" };
+        function primaryGoogleCard(item) {
             return `
-                <div class="bg-slate-900 border border-slate-800 ${tone.border} px-3 py-2.5 rounded-xl transition">
+                <div class="rounded-2xl border-2 border-sky-400/60 bg-sky-950/40 p-4 sm:p-5 shadow-xl shadow-sky-900/20">
+                    <div class="text-[10px] font-extrabold uppercase tracking-wider text-sky-300 mb-2">Cheap authentic ticket</div>
+                    <h3 class="text-lg sm:text-xl font-black text-white">Google Flights</h3>
+                    <p class="text-xs sm:text-sm text-slate-300 mt-2 leading-5">${escapeHtml(item.blurb || "")}</p>
+                    <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="mt-4 w-full block text-center bg-sky-500 hover:bg-sky-400 text-white font-black py-3.5 rounded-xl text-sm sm:text-base transition shadow-lg shadow-sky-500/30">
+                        <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i> ${escapeHtml(item.cta || "Open Google Flights")}
+                    </a>
+                    <p class="text-[11px] text-slate-500 mt-2">tfs search URL — we do not invent ৳. Live fare is on Google Flights.</p>
+                </div>
+            `;
+        }
+
+        function cheapPathCard(item) {
+            const tone = item.id === "gozayaan"
+                ? { border: "hover:border-fuchsia-500/50", badge: "text-fuchsia-300 bg-fuchsia-500/10", btn: "bg-fuchsia-500 hover:bg-fuchsia-600 text-white" }
+                : { border: "hover:border-slate-600", badge: "text-slate-300 bg-slate-800", btn: "bg-slate-700 hover:bg-slate-600 text-white" };
+            const flexNote = item.fareNote
+                ? `<span class="text-[10px] text-amber-200/80 font-semibold">${escapeHtml(item.fareNote)}</span>`
+                : "";
+            return `
+                <div class="bg-slate-900/80 border border-slate-800 ${tone.border} px-3 py-2.5 rounded-xl transition">
                     <div class="flex flex-col sm:flex-row sm:items-center gap-2.5">
                         <div class="sm:w-44 shrink-0">
                             <span class="text-[11px] font-bold ${tone.badge} px-2.5 py-1 rounded-md">${escapeHtml(item.name)}</span>
+                            ${flexNote ? `<div class="mt-1">${flexNote}</div>` : ""}
                         </div>
                         <div class="flex-1 min-w-0">
                             ${savingsChips(item.savings)}
@@ -1302,7 +1318,12 @@
         function resetResultsUntilDates() {
             const pathBox = document.getElementById('cheapPathResults');
             const needDates = document.getElementById('needDatesHint');
+            const googleBar = document.getElementById('googleBookBar');
             if (pathBox) pathBox.innerHTML = "";
+            if (googleBar) {
+                googleBar.innerHTML = "";
+                googleBar.classList.add('hidden');
+            }
             if (needDates) needDates.classList.remove('hidden');
             document.getElementById('hotelResults').innerHTML = "";
             document.getElementById('hotelSectionWrapper').classList.add('hidden');
@@ -1349,8 +1370,22 @@
             const needDates = document.getElementById('needDatesHint');
             if (needDates) needDates.classList.add('hidden');
             const pathBox = document.getElementById('cheapPathResults');
+            const googleBar = document.getElementById('googleBookBar');
             const rows = BookingLinks.cheapBookPath(opts);
-            pathBox.innerHTML = rows.map(item => cheapPathCard(item)).join("");
+            const primary = rows.filter((item) => item.tier === "primary" || item.id === "google-flights");
+            const secondary = rows.filter((item) => item.id !== "google-flights");
+            if (googleBar) {
+                googleBar.classList.remove('hidden');
+                googleBar.innerHTML = primary.map((item) => primaryGoogleCard(item)).join("");
+            }
+            const secondaryHeading = `
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2 mt-1">
+                    <h3 class="text-xs sm:text-sm font-bold text-slate-300">Airline site (often Flex / higher fare family)</h3>
+                    <span class="text-[10px] sm:text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-semibold">Official % beside the book row</span>
+                </div>
+                <p class="text-[11px] text-slate-500 mb-2">Secondary. Official engines often show Flex. Use these for a published checkout code or a card that only works on that OTA. Cheap authentic airline-issued fares stay on Google Flights above.</p>
+            `;
+            pathBox.innerHTML = secondaryHeading + secondary.map((item) => cheapPathCard(item)).join("");
             bindCopyButtons(pathBox);
 
             const dest = getAllAirports().find(i => i.code === selectedDestCode) || COUNTRY_AIRPORTS[0];
@@ -1374,7 +1409,7 @@
             document.getElementById('hotelSectionWrapper').classList.remove('hidden');
 
             const btnText = document.getElementById('btnText');
-            if (btnText) btnText.innerText = "Refresh dated path";
+            if (btnText) btnText.innerText = "Refresh cheap Google Flights path";
         }
 
         function triggerFullScan() {
@@ -1394,7 +1429,7 @@
                 renderCalendars();
                 renderResults();
                 icon.className = "fa-solid fa-magnifying-glass";
-                btnText.innerText = "Refresh dated path";
+                btnText.innerText = "Refresh cheap Google Flights path";
                 setTimeout(() => toast.classList.add('hidden'), 250);
             }, 180);
         }

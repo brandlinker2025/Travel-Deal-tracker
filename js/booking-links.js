@@ -6,9 +6,9 @@
  * Never use Google Flights `?q=` natural-language URLs (empty landing page).
  * ShareTrip `/flight/search` 404s — do not add it back without a working dated URL.
  * US-Bangla: stable TTI FrontOffice only — never a session-GUID path that 404s later.
- * Stamp: no-campaign-grid-20260902
- * Official card % and checkout codes sit beside the airline/OTA search/book row they apply to.
- * BRAC and other banks appear only when that checkout actually publishes an offer.
+ * Stamp: google-primary-20260902
+ * Cheap authentic path is Google Flights tfs search — book the airline there.
+ * Official airline engines are secondary; they often open a higher fare family (Flex).
  * No public fare API without secrets — show official up to X%, never a made-up ৳.
  */
 (function (root, factory) {
@@ -414,8 +414,8 @@
             home: "https://usbair.com",
             match: /us-?bangla|usbair/i,
             relevant: (o, d) => BD_AIRPORTS.has(o) || BD_AIRPORTS.has(d),
-            blurb: "Official US-Bangla booking engine (usbair.com Book a Flight uses this TTI FrontOffice). Stable public URL — not a session GUID that 404s later. Origin, destination and date are in the query. Live ৳ is on their site; we do not invent fares.",
-            cta: "Open US-Bangla official booking",
+            blurb: "Official US-Bangla engine. It often opens a higher fare family such as Flex. The cheap authentic US-Bangla ticket is the airline-issued fare on Google Flights — we do not invent ৳.",
+            cta: "Open US-Bangla official engine",
             url(opts) {
                 return ttiZenithFrontOfficeUrl(USBA_FRONTOFFICE, opts);
             }
@@ -895,8 +895,9 @@
                 id: "google-flights",
                 name: "Google Flights",
                 url: googleFlightsUrl(opts),
-                cta: "Open cheapest Google Flights results",
-                blurb: "Filled tfs search, cheapest sort, BDT. Card/code savings apply on the airline or OTA you actually pay — not on this meta-search.",
+                cta: "Open Google Flights",
+                tier: "primary",
+                blurb: "Dated tfs search, cheapest sort, BDT. Book with the airline there — that is the real ticket. A US-Bangla ৳ on Google Flights is an authentic airline-issued fare, not a Flex-only price from the airline site and not a number we invent.",
                 savings: savingsForProvider("google-flights", opts)
             },
             {
@@ -904,6 +905,7 @@
                 name: "GoZayaan",
                 url: gozayaanUrl(opts),
                 cta: "Open GoZayaan with your dates",
+                tier: "secondary",
                 blurb: "Official Bangladesh OTA search with these airports and dates. Live fare is on GoZayaan. Enter a listed card at their payment step.",
                 savings: savingsForProvider("gozayaan", opts)
             }
@@ -914,6 +916,8 @@
                 name: airline.name,
                 url: airline.url,
                 cta: airline.cta,
+                tier: "secondary",
+                fareNote: "often Flex",
                 blurb: airline.blurb,
                 savings: airline.savings || savingsForProvider(airline.id, opts)
             });
@@ -925,6 +929,7 @@
                 name: "ShareTrip",
                 url: "https://sharetrip.net/",
                 cta: "Open ShareTrip home, then enter the EBL code",
+                tier: "secondary",
                 blurb: "EBL Stellar codes are for ShareTrip checkout only. Dated /flight/search 404s — search from their home page.",
                 savings: shareSavings
             });
