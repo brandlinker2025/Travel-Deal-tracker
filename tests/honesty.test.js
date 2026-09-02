@@ -57,7 +57,7 @@ const required = [
     "final price is on the provider",
     "Cheap ticket path",
     "cheapPathResults",
-    "Official % on the book button",
+    "Official % beside the book row",
     "SCB card: official up to 10% on this OTA",
     "AIRASTRA15: 15% at airline checkout",
     "estimate from official %",
@@ -67,7 +67,7 @@ const required = [
     "tripCalendarGrid",
     "googleBookBar",
     "Official packages",
-    "attach-savings-20260902",
+    "beside-row-20260902",
     "Cheap Ticket Finder",
     "cheapticketfinder.site",
     "No official card or checkout code mapped",
@@ -90,6 +90,7 @@ assert.ok(!html.includes("Cheapest live search"), "cheap path replaced the separ
 assert.ok(!html.includes('id="discountResults"'), "do not keep a standalone discountResults grid");
 assert.ok(!html.includes('id="promoCodeResults"'), "do not keep a standalone promoCodeResults grid");
 assert.ok(!html.includes("cheap-ticket-finder-20260902"), "deploy stamp must move with this ship");
+assert.ok(!html.includes("attach-savings-20260902"), "deploy stamp must move with the beside-row ship");
 
 const pathIdx = html.indexOf("Cheap ticket path");
 const hotelIdx = html.indexOf("Hotels for these dates");
@@ -119,7 +120,9 @@ assert.ok(links.includes("AIRASTRA15"), "AIR ASTRA official promo code must be l
 assert.ok(links.includes("STLRPIQ326"), "EBL official Stellar international code must be listed");
 assert.ok(links.includes("bkash.com/en/campaign"), "bKash official campaign hub must be listed");
 assert.ok(!links.includes("USBA15"), "Do not invent USBA15 without the airline official promo page");
-assert.ok(html.includes("cheapPathCard") && html.includes("savingsChips"), "cheap-path cards must attach official savings to each book button");
+assert.ok(html.includes("cheapPathCard") && html.includes("savingsChips"), "cheap-path rows must attach official savings beside each book control");
+assert.ok(html.includes("sm:flex-row sm:items-center"), "promo/card chips sit beside the airline/OTA search/book row");
+assert.ok(html.includes("None — No official card or checkout code mapped"), "airlines with no published promo show None beside the row");
 assert.ok(links.includes("Open cheapest Google Flights results"), "Google Flights CTA stays on the cheap path");
 assert.ok(links.includes("SCB card: official up to 10% on this OTA"), "GoZayaan SCB headline must stay mapped to that OTA");
 assert.ok(links.includes("AIRASTRA15: 15% at airline checkout"), "AIRASTRA15 must stay mapped to airline checkout");

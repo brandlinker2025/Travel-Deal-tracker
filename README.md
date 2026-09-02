@@ -7,13 +7,13 @@ Static Bangladesh-friendly search page for **cheapticketfinder.site**. It does *
 Pick From / To, then dates on **one empty calendar** (nothing is pre-selected). Cheap Ticket Finder then shows **one cheap ticket path**:
 
 - Google Flights cheapest `tfs` search
-- GoZayaan dated search with official card percents on that OTA (SCB up to 10% international / 7% domestic; City Amex up to 18% international)
-- One official book button per airline, with checkout codes only where they actually apply (AIRASTRA15: 15% at AIR ASTRA)
-- EBL Stellar codes only on ShareTrip home (not `/flight/search`, which 404s)
+- GoZayaan dated search, with SCB / City Amex **beside that OTA row** when they apply at GoZayaan checkout (SCB up to 10% international / 7% domestic; City Amex up to 18% international). BRAC is omitted unless that checkout publishes a BRAC offer.
+- One official search/book row per airline. A published checkout code sits **beside that airline** (AIRASTRA15: 15% at AIR ASTRA). US-Bangla shows None — we do not invent USBA15.
+- EBL Stellar codes only beside ShareTrip home (not `/flight/search`, which 404s)
 
 There is no public fare API without secrets, so this page does not print a made-up ৳. We show the official **up to X%**. If a real fare is ever known, fare after that percent is labeled an estimate from official %.
 
-Bank/card percents and checkout codes sit **on the cheap-path book button** for the provider they actually book on. There is no separate BANK / CARD CAMPAIGNS grid.
+There is **one place**: beside each airline/OTA search/book row. There is no separate BANK / CARD CAMPAIGNS grid.
 
 ShareTrip dated `/flight/search` is not linked (404). EBL Stellar codes use ShareTrip home only.
 

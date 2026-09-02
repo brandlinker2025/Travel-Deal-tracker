@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cheap Ticket Finder — official % on the book button</title>
     <meta name="application-name" content="Cheap Ticket Finder">
-    <meta name="deploy" content="attach-savings-20260902">
-    <meta name="description" content="Cheap Ticket Finder does not sell tickets. One cheap ticket path after you pick dates: Google Flights, GoZayaan, and official airline book buttons with official card % and checkout codes attached. We do not invent ৳ fares.">
+    <meta name="deploy" content="beside-row-20260902">
+    <meta name="description" content="Cheap Ticket Finder does not sell tickets. One cheap ticket path after you pick dates: each airline/OTA search-and-book row shows the official card or promo for that checkout beside it. We do not invent ৳ fares.">
     <meta property="og:site_name" content="Cheap Ticket Finder">
     <meta property="og:title" content="Cheap Ticket Finder">
     <link rel="canonical" href="https://cheapticketfinder.site/">
@@ -74,13 +74,13 @@
 
         <header class="text-center mb-6 sm:mb-8">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full deal-chip text-[10px] sm:text-xs font-bold text-sky-300 mb-3">
-                <i class="fa-solid fa-tags"></i> Official % on the book button • We do not sell tickets
+                <i class="fa-solid fa-tags"></i> Official % beside the book row • We do not sell tickets
             </div>
             <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight flex items-center justify-center gap-2.5">
                 <i class="fa-solid fa-plane-departure text-sky-400"></i> Cheap Ticket Finder
             </h1>
             <p class="text-slate-400 text-xs sm:text-sm mt-2 max-w-2xl mx-auto leading-5">
-                Pick From / To, then one day on the calendar. Cheap Ticket Finder shows one cheap ticket path: Google Flights, GoZayaan, and one official book button per airline. Official card percents and checkout codes sit on the provider they actually book on (SCB on GoZayaan, AIRASTRA15 on AIR ASTRA). No live fare API — we show official up to X%, not a made-up ৳. US-Bangla uses TTI FrontOffice, never a session GUID.
+                Pick From / To, then one day on the calendar. Cheap Ticket Finder shows one cheap ticket path: Google Flights, GoZayaan, and one official book button per airline. The published card or promo sits beside that search/book row (SCB on GoZayaan, AIRASTRA15 on AIR ASTRA, none on US-Bangla). BRAC and other banks appear only if they apply at that checkout. No live fare API — we show official up to X%, not a made-up ৳.
             </p>
         </header>
 
@@ -169,7 +169,7 @@
 
         <div class="mb-4 rounded-xl border border-sky-500/20 bg-sky-950/40 px-3.5 py-3 text-[11px] leading-5 text-slate-300">
             <i class="fa-solid fa-circle-info text-sky-400 mr-1"></i>
-            Cheap Ticket Finder does not sell tickets and does not invent ৳. After you pick dates, one cheap ticket path: Google Flights, GoZayaan, and one official book button per airline. Official card % and checkout codes sit on the provider they actually book on (up to X% — not a made-up ৳). We never subtract a promo from a fake fare.
+            Cheap Ticket Finder does not sell tickets and does not invent ৳. After you pick dates, one cheap ticket path. Each airline or OTA search/book row has one place beside it for the official card or promo that applies at that checkout (up to X% — not a made-up ৳). We never subtract a promo from a fake fare.
         </div>
 
         <div id="tripSummary" class="hidden bg-slate-900 border border-slate-800 rounded-xl p-3.5 mb-6 flex flex-wrap justify-between items-center text-xs sm:text-sm gap-2">
@@ -188,11 +188,11 @@
                 <h2 class="text-sm sm:text-lg font-bold text-sky-400 flex items-center gap-2">
                     <i class="fa-solid fa-bolt"></i> Cheap ticket path
                 </h2>
-                <span class="text-[10px] sm:text-xs bg-sky-500/20 text-sky-300 px-2.5 py-0.5 rounded-full font-semibold">Official % on the book button</span>
+                <span class="text-[10px] sm:text-xs bg-sky-500/20 text-sky-300 px-2.5 py-0.5 rounded-full font-semibold">Official % beside the book row</span>
             </div>
-            <p class="text-[11px] text-slate-500 mb-3">One place for the cheap path — not a separate bank/card campaign grid. Each book button shows which card or promo can make that checkout cheaper, e.g. GoZayaan + “SCB card: official up to 10% on this OTA” / AIR ASTRA + “AIRASTRA15: 15% at airline checkout”. Only official published %/codes, mapped to the provider they actually book on. No live fare API, so we do not print a made-up ৳. If a real fare is ever known, we also show fare after that percent, labeled estimate from official %.</p>
-            <div id="needDatesHint" class="rounded-xl border border-slate-800 bg-slate-950/60 px-3.5 py-3 text-xs text-slate-400">Pick From / To and a date on the calendar. Savings attach to each book button — we do not scatter bank/card cards around the page.</div>
-            <div id="cheapPathResults" class="space-y-3"></div>
+            <p class="text-[11px] text-slate-500 mb-3">One place only: beside each airline/OTA search/book row. US-Bangla shows its published promo or None. GoZayaan shows SCB/City Amex that apply at that OTA checkout — BRAC only if that checkout actually has a BRAC offer. AIR ASTRA shows “AIRASTRA15: 15% at airline checkout”. Example: “SCB card: official up to 10% on this OTA”. No separate bank grid. No live fare API, so we do not print a made-up ৳. If a real fare is ever known, we also show fare after that percent, labeled estimate from official %.</p>
+            <div id="needDatesHint" class="rounded-xl border border-slate-800 bg-slate-950/60 px-3.5 py-3 text-xs text-slate-400">Pick From / To and a date on the calendar. Each search/book row then shows the official card or promo for that checkout beside it.</div>
+            <div id="cheapPathResults" class="space-y-2"></div>
             <div id="googleBookBar" class="hidden"></div>
         </div>
 
@@ -298,7 +298,7 @@
         </div>
     </div>
 
-    <script src="js/booking-links.js?v=attach-savings-20260902"></script>
+    <script src="js/booking-links.js?v=beside-row-20260902"></script>
     <script>
         const COUNTRY_AIRPORTS = [
 
@@ -1215,31 +1215,28 @@
         function savingsChips(savings, liveFareBdt) {
             const list = Array.isArray(savings) ? savings : [];
             if (!list.length) {
-                return `<p class="mt-3 text-[11px] text-slate-500">No official card or checkout code mapped to this provider. Live fare is on their site.</p>`;
+                return `<span class="text-[11px] text-slate-500">None — No official card or checkout code mapped to this provider</span>`;
             }
-            return list.map((item) => {
+            return `<div class="flex flex-wrap items-center gap-1.5">${list.map((item) => {
                 const estimate = liveFareBdt != null
                     ? BookingLinks.estimateAfterOfficialPercent(liveFareBdt, item)
                     : null;
                 const estimateHtml = estimate
-                    ? `<p class="text-[11px] text-emerald-200/90 mt-1">${escapeHtml(estimate.label)}: ৳${estimate.afterBdt.toLocaleString("en-BD")} after official %.</p>`
-                    : `<p class="text-[11px] text-slate-500 mt-1">No live fare on this page — showing official ${item.how === "up to" ? "up to " : ""}${escapeHtml(String(item.percent))}%.</p>`;
+                    ? `<span class="text-[10px] text-emerald-200/90">${escapeHtml(estimate.label)}: ৳${estimate.afterBdt.toLocaleString("en-BD")}</span>`
+                    : "";
                 const codeHtml = item.code
-                    ? `<div class="mt-1 flex items-center justify-between gap-2">
-                            <code class="font-mono text-sm font-black text-white tracking-wide">${escapeHtml(item.code)}</code>
-                            <button type="button" data-copy-code="${escapeHtml(item.code)}" class="shrink-0 text-[10px] font-bold px-2 py-1 rounded-lg bg-amber-500 text-slate-950 hover:bg-amber-400">Copy</button>
-                       </div>`
+                    ? `<code class="font-mono text-[11px] font-black text-white tracking-wide">${escapeHtml(item.code)}</code>
+                       <button type="button" data-copy-code="${escapeHtml(item.code)}" class="shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-500 text-slate-950 hover:bg-amber-400">Copy</button>`
                     : "";
                 return `
-                    <div class="mt-2 rounded-xl border border-amber-500/30 bg-amber-500/5 p-2.5">
-                        <div class="text-[11px] font-black text-amber-200">${escapeHtml(item.headline)}</div>
+                    <span class="inline-flex flex-wrap items-center gap-1.5 rounded-lg border border-amber-500/40 bg-amber-500/10 px-2 py-1 max-w-full">
+                        <span class="text-[10px] font-black text-amber-200">${escapeHtml(item.headline)}</span>
                         ${codeHtml}
-                        <p class="text-[11px] text-slate-400 mt-1.5 leading-4">${escapeHtml(item.detail || "")}</p>
                         ${estimateHtml}
-                        <a href="${item.sourceUrl}" target="_blank" rel="noopener noreferrer" class="mt-1 inline-block text-[11px] font-semibold text-sky-300 hover:underline">Official source</a>
-                    </div>
+                        <a href="${item.sourceUrl}" target="_blank" rel="noopener noreferrer" class="text-[10px] font-semibold text-sky-300 hover:underline">source</a>
+                    </span>
                 `;
-            }).join("");
+            }).join("")}</div>`;
         }
 
         function cheapPathCard(item) {
@@ -1249,13 +1246,18 @@
                     ? { border: "hover:border-fuchsia-500/50", badge: "text-fuchsia-300 bg-fuchsia-500/10", btn: "bg-fuchsia-500 hover:bg-fuchsia-600 text-white" }
                     : { border: "hover:border-amber-500/50", badge: "text-amber-300 bg-amber-500/10", btn: "bg-amber-500 hover:bg-amber-600 text-slate-950" };
             return `
-                <div class="bg-slate-900 border border-slate-800 ${tone.border} p-4 rounded-2xl shadow-xl transition">
-                    <span class="text-[11px] font-bold ${tone.badge} px-2.5 py-1 rounded-md">${escapeHtml(item.name)}</span>
-                    <p class="text-xs text-slate-400 mt-3 leading-5">${escapeHtml(item.blurb || "")}</p>
-                    ${savingsChips(item.savings)}
-                    <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="mt-4 w-full block text-center ${tone.btn} font-bold py-2 rounded-xl text-xs transition">
-                        <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> ${escapeHtml(item.cta || "Open " + item.name)}
-                    </a>
+                <div class="bg-slate-900 border border-slate-800 ${tone.border} px-3 py-2.5 rounded-xl transition">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2.5">
+                        <div class="sm:w-44 shrink-0">
+                            <span class="text-[11px] font-bold ${tone.badge} px-2.5 py-1 rounded-md">${escapeHtml(item.name)}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            ${savingsChips(item.savings)}
+                        </div>
+                        <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="shrink-0 text-center ${tone.btn} font-bold px-3 py-2 rounded-xl text-[11px] transition whitespace-nowrap">
+                            <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> ${escapeHtml(item.cta || "Open " + item.name)}
+                        </a>
+                    </div>
                 </div>
             `;
         }

@@ -465,6 +465,11 @@ assert.ok(astraPath.savings.some((s) => s.code === "AIRASTRA15" && s.percent ===
 const bimanPath = path.find((row) => row.id === "biman");
 assert.ok(bimanPath);
 assert.deepStrictEqual(bimanPath.savings, []);
+const usbPath = path.find((row) => row.id === "usbangla");
+assert.ok(usbPath);
+assert.deepStrictEqual(usbPath.savings, [], "US-Bangla has no published website promo — show none beside that row");
+assert.deepStrictEqual(BookingLinks.savingsForProvider("usbangla", dacCan), []);
+assert.ok(!JSON.stringify(path[1].savings).toLowerCase().includes("brac"), "BRAC is not mapped to GoZayaan checkout");
 assert.ok(path.some((row) => row.id === "sharetrip" && row.url === "https://sharetrip.net/"));
 assert.ok(!JSON.stringify(path).includes("USBA15"));
 assert.ok(!path.some((row) => /bank \/ card campaign/i.test(JSON.stringify(row))));

@@ -6,8 +6,9 @@
  * Never use Google Flights `?q=` natural-language URLs (empty landing page).
  * ShareTrip `/flight/search` 404s — do not add it back without a working dated URL.
  * US-Bangla: stable TTI FrontOffice only — never a session-GUID path that 404s later.
- * Stamp: attach-savings-20260902
- * Official card % and checkout codes attach to the provider you book on.
+ * Stamp: beside-row-20260902
+ * Official card % and checkout codes sit beside the airline/OTA search/book row they apply to.
+ * BRAC and other banks appear only when that checkout actually publishes an offer.
  * No public fare API without secrets — show official up to X%, never a made-up ৳.
  */
 (function (root, factory) {
@@ -750,6 +751,8 @@
     }
 
     // Official % / codes only, keyed to the checkout that actually accepts them.
+    // BRAC’s official offers hub currently has no flight offer — do not show BRAC beside any row.
+    // SCB’s generic airline-hub “up to 20%” is not a named checkout, so it is not attached here.
     function savingsForProvider(providerId, opts) {
         const route = opts || {};
         const domestic = isDomesticRoute(route);
